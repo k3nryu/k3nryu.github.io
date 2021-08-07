@@ -38,7 +38,7 @@ site:
 
 # config
 config:
-  skin: theme-black # 主题颜色 theme-black theme-blue theme-green theme-purple
+  skin: # 主题颜色 theme-black theme-blue theme-green theme-purple
   layout: main-center # 布局方式 main-left main-center main-right
   toc: true # 是否开启文章章节目录导航
   menu_highlight: false # 是否开启当前菜单高亮显示
@@ -83,7 +83,7 @@ search:
 
 # Donate
 donate:
-  enable: true
+  enable: false
   # 微信打赏
   wechatpay:
     qrcode: images/donate/wechatpayimg.png
@@ -108,8 +108,8 @@ github:
 # Gitment
 # Introduction: https://imsun.net/posts/gitment-introduction/
 comment:
-  type: valine  # 启用哪种评论系统
-  disqus:  # enter disqus shortname here
+  type: disqus  # 启用哪种评论系统
+  disqus: k3nryu # enter disqus shortname here
   youyan: 
     uid: 1783844 # enter youyan uid 
   livere:
@@ -190,7 +190,7 @@ profile:
   author: kenryu
   author_title: InfraEngineer
   author_description: Hello There!
-  location: saitama, japan
+  location: Saitama, Japan
   follow: https://github.com/k3nryu
   # Social Links
   social:
