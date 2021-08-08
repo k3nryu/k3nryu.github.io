@@ -188,7 +188,7 @@ profile:
   avatar: images/avatar.jpg
   gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
   author: kenryu
-  author_title: InfraEngineer
+  author_title: Infra Engineer
   author_description: Hello There!
   location: Saitama, Japan
   follow: https://github.com/k3nryu
