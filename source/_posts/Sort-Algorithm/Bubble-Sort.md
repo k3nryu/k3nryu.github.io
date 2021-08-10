@@ -1,7 +1,14 @@
 ---
 title: Bubble Sort
 date: 2020/9/30
+categories: 
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
 ```c
 #ifndef ALGORITHM_BUBBLE_SORT_H

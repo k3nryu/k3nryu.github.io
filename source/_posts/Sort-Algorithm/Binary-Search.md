@@ -1,8 +1,16 @@
 ---
 title: Binary Search
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #ifndef ALGORITHM_BINARY_SEARCH_METHOD_H
 #define ALGORITHM_BINARY_SEARCH_METHOD_H

@@ -1,8 +1,16 @@
 ---
 title: Selection Sort
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #ifndef ALGORITHM_SELECTION_SORT_H
 #define ALGORITHM_SELECTION_SORT_H

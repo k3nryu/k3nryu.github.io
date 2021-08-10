@@ -1,8 +1,16 @@
 ---
 title: Global Head
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #ifndef ALGORITHM_GLOBAL_H
 #define ALGORITHM_GLOBAL_H

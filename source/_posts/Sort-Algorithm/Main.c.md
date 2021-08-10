@@ -1,8 +1,16 @@
 ---
 title: Main.c
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #include"global.h"
 

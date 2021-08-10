@@ -1,8 +1,16 @@
 ---
 title: Merge Sort
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #ifndef ALGORITHM_MERGE_SORT_H
 #define ALGORITHM_MERGE_SORT_H

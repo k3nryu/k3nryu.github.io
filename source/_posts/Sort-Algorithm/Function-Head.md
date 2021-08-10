@@ -1,8 +1,16 @@
 ---
 title: Function Head
 date: 2020/9/30
+categories:
+  - Algorithm
+tags:
+  - C
+  - Algorithm
+  - FE
 toc: true
+#sidebar: none
 ---
+
 ```c
 #ifndef ALGORITHM_FUNCTION_H
 #define ALGORITHM_FUNCTION_H
