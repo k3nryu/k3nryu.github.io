@@ -196,13 +196,13 @@ profile:
   social:
     links:
       github: https://github.com/k3nryu
-      weibo: http://weibo.com/stcjl717
-      twitter: https://twitter.com/stcjl717
-      # facebook: /
-      # dribbble: /
-      behance: https://www.behance.net/stcjl717
-      rss: atom.xml
-    link_tooltip: true # enable the social link tooltip, options: true, false
+      weibo: https://weibo.com/512308520 
+      twitter: https://twitter.com/Chen__JL
+    # facebook: /
+    # dribbble: /
+    # behance: https://www.behance.net/stcjl717
+    # rss: atom.xml
+    link_tooltip: false # enable the social link tooltip, options: true, false
   # My Skills 
   skills:
     Git: ★★★☆☆
@@ -216,9 +216,9 @@ profile:
   links:
     Github: https://github.com/k3nryu
     Blog: http://kenryu.cc
-    微博: http://weibo.comstcjl717
-    花瓣: http://huaban.com/stcjl717
-    Behance: https://www.behance.net/stcjl717
+    微博: https://weibo.com/512308520 
+   #花瓣: http://huaban.com/stcjl717
+   #Behance: https://www.behance.net/stcjl717
   # My Personal Labels
   labels:
     - 前端
