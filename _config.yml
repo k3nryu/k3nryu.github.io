@@ -3,18 +3,18 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: kenryu
+title: Kenryu
 subtitle: 'hello there.'
 description: 'im testing my firt blog site.'
 keywords:
-author: kenryu
-language: en
+author: Kenryu
+language: zh-CN # Option: en, ja-JP
 timezone: 'Japan'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 #url: https://k3nryu.github.io
-url: https://kenryu.cc
+url: https://kenryu.cc/cn
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
