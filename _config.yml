@@ -8,13 +8,13 @@ subtitle: 'hello there.'
 description: 'im testing my firt blog site.'
 keywords:
 author: Kenryu
-language: zh-CN # Option: en, ja-JP
+language: en # Option: en, zh-CN, ja-JP
 timezone: 'Japan'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 #url: https://k3nryu.github.io
-url: https://kenryu.cc/cn
+url: https://kenryu.cc/en
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
