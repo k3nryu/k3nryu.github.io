@@ -31,7 +31,7 @@ site:
     width: 40
     height: 40
     url: ../images/logo.png
-  title: kenryu # 页面title
+  title: Kenryu # 页面title
   favicon: /favicon.png
   board: <p>Feel free to exchange and share your experiences!</p> # 站点公告
   copyright: false # 底部版权信息
@@ -187,7 +187,7 @@ profile:
   enabled: true # Whether to show profile bar
   avatar: images/avatar.jpg
   gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
-  author: kenryu
+  author: Kenryu
   author_title: Infra Engineer
   author_description: Hello There!
   location: Saitama, Japan
