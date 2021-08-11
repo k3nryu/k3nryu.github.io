@@ -1,0 +1,94 @@
+menu:
+  Home: ホーム
+  Archives: アーカイブ
+  Categories: カテゴリ
+  Tags: タグ
+  Repository: プロジェクト
+  Books: 書籍
+  Movies: 映画
+  Links: リンク
+  About: 私について
+nav:
+  all: All
+  older: 次のページ
+  newer: 前のページ
+page:
+  home: ホーム
+  archive: アーカイブ
+  archives: アーカイブ
+  category: カテゴリ
+  categories: カテゴリ
+  tag: タグ
+  tags: タグ
+  tagcloud: タグクラウド
+  uncategorized: 未分類
+  repository: プロジェクト
+  douban: My Douban
+  books: ブックリスト
+  books-desc: 私の個人的なコレクションの中で、皆さんにお勧めしたい本のリスト
+  movies: 映画
+  movies-desc: 誰もが楽しめる個人的なお気に入りの映画
+  links: リンクシェア
+  links-desc: リンクシェア大歓迎です
+  about: 私について
+pagination: 
+  next: 次のページ
+  prev: 前のページ
+  page: %d ページ
+  pageof: %d ページの %s ページ目
+widget:
+  search: 検索
+  board: 看板
+  archive: アーカイブ
+  tags: タグ
+  categories: 
+  tagcloud: タグ達
+  recent_posts: 最近の記事
+profile: 
+  follow: フォロー
+  skill: スキル
+  label: よく言われる
+  work: 私の作品
+  project: 私のプロジェクト
+  link: 私のリンク
+insight:
+  hint: なんのお探しでしょうか？
+  posts: 記事
+  pages: ページ
+  categories: カテゴリ
+  tags: タグ
+  untitled: （無名）
+unit:
+  word: 文字
+  time: 分
+article:
+  wordcount: 文字数
+  readcount: 読む時間約
+  more: もっと
+  comments: コメント
+  share: シェア
+  catalogue: 索引
+total:
+  article: %d 個の記事があります
+  tag: %d 個のタグがあります
+  category: %d 個のカテゴリがあります
+  link: %d 個のリンクシェアがあります
+  repository: %d 個のプロジェクトがあります
+donate:
+  qrcode_alt: QRコード
+  qrcode_title: QRコードをスキャン
+  button: 心付け
+  title: ご厚志ありがとうございます！これからも頑張ります！
+  tip: スキャンしてチップを〜
+  alipay_action_tip: Alipay
+  wechatpay_action_tip: WeChat Pay
+  alipay: Alipay
+  wechatpay: WeChat Pay
+comment: コメント
+tweets: Twitter
+share: Share
+rss_feed: RSS Feed
+copyright:
+  theme_by: Theme by
+  base_on: base on
+  powered_by: Powered by
