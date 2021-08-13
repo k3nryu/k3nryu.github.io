@@ -31,11 +31,11 @@ page:
   links: リンクシェア
   links-desc: リンクシェア大歓迎です
   about: 私について
-pagination: 
+pagination:
   next: 次のページ
   prev: 前のページ
-  page: %d ページ
-  pageof: %d ページの %s ページ目
+  page: 全部%d ページ
+  pageof: 全部%d ページの %s ページ目
 widget:
   search: 検索
   board: 看板
@@ -69,11 +69,11 @@ article:
   share: シェア
   catalogue: 索引
 total:
-  article: %d 個の記事があります
-  tag: %d 個のタグがあります
-  category: %d 個のカテゴリがあります
-  link: %d 個のリンクシェアがあります
-  repository: %d 個のプロジェクトがあります
+  article: 全部 %d 個の記事があります
+  tag: 全部%d 個のタグがあります
+  category: 全部%d 個のカテゴリがあります
+  link: 全部%d 個のリンクシェアがあります
+  repository: 全部%d 個のプロジェクトがあります
 donate:
   qrcode_alt: QRコード
   qrcode_title: QRコードをスキャン
