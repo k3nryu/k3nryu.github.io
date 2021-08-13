@@ -31,7 +31,7 @@ site:
     width: 40
     height: 40
     url: ../images/logo.png
-  title: Kenryu # 页面title
+  title: Kenryu # 网站标题
   favicon: /favicon.png
   board: <p>Feel free to exchange and share your experiences!</p> # 站点公告
   copyright: false # 底部版权信息
@@ -74,7 +74,7 @@ archive_type: 'monthly'
 show_count: true
 
 # Fancybox
-fancybox: false
+fancybox: false # 实现点击图片放大的部件，默认关闭，打开后会导致友链打不开（解决办法参考后文Hexo博客搭建(4)——常见问题之如何实现点击图片放大）。
 
 # Search
 search:
@@ -96,7 +96,7 @@ donate:
 # Share
 # weibo,qq,qzone,wechat,tencent,douban,diandian,facebook,twitter,google,linkedin
 share:
-  enable: false  # 是否启用分享
+  enable: false  # 是否启用分享,属性值为英文逗号分隔且无空格。
   sites: weibo,qq,wechat,facebook,twitter  # PC端显示的分享图标
   mobile_sites: weibo,qq,qzone  # 移动端显示的分享图标
 
@@ -157,14 +157,14 @@ douban:
 # PV
 pv:
   busuanzi:
-    enable: false  # 不蒜子统计
+    enable: true # 不蒜子统计
   leancloud:
-    enable: true  # leancloud统计
+    enable: false # leancloud统计
     app_id: # leancloud <AppID>
     app_key: # leancloud <AppKey>
         
 # wordcount
-postCount:
+postCount: # 'npm install hexo-wordcount --save'
   enable: true
   wordcount: true  # 文章字数统计
   min2read: true  # 阅读时长预计 
@@ -192,7 +192,7 @@ profile:
   author_description: Hello There!
   location: Saitama, Japan
   follow: https://github.com/k3nryu
-  # Social Links
+# Social Links 会在左下角显示,以及移动端的菜单栏底部显示
   social:
     links:
       github: https://github.com/k3nryu
@@ -203,7 +203,7 @@ profile:
     # behance: https://www.behance.net/stcjl717
     # rss: atom.xml
     link_tooltip: false # enable the social link tooltip, options: true, false
-  # My Skills 
+# My Skills 
   skills:
     Git: ★★★☆☆
     Gulp: ★★★☆☆
@@ -215,7 +215,7 @@ profile:
   # My Personal Links
   links:
     Github: https://github.com/k3nryu
-    Blog: http://kenryu.cc
+    Blog: https://kenryu.cc
     微博: https://weibo.com/512308520 
    #花瓣: http://huaban.com/stcjl717
    #Behance: https://www.behance.net/stcjl717
