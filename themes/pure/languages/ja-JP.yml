@@ -1,7 +1,7 @@
 menu:
   Home: ホーム
   Archives: アーカイブ
-  Categories: カテゴリ
+  Categories: カテゴリー
   Tags: タグ
   Repository: プロジェクト
   Books: 書籍
@@ -10,8 +10,8 @@ menu:
   About: 私について
 nav:
   all: All
-  older: 次のページ
-  newer: 前のページ
+  older: 戻る
+  newer: 次へ
 page:
   home: ホーム
   archive: アーカイブ
@@ -23,41 +23,41 @@ page:
   tagcloud: タグクラウド
   uncategorized: 未分類
   repository: プロジェクト
-  douban: My Douban
+  douban: Douban
   books: ブックリスト
-  books-desc: 私の個人的なコレクションの中で、皆さんにお勧めしたい本のリスト
+  books-desc: 個人的なコレクションの中で、皆さんにお勧めしたい本のリスト
   movies: 映画
-  movies-desc: 誰もが楽しめる個人的なお気に入りの映画
+  movies-desc: 個人的なお気に入りの映画
   links: リンクシェア
   links-desc: リンクシェア大歓迎です
   about: 私について
-pagination:
-  next: 次のページ
-  prev: 前のページ
-  page: 全部%d ページ
-  pageof: 全部%d ページの %s ページ目
+pagination: 
+  next: 次へ
+  prev: 戻る
+  page: 第 %d ページ
+  pageof: 全体 %d ページの第 %s ページ
 widget:
   search: 検索
   board: 看板
   archive: アーカイブ
   tags: タグ
-  categories: 
-  tagcloud: タグ達
+  categories: カテゴリー
+  tagcloud: タグクラウド
   recent_posts: 最近の記事
-profile: 
+profile:
   follow: フォロー
   skill: スキル
-  label: よく言われる
+  label: ラベル
   work: 私の作品
   project: 私のプロジェクト
   link: 私のリンク
 insight:
-  hint: なんのお探しでしょうか？
+  hint: なんのお探しでしょうか?
   posts: 記事
   pages: ページ
   categories: カテゴリ
   tags: タグ
-  untitled: （無名）
+  untitled: (無名)
 unit:
   word: 文字
   time: 分
@@ -70,10 +70,10 @@ article:
   catalogue: 索引
 total:
   article: 全部 %d 個の記事があります
-  tag: 全部%d 個のタグがあります
-  category: 全部%d 個のカテゴリがあります
-  link: 全部%d 個のリンクシェアがあります
-  repository: 全部%d 個のプロジェクトがあります
+  tag: 全部 %d 個のタグがあります
+  category: 全部 %d 個のカテゴリがあります
+  link: 全部 %d 個のリンクシェアがあります
+  repository: 全部 %d 個のプロジェクトがあります
 donate:
   qrcode_alt: QRコード
   qrcode_title: QRコードをスキャン
