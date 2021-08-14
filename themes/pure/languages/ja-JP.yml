@@ -35,10 +35,10 @@ pagination:
   next: 次へ
   prev: 戻る
   page: 第 %d ページ
-  pageof: 全体 %d ページの第 %s ページ
+  pageof: 第 %d ページ/全体 %s ページ
 widget:
   search: 検索
-  board: 看板
+  board: 初めはして
   archive: アーカイブ
   tags: タグ
   categories: カテゴリー
