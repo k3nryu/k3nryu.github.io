@@ -8,6 +8,9 @@ menu:
 # Books: books  # 豆瓣书单
   Links: links  # 友链
   About: about  # 关于
+# Language0: https://kenryu.cc
+  中文: https://kenryu.cc/zh
+  日本語: https://kenryu.cc/ja
 
 # Enable/Disable menu icons
 menu_icons:
@@ -20,7 +23,9 @@ menu_icons:
   books: icon-book-fill
   links: icon-friendship
   about: icon-cup-fill
-
+# Languge0: icon-more
+  中文: icon-more
+  日本語: icon-more
 # rss
 rss: /atom.xml
 
