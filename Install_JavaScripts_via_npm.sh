@@ -9,4 +9,5 @@ npm install hexo-generator-feed --save
 npm install hexo-generator-sitemap --save
 #npm install hexo-generator-baidu-sitemap --save
 
-#rm -rf node_modules && npm install --force
+rm -rf node_modules && npm install --force
+npm audit fix
