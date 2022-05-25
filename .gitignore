@@ -11,6 +11,8 @@ package-lock.json
 .nyc_output/
 coverage/
 .tmp*
+_config.yml
+themes/pure/_config.yml
 
 ja/public/
 ja/.deploy_git/
