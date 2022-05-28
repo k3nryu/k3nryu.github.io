@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack) | Kenryu</title>
+  <meta name="description" content="Name Version Command    Linux Rocky Linux release 8.5 (Green Obsidian) cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-release &#x2F;etc&#x2F;system-release   Nginx nginx version: nginx&#x2F;1.20.2 nginx -v   MySQL mysql Ver 8.0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deploy Nginx, MySQL, PHP on Linux (LEMP&#x2F;LNMP stack)">
+<meta property="og:url" content="https://kenryu.cc/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="Name Version Command    Linux Rocky Linux release 8.5 (Green Obsidian) cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-release &#x2F;etc&#x2F;system-release   Nginx nginx version: nginx&#x2F;1.20.2 nginx -v   MySQL mysql Ver 8.0">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kenryu.cc/resources/a00140617cff48c9ab2405d7a47ee3fc.png">
+<meta property="og:image" content="https://kenryu.cc/resources/52ae4c9828d54beebfd2f823ba64d346.png">
+<meta property="article:published_time" content="2021-11-21T15:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-28T01:02:45.932Z">
+<meta property="article:author" content="Kenryu">
+<meta property="article:tag" content="Server">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/a00140617cff48c9ab2405d7a47ee3fc.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13px;">PHP</a> <a href="/tags/Server/" style="font-size: 13px;">Server</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-Preparation"><span class="toc-number">1.</span> <span class="toc-text">0. Preparation</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Add-repositories"><span class="toc-number">2.</span> <span class="toc-text">1. Add repositories</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Add-Nginx-Official-repository"><span class="toc-number">2.0.1.</span> <span class="toc-text">1.1 Add Nginx Official repository</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Add-MySQL-Official-repositories"><span class="toc-number">2.0.2.</span> <span class="toc-text">1.2 Add MySQL Official repositories</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Add-PHP-repository"><span class="toc-number">2.0.3.</span> <span class="toc-text">1.3 Add PHP repository</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Installation"><span class="toc-number">3.</span> <span class="toc-text">2. Installation</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-Install-Nginx"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 Install Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-Install-MySQL"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 Install MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-Install-PHP"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 Install PHP</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Configuration"><span class="toc-number">4.</span> <span class="toc-text">3. Configuration</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-Configure-Nginx"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 Configure Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-Configure-MySQL"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 Configure MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-Configure-PHP"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 Configure PHP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optional-Verify-environment-configuration"><span class="toc-number">4.4.</span> <span class="toc-text">(Optional) Verify environment configuration</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/Deploy-Linux-Nginx-MySQL-PHP-Server" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" class="article-date">
+	  <time datetime="2021-11-21T15:00:00.000Z" itemprop="datePublished">2021-11-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/MySQL/" rel="tag">MySQL</a>, <a class="article-tag-link-link" href="/tags/Nginx/" rel="tag">Nginx</a>, <a class="article-tag-link-link" href="/tags/PHP/" rel="tag">PHP</a>, <a class="article-tag-link-link" href="/tags/Server/" rel="tag">Server</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 663(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Linux</td>
+<td>Rocky Linux release 8.5 (Green Obsidian)</td>
+<td>cat /etc/os-release /etc/redhat-release /etc/system-release</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>nginx version: nginx/1.20.2</td>
+<td>nginx -v</td>
+</tr>
+<tr>
+<td>MySQL</td>
+<td>mysql Ver 8.0.28 for Linux on x86_64 (MySQL Community Server - GPL)</td>
+<td>mysql –version</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>PHP 7.4.29 (cli) (built: Apr 12 2022 10:55:38) ( NTS )</td>
+<td>php -v</td>
+</tr>
+</tbody></table>
+<h1 id="0-Preparation"><a href="#0-Preparation" class="headerlink" title="0. Preparation"></a>0. Preparation</h1><p>Check if old packages have been installed.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># rpm -qa | grep -E &quot;nginx|php|mariadb&quot;</span><br></pre></td></tr></table></figure>
+<p>If they are installed, remove them.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># yum remove -y &quot;nginx*&quot;</span><br><span class="line"># yum remove -y &quot;php*&quot;</span><br><span class="line"># yum remove -y &quot;mariadb*&quot;</span><br></pre></td></tr></table></figure>
+<h1 id="1-Add-repositories"><a href="#1-Add-repositories" class="headerlink" title="1. Add repositories"></a>1. Add repositories</h1><h3 id="1-1-Add-Nginx-Official-repository"><a href="#1-1-Add-Nginx-Official-repository" class="headerlink" title="1.1 Add Nginx Official repository"></a>1.1 Add Nginx Official repository</h3><p>Create and edit the following file.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/yum.repos.d/nginx.repo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[nginx]</span><br><span class="line">name=nginx stable repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/$releasever/$basearch</span><br><span class="line">gpgcheck=1</span><br><span class="line">enable=1</span><br><span class="line">gpgkey=https://nginx.org/keys/nginx_signing.key</span><br><span class="line">module_hotfixes=true</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># yum-config-manager --enable nginx</span><br><span class="line"># dnf config-manager --enable nginx</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-Add-MySQL-Official-repositories"><a href="#1-2-Add-MySQL-Official-repositories" class="headerlink" title="1.2 Add MySQL Official repositories"></a>1.2 Add MySQL Official repositories</h3><p>Download and install repositories form : <a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/repo/yum/">MySQL Community Downloads</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y install https://repo.mysql.com//mysql80-community-release-el8-3.noarch.rpm</span><br><span class="line"># dnf config-manager --enable mysql80-community</span><br><span class="line"># yum repolist all | grep mysql</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-Add-PHP-repository"><a href="#1-3-Add-PHP-repository" class="headerlink" title="1.3 Add PHP repository"></a>1.3 Add PHP repository</h3><p>Execute the following commands in sequence to add and update epel repository.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm</span><br><span class="line"># dnf module enable php:remi-7.4 -y</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-Installation"><a href="#2-Installation" class="headerlink" title="2. Installation"></a>2. Installation</h1><h2 id="2-1-Install-Nginx"><a href="#2-1-Install-Nginx" class="headerlink" title="2.1 Install Nginx"></a>2.1 Install Nginx</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y install nginx</span><br><span class="line"># nginx -v</span><br></pre></td></tr></table></figure>
+<h2 id="2-2-Install-MySQL"><a href="#2-2-Install-MySQL" class="headerlink" title="2.2 Install MySQL"></a>2.2 Install MySQL</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># yum module disable mysql -y</span><br><span class="line"># yum install mysql-community-server -y</span><br><span class="line"># mysql -V</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-3-Install-PHP"><a href="#2-3-Install-PHP" class="headerlink" title="2.3 Install PHP"></a>2.3 Install PHP</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf install php php-curl php-dom php-exif php-fileinfo php-fpm php-gd php-hash php-json php-mbstring php-mysqli php-openssl php-pcre php-xml libsodium php-ldap php-pdo php-pear php-snmp php-xml -y</span><br><span class="line"># php -v</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-Configuration"><a href="#3-Configuration" class="headerlink" title="3. Configuration"></a>3. Configuration</h1><h2 id="3-1-Configure-Nginx"><a href="#3-1-Configure-Nginx" class="headerlink" title="3.1 Configure Nginx"></a>3.1 Configure Nginx</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># systemctl enable --now nginx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak</span><br><span class="line"># vim default.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">root /usr/share/nginx/html;</span><br><span class="line">- index index.html index.htm;</span><br><span class="line">+ index index.html index.htm index.php;</span><br><span class="line">&#125;</span><br><span class="line">location ~ .php$ &#123;</span><br><span class="line">root /usr/share/nginx/html;</span><br><span class="line">fastcgi_pass unix:/run/php-fpm/www.sock;</span><br><span class="line">fastcgi_index index.php;</span><br><span class="line">fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">include fastcgi_params;</span><br><span class="line">&#125;</span><br><span class="line">## Edit this file according to actual usage.</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-Configure-MySQL"><a href="#3-2-Configure-MySQL" class="headerlink" title="3.2 Configure MySQL"></a>3.2 Configure MySQL</h2><p>Start and set enabled the MySQL server</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># systemctl enable --now mysqld</span><br></pre></td></tr></table></figure>
+<p>A superuser account ‘root‘@’localhost’ is created. A password for the superuser is set and stored in the error log file. To reveal it, use the following command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># grep &#x27;temporary password&#x27; /var/log/mysqld.log</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">mysql&gt; ALTER USER &#x27;root&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;Your_Password&#x27;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>MySQL’s validate_password plugin is installed by default. This will require that passwords contain at least one uppercase letter, one lowercase letter, one digit, and one special character, and that the total password length is at least 8 characters.</p>
+</blockquote>
+<blockquote>
+<p>Reference site<br><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/">A Quick Guide to Using the MySQL Yum Repository
+</a></p>
+</blockquote>
+<h2 id="3-3-Configure-PHP"><a href="#3-3-Configure-PHP" class="headerlink" title="3.3 Configure PHP"></a>3.3 Configure PHP</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/php-fpm.d/www.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- user = apache</span><br><span class="line">+ user = nginx</span><br><span class="line">- group = apache</span><br><span class="line">+ group = nginx</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># grep timezone /etc/php.ini</span><br><span class="line">; Defines the default timezone used by the date functions</span><br><span class="line">; http://php.net/date.timezone</span><br><span class="line">date.timezone = Asia/Tokyo</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># systemctl enable --now php-fpm</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Optional-Verify-environment-configuration"><a href="#Optional-Verify-environment-configuration" class="headerlink" title="(Optional) Verify environment configuration"></a>(Optional) Verify environment configuration</h2><p>Execute the following command to create test file.</p>
+<blockquote>
+<p>The root directory of the site that has been configured in <code>/usr/share/nginx/html</code>, This article uses thatdirectory as an example.</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># echo &quot;&lt;?php phpinfo(); ?&gt;&quot; &gt;&gt; /usr/share/nginx/html/index.php</span><br><span class="line"># nginx -t</span><br><span class="line"># nginx -s reload</span><br></pre></td></tr></table></figure>
+<p>Modify the firewall policy to make the server can be accessed.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># firewall-cmd --permanent --add-port=&#123;443/tcp,80/tcp&#125;</span><br><span class="line"># firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+
+<p>Access the following address in your browser.<br><a target="_blank" rel="noopener" href="http://your_lnmp_server_ip/">http://your_lnmp_server_ip</a><br><img src="/resources/a00140617cff48c9ab2405d7a47ee3fc.png" alt="74cf5cec9ade58f2fb87e6003d42c459.png"><br><a target="_blank" rel="noopener" href="http://your_lnmp_server_ip/index.php">http://your_lnmp_server_ip/index.php</a><br><img src="/resources/52ae4c9828d54beebfd2f823ba64d346.png" alt="4a5b21722700b65b44b39fde5379768e.png"></p>
+<p>If the results are displayed as above, the environment is successfully configured.</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/" title="Postfix Dovecot MySQL Mail Server"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/09/30/Sort-Algorithm/Binary-Search/" title="Binary Search"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/';
+        
+        this.page.identifier = 'Linux/Deploy-Linux-Nginx-MySQL-PHP-Server';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

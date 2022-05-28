@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Postfix Dovecot MySQL Mail Server | Kenryu</title>
+  <meta name="description" content="Objective Local network (web)mail server. Local private PKI. On LNMP-base use Postfix &amp; Dovecot &amp; PostfixAdmin &amp; RoundCube.     Name Version Command    Linux Rocky Linux release 8.5 (Green">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postfix Dovecot MySQL Mail Server">
+<meta property="og:url" content="https://kenryu.cc/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="Objective Local network (web)mail server. Local private PKI. On LNMP-base use Postfix &amp; Dovecot &amp; PostfixAdmin &amp; RoundCube.     Name Version Command    Linux Rocky Linux release 8.5 (Green">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kenryu.cc/resources/56ef873134dc4730af5e4c076f0a142d.png">
+<meta property="og:image" content="https://kenryu.cc/resources/968a63824b734664bdf63ddc612b5149.png">
+<meta property="og:image" content="https://kenryu.cc/resources/da9e0417bc4148dc84619435b459a634.png">
+<meta property="og:image" content="https://kenryu.cc/resources/1280d8cac4354e059b2d5bdb569f553c.png">
+<meta property="og:image" content="https://kenryu.cc/resources/15047935b37a48d8b80e2e96113edfdd.png">
+<meta property="og:image" content="https://kenryu.cc/resources/ef129191e5c6400bb41f2b264df87b1f.png">
+<meta property="og:image" content="https://kenryu.cc/resources/4cf2d9a8596b47dea678335543e9b345.png">
+<meta property="og:image" content="https://kenryu.cc/resources/202413271cbf457ba0f75f5874a0bc9d.png">
+<meta property="og:image" content="https://kenryu.cc/resources/f847d7cf9b224785b8482e7559a472e8.png">
+<meta property="og:image" content="https://kenryu.cc/resources/b9bf213308ec4609b63b6b12e9ceb9c3.png">
+<meta property="og:image" content="https://kenryu.cc/resources/91a0bc77b06f4a1daee68fb7a6826d79.png">
+<meta property="og:image" content="https://kenryu.cc/resources/2f69fc9c3e3045a28a29277368d8412a.png">
+<meta property="article:published_time" content="2022-05-01T15:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-27T12:48:43.935Z">
+<meta property="article:author" content="Kenryu">
+<meta property="article:tag" content="Server">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/56ef873134dc4730af5e4c076f0a142d.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13px;">PHP</a> <a href="/tags/Server/" style="font-size: 13px;">Server</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Objective"><span class="toc-number">1.</span> <span class="toc-text">Objective</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Prerequisites"><span class="toc-number">2.</span> <span class="toc-text">Prerequisites</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step1-OS-Setting"><span class="toc-number">3.</span> <span class="toc-text">Step1. OS Setting</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step2-Create-Databases"><span class="toc-number">4.</span> <span class="toc-text">Step2. Create Databases</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step3-Create-Web-Servers"><span class="toc-number">5.</span> <span class="toc-text">Step3. Create Web Servers</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step4-Configure-Postfix"><span class="toc-number">6.</span> <span class="toc-text">Step4. Configure Postfix</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step5-Configure-Dovecot"><span class="toc-number">7.</span> <span class="toc-text">Step5. Configure Dovecot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step6-Configure-Postfixadmin"><span class="toc-number">8.</span> <span class="toc-text">Step6. Configure Postfixadmin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Step7-Configure-RoundCube"><span class="toc-number">9.</span> <span class="toc-text">Step7. Configure RoundCube</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TroubleShooting"><span class="toc-number">10.</span> <span class="toc-text">TroubleShooting</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Postfix Dovecot MySQL Mail Server
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/" class="article-date">
+	  <time datetime="2022-05-01T15:00:00.000Z" itemprop="datePublished">2022-05-02</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/MySQL/" rel="tag">MySQL</a>, <a class="article-tag-link-link" href="/tags/Nginx/" rel="tag">Nginx</a>, <a class="article-tag-link-link" href="/tags/PHP/" rel="tag">PHP</a>, <a class="article-tag-link-link" href="/tags/Server/" rel="tag">Server</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 2.9k(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 18(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Objective"><a href="#Objective" class="headerlink" title="Objective"></a>Objective</h1><ul>
+<li>Local network (web)mail server.</li>
+<li>Local private PKI.</li>
+<li>On LNMP-base use Postfix &amp; Dovecot &amp; PostfixAdmin &amp; RoundCube.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Linux</td>
+<td>Rocky Linux release 8.5 (Green Obsidian)</td>
+<td>cat /etc/centos-release /etc/os-release /etc/redhat-release /etc/rocky-release /etc/system-release</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>nginx version: nginx/1.20.2</td>
+<td>nginx -v</td>
+</tr>
+<tr>
+<td>MySQL</td>
+<td>mysql Ver 8.0.28 for Linux on x86_64 (MySQL Community Server - GPL)</td>
+<td>mysql –version</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>PHP 7.4.29 (fpm-fcgi) (built: Apr 12 2022 10:55:38)</td>
+<td>php -v</td>
+</tr>
+<tr>
+<td>Postfix</td>
+<td>mail_version = 3.5.8</td>
+<td>postconf mail_version</td>
+</tr>
+<tr>
+<td>Dovecot</td>
+<td>2.3.8 (9df20d2db)</td>
+<td>dovecot –version</td>
+</tr>
+<tr>
+<td>PostfixAdmin</td>
+<td>3.3.11</td>
+<td></td>
+</tr>
+<tr>
+<td>Roundcube</td>
+<td>1.5.2</td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h1><ul>
+<li>Have a host with CPU more than 1Core and Memory higher than 2GB.</li>
+<li>Have an LNMP-Base or LAMP-Base host;</li>
+<li>Have an FQDN that can be resolved;</li>
+<li>Have private CA root certificate, Host’s private key, Host’s certificate;</li>
+</ul>
+<p><code>free</code> command</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># free -h</span><br><span class="line">total used free shared buff/cache available</span><br><span class="line">Mem: 1.9Gi 624Mi 746Mi 20Mi 606Mi 1.2Gi</span><br><span class="line">Swap: 2.0Gi 0B 2.0Gi</span><br></pre></td></tr></table></figure>
+
+<p>DNS Record on name server:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mail.example.com. IN A 192.168.65.132</span><br><span class="line">132.65 IN PTR mail.example.com.</span><br></pre></td></tr></table></figure>
+<p>SSL/TSL’s private key and certificate file is following path :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@email ~]# ll /etc/pki/tls/certs/mail.example.com.crt</span><br><span class="line">-r--r--r-- 1 root root 5439 Apr 23 16:41 /etc/pki/tls/certs/mail.example.com.crt</span><br><span class="line">[root@email ~]#</span><br><span class="line">[root@email ~]# ll /etc/pki/tls/private/mail.example.com.key</span><br><span class="line">-r-------- 1 root root 1704 Apr 23 16:41 /etc/pki/tls/private/mail.example.com.key</span><br></pre></td></tr></table></figure>
+<h1 id="Step1-OS-Setting"><a href="#Step1-OS-Setting" class="headerlink" title="Step1. OS Setting"></a>Step1. OS Setting</h1><p>Setting hostname.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y update</span><br><span class="line"># hostnamectl set-hostname mail.example.com</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/hosts</span><br><span class="line">127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4 mail.example.com</span><br><span class="line">::1 localhost localhost.localdomain localhost6 localhost6.localdomain6 mail.example.com</span><br></pre></td></tr></table></figure>
+<p>Disable SELinux</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config</span><br><span class="line"># reboot</span><br></pre></td></tr></table></figure>
+<p>Allow the following packages to pass though the firewall.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># firewall-cmd --permanent --add-service=&#123;http,https,smtp,smtp-submission,smtps,imap,imaps,pop3,pop3s&#125;</span><br><span class="line"># firewall-cmd --reload</span><br><span class="line"># firewall-cmd --list-all</span><br></pre></td></tr></table></figure>
+<p>Install some required packages and recommended PHP modules.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y install vim wget tar git nmap bind-utils telnet mailx openssl</span><br><span class="line"># dnf -y install php php-fpm php-imap php-mbstring php-mysqlnd php-gd php-opcache php-json php-curl php-zip php-xml php-bz2 php-intl php-gmp</span><br></pre></td></tr></table></figure>
+<h1 id="Step2-Create-Databases"><a href="#Step2-Create-Databases" class="headerlink" title="Step2. Create Databases"></a>Step2. Create Databases</h1><p>Create a database for PostfixAdmin.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE DATABASE postfixadmin;</span><br><span class="line">mysql&gt; CREATE USER &#x27;postfixadmin&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;YourPassword&#x27;;</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON `postfixadmin` . _config.landscape.yml _config.yml db.json Get_Joplin_resources.sh i18n Install_JavaScripts_via_npm.sh node_modules package.json package-lock.json public scaffolds source symlink.sh test.md themes tmp.md TO &#x27;postfixadmin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<p>Create a database for roundcubu.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE DATABASE roundcube DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</span><br><span class="line">mysql&gt; CREATE USER roundcube@localhost IDENTIFIED BY &#x27;YourPassword&#x27;;</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON roundcube.* TO roundcube@localhost;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<h1 id="Step3-Create-Web-Servers"><a href="#Step3-Create-Web-Servers" class="headerlink" title="Step3. Create Web Servers"></a>Step3. Create Web Servers</h1><p>Create Nginx config file for PostfixAdmin and RoundCube.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"># cat /etc/nginx/conf.d/mail.example.com.conf</span><br><span class="line"># Redirect http to https.</span><br><span class="line">server &#123;</span><br><span class="line">listen 80;</span><br><span class="line">listen [::]:80;</span><br><span class="line">server_name mail.example.com, 192.168.65.132;</span><br><span class="line">return 301 https://mail.example.com$request_uri;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Listen https://mail.example.com</span><br><span class="line">server &#123;</span><br><span class="line">listen 443 ssl http2;</span><br><span class="line">server_name mail.example.com;</span><br><span class="line"></span><br><span class="line"># SSl/TLS configuration</span><br><span class="line">ssl_certificate &quot;/etc/pki/tls/certs/mail.example.com.crt&quot;;</span><br><span class="line">ssl_certificate_key &quot;/etc/pki/tls/private/mail.example.com.key&quot;;</span><br><span class="line">ssl_session_cache shared:SSL:1m;</span><br><span class="line">ssl_session_timeout 10m;</span><br><span class="line">ssl_ciphers PROFILE=SYSTEM;</span><br><span class="line">ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line"># Roundcube configuration</span><br><span class="line">root /usr/share/nginx/roundcube/;</span><br><span class="line">index index.php index.html index.htm;</span><br><span class="line"></span><br><span class="line"># Roundcube logs</span><br><span class="line">error_log /var/log/nginx/roundcube.error;</span><br><span class="line">access_log /var/log/nginx/roundcube.access;</span><br><span class="line"></span><br><span class="line"># Roundcube Locations</span><br><span class="line">location / &#123;</span><br><span class="line">try_files $uri $uri/ /index.php;</span><br><span class="line">&#125;</span><br><span class="line">location ~ .php$ &#123;</span><br><span class="line">try_files $uri =404;</span><br><span class="line">fastcgi_pass unix:/run/php-fpm/www.sock;</span><br><span class="line">fastcgi_index index.php;</span><br><span class="line">fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">include fastcgi_params;</span><br><span class="line">&#125;</span><br><span class="line">location ~ /.well-known/acme-challenge &#123;</span><br><span class="line">allow all;</span><br><span class="line">&#125;</span><br><span class="line">location ~ ^/(README|INSTALL|LICENSE|CHANGELOG|UPGRADING)$ &#123;</span><br><span class="line">deny all;</span><br><span class="line">&#125;</span><br><span class="line">location ~ ^/(bin|SQL)/ &#123;</span><br><span class="line">deny all;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Sub-Location of PostfixAdmin</span><br><span class="line">location /postfixadmin &#123;</span><br><span class="line">alias /usr/share/nginx/postfixadmin/public;</span><br><span class="line">access_log /var/log/nginx/postfixadmin_access.log;</span><br><span class="line">error_log /var/log/nginx/postfixadmin_error.log;</span><br><span class="line">try_files $uri $uri/ /index.php;</span><br><span class="line"></span><br><span class="line">location ~ ^/(.+.php)$ &#123;</span><br><span class="line">try_files $uri =404;</span><br><span class="line">fastcgi_pass unix:/run/php-fpm/www.sock;</span><br><span class="line">fastcgi_index index.php;</span><br><span class="line">fastcgi_param SCRIPT_FILENAME $request_filename;</span><br><span class="line">include /etc/nginx/fastcgi_params;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># A long browser cache lifetime can speed up repeat visits to your page</span><br><span class="line"># location ~* .(jpg|jpeg|gif|png|webp|svg|woff|woff2|ttf|css|js|ico|xml)$ &#123;</span><br><span class="line"># access_log off;</span><br><span class="line"># log_not_found off;</span><br><span class="line"># expires 360d;</span><br><span class="line"># &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Step4-Configure-Postfix"><a href="#Step4-Configure-Postfix" class="headerlink" title="Step4. Configure Postfix"></a>Step4. Configure Postfix</h1><p>Install and start Postfix.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y install postfix postfix-mysql</span><br><span class="line"># systemctl enable --now postfix</span><br></pre></td></tr></table></figure>
+<p>Edit Postfix main config file with following command. This will defined our <code>domain</code> <code>hostname</code> <code>tls_level</code> etc…</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/postfix/main.cf /etc/postfix/main.cf.bak</span><br><span class="line"># vim /etc/postfix/main.cf</span><br></pre></td></tr></table></figure>
+<p><a href="/resources/0e222d97baca4600b523da77666a1419.cf">main.cf</a></p>
+<p>We can configure postfix by direct modifying above file or use following <code>postconf</code> command.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Change to:</span><br><span class="line"># postconf -e &quot;inet_interfaces = all&quot;</span><br><span class="line"># postconf -e &#x27;inet_protocols = ipv4&#x27;</span><br><span class="line"># postconf &#x27;smtpd_tls_cert_file = /etc/pki/tls/certs/mail.example.com.crt&#x27;</span><br><span class="line"># postconf &#x27;smtpd_tls_key_file = /etc/pki/tls/private/mail.example.com.key&#x27;</span><br><span class="line">Add:</span><br><span class="line"># postconf -e &#x27;smtp_address_preference = ipv4&#x27;</span><br><span class="line"># postconf &quot;smtpd_tls_loglevel = 1&quot;</span><br><span class="line"># postconf &quot;smtp_tls_loglevel = 1&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">#Add following to the end of the file.</span><br><span class="line"># Force TLSv1.3 or TLSv1.2</span><br><span class="line">smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</span><br><span class="line">smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</span><br><span class="line">smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</span><br><span class="line">smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</span><br><span class="line"></span><br><span class="line">mailbox_transport = lmtp:unix:private/dovecot-lmtp</span><br><span class="line">smtputf8_enable = no</span><br><span class="line"></span><br><span class="line">virtual_mailbox_domains = proxy:mysql:/etc/postfix/sql/mysql_virtual_domains_maps.cf</span><br><span class="line">virtual_mailbox_maps =</span><br><span class="line">proxy:mysql:/etc/postfix/sql/mysql_virtual_mailbox_maps.cf,</span><br><span class="line">proxy:mysql:/etc/postfix/sql/mysql_virtual_alias_domain_mailbox_maps.cf</span><br><span class="line">virtual_alias_maps =</span><br><span class="line">proxy:mysql:/etc/postfix/sql/mysql_virtual_alias_maps.cf,</span><br><span class="line">proxy:mysql:/etc/postfix/sql/mysql_virtual_alias_domain_maps.cf,</span><br><span class="line">proxy:mysql:/etc/postfix/sql/mysql_virtual_alias_domain_catchall_maps.cf</span><br><span class="line">virtual_transport = lmtp:unix:private/dovecot-lmtp</span><br><span class="line"></span><br><span class="line">virtual_mailbox_base = /var/vmail</span><br><span class="line">virtual_minimum_uid = 2000</span><br><span class="line">virtual_uid_maps = static:2000</span><br><span class="line">virtual_gid_maps = static:2000</span><br></pre></td></tr></table></figure>
+<p>Enable Submssion port (587) and SMTP-S (465) by editting <code>/etc/postfix/master.cf</code> file.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/postfix/master.cf /etc/postfix/master.cf.bak</span><br><span class="line"># vim /etc/postfix/master.cf</span><br></pre></td></tr></table></figure>
+
+
+<p><a href="/resources/aef18d6512de4fffa179363b41ca9710.cf">master.cf</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># For Submission</span><br><span class="line">submission inet n - y - - smtpd</span><br><span class="line">-o syslog_name=postfix/submission</span><br><span class="line">-o smtpd_tls_security_level=encrypt</span><br><span class="line">-o smtpd_tls_wrappermode=no</span><br><span class="line">-o smtpd_sasl_auth_enable=yes</span><br><span class="line">-o smtpd_relay_restrictions=permit_sasl_authenticated,reject</span><br><span class="line">-o smtpd_recipient_restrictions=permit_mynetworks,permit_sasl_authenticated,reject</span><br><span class="line">-o smtpd_sasl_type=dovecot</span><br><span class="line">-o smtpd_sasl_path=private/auth</span><br><span class="line"></span><br><span class="line"># For SMTP-S</span><br><span class="line">smtps inet n - y - - smtpd</span><br><span class="line">-o syslog_name=postfix/smtps</span><br><span class="line">-o smtpd_tls_wrappermode=yes</span><br><span class="line">-o smtpd_sasl_auth_enable=yes</span><br><span class="line">-o smtpd_relay_restrictions=permit_sasl_authenticated,reject</span><br><span class="line">-o smtpd_recipient_restrictions=permit_mynetworks,permit_sasl_authenticated,reject</span><br><span class="line">-o smtpd_sasl_type=dovecot</span><br><span class="line">-o smtpd_sasl_path=private/auth</span><br></pre></td></tr></table></figure>
+
+<p>(Option) We can follow the steps below to create a watchdog to prevent the service from terminating unexpectedly.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># mkdir -p /etc/systemd/system/postfix.service.d/</span><br><span class="line"># vim /etc/systemd/system/postfix.service.d/restart.conf</span><br><span class="line">[Service]</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br></pre></td></tr></table></figure>
+<p>(Option) Verify the watchdog is working.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># systemctl daemon-reload</span><br><span class="line"># pkill master</span><br><span class="line"># systemctl status postfix</span><br></pre></td></tr></table></figure>
+<h1 id="Step5-Configure-Dovecot"><a href="#Step5-Configure-Dovecot" class="headerlink" title="Step5. Configure Dovecot"></a>Step5. Configure Dovecot</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># dnf -y install dovecot dovecot-mysql</span><br><span class="line"># systemctl enable --now dovecot</span><br></pre></td></tr></table></figure>
+<p>Add the dovecot to the mail group.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># gpasswd -a dovecot mail</span><br></pre></td></tr></table></figure>
+<p>Add the web server(nginx) to the dovecot group.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># gpasswd -a nginx dovecot</span><br></pre></td></tr></table></figure>
+<p>Generating DH parameters, This is going to take a long time.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># openssl dhparam -out /etc/dovecot/dh.pem 4096</span><br></pre></td></tr></table></figure>
+<p>Uncomment following line and remove <del>submission</del> because we have enabled submission using Postfix.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.bak</span><br><span class="line"># vim /etc/dovecot/dovecot.conf</span><br><span class="line">#protocols = imap pop3 lmtp submission</span><br><span class="line">protocols = imap pop3 lmtp</span><br></pre></td></tr></table></figure>
+<p>Create new file and fill in the following. This will enable Dovecot to connect to our MySQL database.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/dovecot/dovecot-sql.conf.ext</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">driver = mysql</span><br><span class="line">connect = host=localhost dbname=postfixadmin user=postfixadmin password=YourPassword</span><br><span class="line">default_pass_scheme = SHA512</span><br><span class="line">password_query = SELECT username AS user,password FROM mailbox WHERE username = &#x27;%u&#x27; AND active=&#x27;1&#x27;</span><br><span class="line">user_query = SELECT maildir, 2000 AS uid, 2000 AS gid FROM mailbox WHERE username = &#x27;%u&#x27; AND active=&#x27;1&#x27;</span><br><span class="line">iterate_query = SELECT username AS user FROM mailbox</span><br></pre></td></tr></table></figure>
+<p>Modify the file as below. This will define the mail location as well as the namespace.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/dovecot/conf.d/10-mail.conf</span><br><span class="line"># Add following in the end.</span><br><span class="line">mail_location = maildir:~/Maildir</span><br><span class="line">mail_home = /var/vmail/%d/%n</span><br><span class="line">mail_privileged_group = mail</span><br></pre></td></tr></table></figure>
+<p>Add the following lines to the end of this file.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/dovecot/conf.d/10-master.conf /etc/dovecot/conf.d/10-master.conf.bak</span><br><span class="line"># vim /etc/dovecot/conf.d/10-master.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#Add following in the end of the file.</span><br><span class="line">service stats &#123;</span><br><span class="line">unix_listener stats-reader &#123;</span><br><span class="line">user = nginx</span><br><span class="line">group = nginx</span><br><span class="line">mode = 0660</span><br><span class="line">&#125;</span><br><span class="line">unix_listener stats-writer &#123;</span><br><span class="line">user = nginx</span><br><span class="line">group = nginx</span><br><span class="line">mode = 0660</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Configuring Authentication Mechanism.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/dovecot/conf.d/10-auth.conf /etc/dovecot/conf.d/10-auth.conf.bak</span><br><span class="line"># vim /etc/dovecot/conf.d/10-auth.conf</span><br><span class="line">#Change to:</span><br><span class="line">auth_username_format = %u</span><br><span class="line">auth_mechanisms = plain login</span><br><span class="line">!include auth-sql.conf.ext</span><br><span class="line">auth_debug = yes</span><br><span class="line">auth_debug_passwords = yes</span><br></pre></td></tr></table></figure>
+<p>Configuring SSL/TLS Encryption.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/dovecot/conf.d/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf.bak</span><br><span class="line"># vim /etc/dovecot/conf.d/10-ssl.conf</span><br><span class="line">#Change to:</span><br><span class="line">ssl = required</span><br><span class="line">ssl_cert = &lt;/etc/pki/tls/certs/mail.example.com.crt</span><br><span class="line">ssl_key = &lt;/etc/pki/tls/private/mail.example.com.key</span><br><span class="line">ssl_dh = &lt;/etc/dovecot/dh.pem</span><br><span class="line">ssl_min_protocol = TLSv1.2</span><br><span class="line">ssl_cipher_list = PROFILE=SYSTEM</span><br><span class="line">ssl_prefer_server_ciphers = yes</span><br></pre></td></tr></table></figure>
+<p>SASL Authentication Between Postfix and Dovecot.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/dovecot/conf.d/10-master.conf</span><br><span class="line"># Change to:</span><br><span class="line">service lmtp &#123;</span><br><span class="line">unix_listener /var/spool/postfix/private/dovecot-lmtp &#123;</span><br><span class="line">mode = 0600</span><br><span class="line">user = postfix</span><br><span class="line">group = postfix</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">service auth &#123;</span><br><span class="line">unix_listener /var/spool/postfix/private/auth &#123;</span><br><span class="line">mode = 0600</span><br><span class="line">user = postfix</span><br><span class="line">group = postfix</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Edit the following file like below. This will auto-create <code>Sent</code> ,<code>Junk</code>, <code>Drafts</code>and <code>Trash</code> Folder.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># cp /etc/dovecot/conf.d/15-mailboxes.conf /etc/dovecot/conf.d/15-mailboxes.conf.bak</span><br><span class="line"># vim /etc/dovecot/conf.d/15-mailboxes.conf</span><br><span class="line">namespace inbox &#123;</span><br><span class="line"># These mailboxes are widely used and could perhaps be created automatically:</span><br><span class="line">mailbox Drafts &#123;</span><br><span class="line">auto = create</span><br><span class="line">special_use = Drafts</span><br><span class="line">&#125;</span><br><span class="line">mailbox Junk &#123;</span><br><span class="line">auto = create</span><br><span class="line">special_use = Junk</span><br><span class="line">&#125;</span><br><span class="line">mailbox Trash &#123;</span><br><span class="line">auto = create</span><br><span class="line">special_use = Trash</span><br><span class="line">&#125;</span><br><span class="line">mailbox Sent &#123;</span><br><span class="line">auto = create</span><br><span class="line">special_use = Sent</span><br><span class="line">&#125;</span><br><span class="line">mailbox &quot;Sent Messages&quot; &#123;</span><br><span class="line">special_use = Sent</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Now we need to restart the Postfix and dovecot services.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># systemctl restart postfix dovecot</span><br><span class="line"># systemctl status postfix</span><br><span class="line"># systemctl status dovecot</span><br></pre></td></tr></table></figure>
+<h1 id="Step6-Configure-Postfixadmin"><a href="#Step6-Configure-Postfixadmin" class="headerlink" title="Step6. Configure Postfixadmin"></a>Step6. Configure Postfixadmin</h1><p>Check <a target="_blank" rel="noopener" href="https://github.com/postfixadmin/postfixadmin/releases">https://github.com/postfixadmin/postfixadmin/releases</a> to get the latest stable release first. And then we need to download the tarball via <code>wget</code> command.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># wget https://github.com/postfixadmin/postfixadmin/archive/postfixadmin-3.3.11.tar.gz</span><br><span class="line"># tar -zxvf postfixadmin-3.3.11.tar.gz</span><br><span class="line"># mv postfixadmin-postfixadmin-3.3.11/ /usr/share/nginx/postfixadmin</span><br><span class="line"># mkdir -p /usr/share/nginx/postfixadmin/templates_c</span><br></pre></td></tr></table></figure>
+<p>Create the following new file and fill it like below. This will enable PostfixAdmin connect MySQL database and update password by PHP.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># vim /usr/share/nginx/postfixadmin/config.local.php</span><br><span class="line">&lt;?php</span><br><span class="line">$CONF[&#x27;configured&#x27;] = true;</span><br><span class="line">$CONF[&#x27;database_type&#x27;] = &#x27;mysqli&#x27;;</span><br><span class="line">$CONF[&#x27;database_host&#x27;] = &#x27;localhost&#x27;;</span><br><span class="line">$CONF[&#x27;database_port&#x27;] = &#x27;3306&#x27;;</span><br><span class="line">$CONF[&#x27;database_user&#x27;] = &#x27;postfixadmin&#x27;;</span><br><span class="line">$CONF[&#x27;database_password&#x27;] = &#x27;YourPassword&#x27;;</span><br><span class="line">$CONF[&#x27;database_name&#x27;] = &#x27;postfixadmin&#x27;;</span><br><span class="line">$CONF[&#x27;encrypt&#x27;] = &#x27;dovecot:SHA512&#x27;;</span><br><span class="line">$CONF[&#x27;dovecotpw&#x27;] = &quot;/usr/bin/doveadm pw -r 12&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># chown -R nginx:nginx /usr/share/nginx/postfixadmin/</span><br></pre></td></tr></table></figure>
+<p>Make following directory.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># mkdir -p /etc/postfix/sql/</span><br></pre></td></tr></table></figure>
+<p>Create following files and make sure they are set with permissions to be accessible by Postfix user.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_domains_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT domain FROM domain WHERE domain=&#x27;%s&#x27; AND active = &#x27;1&#x27;</span><br><span class="line">#query = SELECT domain FROM domain WHERE domain=&#x27;%s&#x27;</span><br><span class="line">#optional query to use when relaying for backup MX</span><br><span class="line">#query = SELECT domain FROM domain WHERE domain=&#x27;%s&#x27; AND backupmx = &#x27;0&#x27; AND active = &#x27;1&#x27;</span><br><span class="line">#expansion_limit = 100</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_mailbox_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT maildir FROM mailbox WHERE username=&#x27;%s&#x27; AND active = &#x27;1&#x27;</span><br><span class="line">#expansion_limit = 100</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_alias_domain_mailbox_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT maildir FROM mailbox,alias_domain WHERE alias_domain.alias_domain = &#x27;%d&#x27; and mailbox.username = CONCAT(&#x27;%u&#x27;, &#x27;@&#x27;, alias_domain.target_domain) AND mailbox.active = 1 AND alias_domain.active=&#x27;1&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_alias_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT goto FROM alias WHERE address=&#x27;%s&#x27; AND active = &#x27;1&#x27;</span><br><span class="line">#expansion_limit = 100</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_alias_domain_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = &#x27;%d&#x27; and alias.address = CONCAT(&#x27;%u&#x27;, &#x27;@&#x27;, alias_domain.target_domain) AND alias.active = 1 AND alias_domain.active=&#x27;1&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/postfix/sql/mysql_virtual_alias_domain_catchall_maps.cf</span><br><span class="line">user = postfixadmin</span><br><span class="line">password = YourPassword</span><br><span class="line">hosts = localhost</span><br><span class="line">dbname = postfixadmin</span><br><span class="line">query = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = &#x27;%d&#x27; and alias.address = CONCAT(&#x27;@&#x27;, alias_domain.target_domain) AND alias.active = 1 AND alias_domain.active=&#x27;1&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># chmod 0640 /etc/postfix/sql/*</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># adduser vmail --system --uid 2000 --user-group --no-create-home</span><br><span class="line"># mkdir /var/vmail/</span><br><span class="line"># chown vmail:vmail /var/vmail/ -R</span><br><span class="line"># chown -R postfix:postfix /etc/postfix/sql/</span><br><span class="line"># chown -R nginx:nginx /var/lib/php/opcache/</span><br><span class="line"># chown -R nginx:nginx /var/lib/php/session/</span><br><span class="line"># chown -R nginx:nginx /var/lib/php/wsdlcache/</span><br><span class="line"># chown nginx:nginx /etc/pki/tls/certs/mail.example.com.crt</span><br><span class="line"># chown nginx:nginx /etc/pki/tls/private/mail.example.com.key</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># nginx -t</span><br><span class="line"># nginx -s reload</span><br></pre></td></tr></table></figure>
+<p>Open our browser and enter following URL to complete PostfixAdmin setup.<br><a target="_blank" rel="noopener" href="https://mail.example.com/postfixadmin/setup.php">https://mail.example.com/postfixadmin/setup.php</a><br><img src="/resources/56ef873134dc4730af5e4c076f0a142d.png" alt="d470a41ee4e4f239da08aa8cce8454e6.png"><br>You can generate a password hash through <code>php -r &#39;echo password_hash(&quot;YourPassword&quot;, PASSWORD_DEFAULT);&#39;</code> command.<br>Now you need to add following line to the <code>/usr/share/nginx/postfixadmin/config.local.php</code> file in the end.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$CONF[&#x27;setup_password&#x27;] = &#x27;Your_Password&#x27;s_Hash&#x27;;</span><br></pre></td></tr></table></figure>
+<p>Follow the setup wizard to create an Administrator user and login.<br><img src="/resources/968a63824b734664bdf63ddc612b5149.png" alt="3033bf031c1ee6c2d69ada9fd9efacb9.png"><br>Now you can create Domain and Mailboxes in PostfixAdmin.</p>
+<blockquote>
+<p>Reference:<br><a target="_blank" rel="noopener" href="https://github.com/postfixadmin/postfixadmin/tree/master/DOCUMENTS">https://github.com/postfixadmin/postfixadmin/tree/master/DOCUMENTS</a><br><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/postfixadmin/postfixadmin/master/INSTALL.TXT">https://raw.githubusercontent.com/postfixadmin/postfixadmin/master/INSTALL.TXT</a></p>
+</blockquote>
+<h1 id="Step7-Configure-RoundCube"><a href="#Step7-Configure-RoundCube" class="headerlink" title="Step7. Configure RoundCube"></a>Step7. Configure RoundCube</h1><p>RoundCube is a WebGUI IMAP client.<br>Download Roundcube Webmail from <a target="_blank" rel="noopener" href="https://github.com/roundcube/roundcubemail/releases">https://github.com/roundcube/roundcubemail/releases</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># wget https://github.com/roundcube/roundcubemail/releases/download/1.5.2/roundcubemail-1.5.2-complete.tar.gz</span><br><span class="line"># tar -zxvf roundcubemail-1.5.2-complete.tar.gz</span><br><span class="line"># mv roundcubemail-1.5.2 /usr/share/nginx/roundcube</span><br><span class="line"># chown nginx:nginx -R /usr/share/nginx/roundcube/</span><br><span class="line"># dnf install php-ldap php-imagick php-common php-gd php-imap php-json php-curl php-zip php-xml php-mbstring php-bz2 php-intl php-gmp -y</span><br></pre></td></tr></table></figure>
+<p>Add your Private CA’s certificate in the end of the following file.</p>
+<blockquote>
+<p>Note: This needs to be saved forcibly with <code>:wq!</code>.</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/pki/tls/certs/ca-bundle.crt</span><br><span class="line">#Add the following to the end of the file.</span><br><span class="line"># My Private CA Certificate.</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">...</span><br><span class="line">Your CA certificate.</span><br><span class="line">...</span><br><span class="line">-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
+<p>Now you need to open your browser and enter following URL to continue RoundCube setup.<br><a target="_blank" rel="noopener" href="https://email.example.com/installer">https://email.example.com/installer</a><br><img src="/resources/da9e0417bc4148dc84619435b459a634.png" alt="3de277f1cb80d92e700afa2291ec518e.png"></p>
+<p>Fill Database setup.<br><img src="/resources/1280d8cac4354e059b2d5bdb569f553c.png" alt="4cc2d3c216084c4f53fe8d31790cc077.png"><br>Fill IMAP setup.<br>IMAP server: <code>ssl://email.example.com</code> port: 993<br><img src="/resources/15047935b37a48d8b80e2e96113edfdd.png" alt="17011cf931373d801743e7e838af5caa.png"><br>SMTP server: <code>tls://email.example.com</code> port: 587<br>SMTP server: <code>ssl://email.example.com</code> port: 465<br><img src="/resources/ef129191e5c6400bb41f2b264df87b1f.png" alt="9cf36687ab8c8aa16a10237452a68fc4.png"><br>Next, you can scroll down to the Plugins section to enable some plugins. For example: the password plugin, mark as junk plugin and so on. I enabled all of them.<br><img src="/resources/4cf2d9a8596b47dea678335543e9b345.png" alt="25aa9951a611254091e5c49fe38f0546.png"><br><img src="/resources/202413271cbf457ba0f75f5874a0bc9d.png" alt="1c5dfe3f1776c20a82dc3767da2f8615.png"><br><img src="/resources/f847d7cf9b224785b8482e7559a472e8.png" alt="9dc291c4498b0bd990eb5576c49d6af0.png"><br>Make sure the password plugin in the plugin list at the end of this file. The plugin order doesn’t matter.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># grep &#x27;password&#x27; /usr/share/nginx/roundcube/config/config.inc.php</span><br></pre></td></tr></table></figure>
+<p>Create the new PHP file by copying the file below and modify it like following. This will enable RoundCube to connect our MySQL database and update password.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /usr/share/nginx/roundcube/plugins/password/config.inc.php.dist /usr/share/nginx/roundcube/plugins/password/config.inc.php</span><br><span class="line">vim /usr/share/nginx/roundcube/plugins/password/config.inc.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#Change the value to:</span><br><span class="line">$config[&#x27;password_db_dsn&#x27;] = &#x27;mysql://postfixadmin:YourPassword@127.0.0.1/postfixadmin&#x27;;</span><br><span class="line">$config[&#x27;password_query&#x27;] = &#x27;UPDATE mailbox SET password=%D,modified=NOW() WHERE username=%u&#x27;;</span><br><span class="line">$config[&#x27;password_strength_driver&#x27;] = &#x27;zxcvbn&#x27;;</span><br><span class="line">$config[&#x27;password_zxcvbn_min_score&#x27;] = 5;</span><br><span class="line">$config[&#x27;password_algorithm&#x27;] = &#x27;dovecot&#x27;;</span><br><span class="line">$config[&#x27;password_dovecotpw&#x27;] = &#x27;/usr/bin/doveadm pw -r 12&#x27;;</span><br><span class="line">$config[&#x27;password_dovecotpw_method&#x27;] = &#x27;SHA512&#x27;;</span><br><span class="line">$config[&#x27;password_dovecotpw_with_method&#x27;] = true;</span><br></pre></td></tr></table></figure>
+
+<p><a href="/resources/dea4c2783658451c979438a687261219.php">config.inc.php</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># chown nginx:nginx /usr/share/nginx/roundcube/plugins/password/config.inc.php</span><br><span class="line"># chmod 600 /usr/share/nginx/roundcube/plugins/password/config.inc.php</span><br><span class="line"># echo &quot;$config[&#x27;enable_installer&#x27;] = true;&quot; &gt;&gt; /usr/share/nginx/roundcube/config/config.inc.php</span><br></pre></td></tr></table></figure>
+<p>Close the browser and enter following URL to complete set up.<br><a target="_blank" rel="noopener" href="https://email.example.com/installer/index.php?_step=3">https://email.example.com/installer/index.php?_step=3</a><br>Send test<br><img src="/resources/b9bf213308ec4609b63b6b12e9ceb9c3.png" alt="c9e11f23949605bfd8b04455e627ffeb.png"><br><img src="/resources/91a0bc77b06f4a1daee68fb7a6826d79.png" alt="aa845e73437a5ee48f3dda613c050b77.png"><br>Login test<br><img src="/resources/2f69fc9c3e3045a28a29277368d8412a.png" alt="5be748fdc44ae54c05b97fc308998f63.png"><br>After completing the installation and the final tests please remove the whole installer folder from the document root of the webserver or make sure that enable_installer option in config.inc.php is disabled.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># rm -rf /usr/share/nginx/roundcube/installer/</span><br><span class="line">vim /usr/share/nginx/roundcube/config/config.inc.php</span><br><span class="line">Change to:</span><br><span class="line">$config[&#x27;enable_installer&#x27;]=false;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># nginx -t</span><br><span class="line"># nginx -s reload</span><br></pre></td></tr></table></figure>
+<p>Close the browser and enter following URL to login your account.<br><a target="_blank" rel="noopener" href="https://mail.example.com/postfixadmin/setup.php">https://mail.example.com/postfixadmin/setup.php</a><br><a target="_blank" rel="noopener" href="https://mail.example.com/">https://mail.example.com</a></p>
+<blockquote>
+<p>Reference:<br><a target="_blank" rel="noopener" href="https://www.linuxbabe.com/redhat/postfixadmin-create-virtual-mailboxes-centos-mail-server">https://www.linuxbabe.com/redhat/postfixadmin-create-virtual-mailboxes-centos-mail-server</a><br><a target="_blank" rel="noopener" href="https://www.linuxbabe.com/redhat/install-roundcube-webmail-centos-8-rhel-8-apache-nginx#out-of-office">https://www.linuxbabe.com/redhat/install-roundcube-webmail-centos-8-rhel-8-apache-nginx#out-of-office</a></p>
+</blockquote>
+<h1 id="TroubleShooting"><a href="#TroubleShooting" class="headerlink" title="TroubleShooting"></a>TroubleShooting</h1><p>Perform a user lookup in Dovecot’s userdbs.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># doveadm user &#x27;*&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># journalctl -eu dovecot</span><br><span class="line"># vim /var/log/maillog</span><br><span class="line"># mail user@gmail.com</span><br><span class="line"># vim /etc/aliases</span><br><span class="line"># newaliases</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" title="Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/';
+        
+        this.page.identifier = 'Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
