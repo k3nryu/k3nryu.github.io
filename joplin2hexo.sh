@@ -47,7 +47,7 @@ echo -e 'EOF\n'
 # Get posts markdown file by Joplin-API
 ## Connetc 
 #joplin_srv_port=41184
-#ssh -fCNL $joplin_srv_port:localhost:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
+#ssh -fNL $joplin_srv_port:localhost:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
 
 # Get the post's attached file from joplin server and modify markdown text to apply attached file.
 echo "What is the new post file path?"
