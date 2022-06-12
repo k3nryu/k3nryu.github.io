@@ -31,7 +31,6 @@ else
 	else
 		echo - "Input error!"
 	fi
-
 fi
 
 echo -e 'The following parameters were read:\n'
@@ -47,7 +46,7 @@ echo -e 'EOF\n'
 # Get posts markdown file by Joplin-API
 ## Connetc 
 #joplin_srv_port=41184
-#ssh -fNL $joplin_srv_port:localhost:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
+#ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
 
 # Get the post's attached file from joplin server and modify markdown text to apply attached file.
 echo "What is the new post file path?"

@@ -1,6 +1,5 @@
 #! /bin/bash
 
-
 # Get hexo server directory.
 hexo_dir=`..`
 mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
@@ -27,7 +26,6 @@ else
         else
                 echo - "Input error!"
         fi
-
 fi
 
 echo -e 'The following parameters were read:\n'
