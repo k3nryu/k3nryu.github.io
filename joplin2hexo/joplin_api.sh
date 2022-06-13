@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Get hexo server directory.
-hexo_dir=`..`
+hexo_dir=..
 mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
 
 # hexo post resources directory.
