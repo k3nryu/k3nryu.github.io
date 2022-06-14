@@ -33,15 +33,49 @@ echo '<<<EOF'
 echo hexo_dir=`pwd`
 echo joplin_srv_user=$joplin_srv_user
 echo joplin_srv_ip=$joplin_srv_ip
+echo joplin_srv_port=$joplin_srv_port
 echo joplin_srv_token=$joplin_srv_token
 echo joplin_rsc_dir=$joplin_rsc_dir
 echo -e 'EOF\n'
 
+# JoplinClipperServer Connection
+ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
+
+
+# JoplinClipperServer Connection Check
+#curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
+#curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/ping
+
+if [ `cat $hexo_dir/tmp/ping.json` == "JoplinClipperServer" ];then
+	echo Connected to the JoplinClipperServer successfully!
+	echo 
+else
+	echo Connection to the JoplinClipperServer failed!
+	echo 
+	exit
+fi
+
+echo -e "Please enter note ID:"
+#read note_id
+note_id=b76691e5a8f14c919360b5ed69b1c0c1
+echo $note_id
 
 # --- Useful ---
 # Get note body(json format) by note id.
-curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?token=$joplin_srv_token\&fields=body
+curl -o $hexo_dir/tmp/Goted_Note_body_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id?token=$joplin_srv_token\&fields=body
 
+echo cat $hexo_dir/tmp/Goted_Note_body_tmp.json
+cat $hexo_dir/tmp/Goted_Note_body_tmp.json
+echo
+
+# Get note attached resources id;title;
+curl -o $hexo_dir/tmp/Goted_Note_resources_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id/resources/?token=$joplin_srv_token
+
+echo cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
+cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
+echo
+
+curl -o $hexo_dir/tmp/192.168.64.130.png -X GET http://localhost:$joplin_srv_port/resources/18eeac093c384a13b0d3b849e41a6292/file?token=$joplin_srv_token
 
 # --- tested  ---
 # Testing if the service is available
@@ -59,8 +93,6 @@ curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?token=$joplin_srv_tok
 # Gets all the tags attached to this note.
 #curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/tags/\?token\=$joplin_srv_token
 
-# Gets all the resources attached to this note.
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/resources/\?token\=$joplin_srv_token
 
 # Gets the IDs only of all the tags:
 #curl http://$joplin_srv_ip:$joplin_srv_port/tags/?fields=id\&token=$joplin_srv_token

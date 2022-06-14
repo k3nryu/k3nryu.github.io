@@ -1,9 +1,10 @@
-#! /usr/bin/bash
+#! /bin/bash
 
-# 可以提取Joplin-Desktop中的附加文件（例如*.png|*.txt|*pdf...etc）放在hexo/source/resources/里面。
-# 自动把Markdown文件中的[fileName.ext](:/guid)转换为为[fileName.ext](/resources/guid.ext)
-# 如果跟我一样Hexo在别的机器上的话，需要跟我一样开启sshd，并设置好authorized_keys无密码使用scp
-
+<<comment
+可以提取Joplin-Desktop中的附加文件（例如*.png|*.txt|*pdf...etc）放在hexo/source/resources/里面。
+自动把Markdown文件中的[fileName.ext](:/guid)转换为为[fileName.ext](/resources/guid.ext)
+如果跟我一样Hexo在别的机器上的话，需要跟我一样开启sshd，并设置好authorized_keys无密码使用scp
+comment
 
 # Get hexo server directory.
 hexo_dir=`pwd`
