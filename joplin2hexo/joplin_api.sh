@@ -44,7 +44,7 @@ ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_sr
 
 # JoplinClipperServer Connection Check
 #curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-#curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/ping
+curl -o $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
 
 if [ `cat $hexo_dir/tmp/ping.json` == "JoplinClipperServer" ];then
 	echo Connected to the JoplinClipperServer successfully!
