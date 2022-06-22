@@ -1,17 +1,35 @@
 #! /bin/bash
+<<flowchat
+读取用户配置
+连接服务器
+读取NoteID
+获取NoteBody
+修改NoteBody
+添加Front Matter
+获取NoteRsc
+展示
+flowchat
 
 # Get hexo server directory.
-hexo_dir=..
+hexo_dir=~/k3nryu.github.io
 mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
 
 # hexo post resources directory.
 local_rsc_dir=$hexo_dir/source/resources/
 
-if [[ -e "./joplin_user_profile.sh" ]];then
-        source ./joplin_user_profile.sh
+if [[ -e "$hexo_dir/joplin2hexo/joplin_user_profile.sh" ]];then
+        source $hexo_dir/joplin2hexo/joplin_user_profile.sh
         echo -e "User profile successfully obtained!"
+	echo -e 'The following parameters were read:'
+	echo hexo_dir=$hexo_dir
+	echo joplin_srv_user=$joplin_srv_user
+	echo joplin_srv_ip=$joplin_srv_ip
+	echo joplin_srv_port=$joplin_srv_port
+	echo joplin_srv_token=$joplin_srv_token
+	echo joplin_rsc_dir=$joplin_rsc_dir
+	echo -e '\n'
 else
-        echo -e "User profile[./joplin_user_profile.sh] not found,\nPlease enter your Joplin server user name:"
+        echo -e "User profile[$hexo_dir/joplin2hexo/joplin_user_profile.sh] not found,\nPlease enter your Joplin server user name:"
         read joplin_srv_user
         echo -e "Please enter your Joplin server IP:"
         read joplin_srv_ip
@@ -26,17 +44,16 @@ else
         else
                 echo - "Input error!"
         fi
+	echo '#!bin/bash' >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo hexo_dir=$hexo_dir >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo joplin_srv_user=$joplin_srv_user >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo joplin_srv_ip=$joplin_srv_ip >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo joplin_srv_port=$joplin_srv_port >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo joplin_srv_token=$joplin_srv_token >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+	echo joplin_rsc_dir=$joplin_rsc_dir >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+
 fi
 
-echo -e 'The following parameters were read:\n'
-echo '<<<EOF'
-echo hexo_dir=`pwd`
-echo joplin_srv_user=$joplin_srv_user
-echo joplin_srv_ip=$joplin_srv_ip
-echo joplin_srv_port=$joplin_srv_port
-echo joplin_srv_token=$joplin_srv_token
-echo joplin_rsc_dir=$joplin_rsc_dir
-echo -e 'EOF\n'
 
 # JoplinClipperServer Connection
 ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
@@ -44,7 +61,7 @@ ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_sr
 
 # JoplinClipperServer Connection Check
 #curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-curl -o $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
+curl -so $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
 
 if [ `cat $hexo_dir/tmp/ping.json` == "JoplinClipperServer" ];then
 	echo Connected to the JoplinClipperServer successfully!
@@ -56,26 +73,25 @@ else
 fi
 
 echo -e "Please enter note ID:"
-#read note_id
+read note_id
 note_id=b76691e5a8f14c919360b5ed69b1c0c1
-echo $note_id
+echo note_id=$note_id
 
 # --- Useful ---
 # Get note body(json format) by note id.
-curl -o $hexo_dir/tmp/Goted_Note_body_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id?token=$joplin_srv_token\&fields=body
+curl -so $hexo_dir/tmp/Goted_Note_body_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id?token=$joplin_srv_token\&fields=body
 
-echo cat $hexo_dir/tmp/Goted_Note_body_tmp.json
-cat $hexo_dir/tmp/Goted_Note_body_tmp.json
+#cat $hexo_dir/tmp/Goted_Note_body_tmp.json
 echo
 
 # Get note attached resources id;title;
-curl -o $hexo_dir/tmp/Goted_Note_resources_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id/resources/?token=$joplin_srv_token
+curl -so $hexo_dir/tmp/Goted_Note_resources_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id/resources/?token=$joplin_srv_token
 
 echo cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
-cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
+#cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
 echo
 
-curl -o $hexo_dir/tmp/192.168.64.130.png -X GET http://localhost:$joplin_srv_port/resources/18eeac093c384a13b0d3b849e41a6292/file?token=$joplin_srv_token
+curl -so $hexo_dir/tmp/192.168.64.130.png -X GET http://localhost:$joplin_srv_port/resources/18eeac093c384a13b0d3b849e41a6292/file?token=$joplin_srv_token
 
 # --- tested  ---
 # Testing if the service is available
