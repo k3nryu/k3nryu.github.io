@@ -1,128 +1,89 @@
 #! /bin/bash
+
 <<flowchat
 读取用户配置
-连接服务器
-读取NoteID
-获取NoteBody
-修改NoteBody
+连接API服务器
+询问Note ID
+Joplin API
+	获取Note Body (JSON file)
+	获取Note Title (JSON file)
+	获取Note Create Data (JSON file)
+	获取Note Note Book (JSON file)
+	获取Note Tag (JSON file)
+转换Note Body (JSON file) --> Note Body (MarkDown File)
+修正Note Body (MarkDown File) --> Hexo Note Body (Markdown File)
 添加Front Matter
-获取NoteRsc
+	读取Note Title (JSON file) >> Note Body (MarkDown File Front Matter YAML)
+	读取Note Create Data (JSON file) >> Note Body (MarkDown File Front Matter YAML)
+	读取Note Note Book (JSON file) >> Note Body (MarkDown File Front Matter YAML)
+	读取Note Tag (JSON file) >> Note Body (MarkDown File Front Matter YAML)
+	读取Note Create Data (JSON file) >> Note Body (MarkDown File)
+获取Note Attachment 储存到 /hexo/source/resources/
 展示
 flowchat
 
 # Get hexo server directory.
 hexo_dir=~/k3nryu.github.io
-mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
-
+hexo_post_dir=$hexo_dir/source/_posts
+hexo_rsc_dir=$hexo_dir/source/resources
+note_body_json=$hexo_dir/tmp/Goted_Note_body_tmp.json
+note_title_json=$hexo_dir/tmp/Goted_Note_title_tmp.json
+note_date_json=$hexo_dir/tmp/Goted_Note_date_tmp.json
+note_tag_json=$hexo_dir/tmp/Goted_Note_tag_tmp.json
+note_cat_json=$hexo_dir/tmp/Goted_Note_cat_tmp.json
+note_body_md=$hexo_dir/tmp/Goted_Note_body_tmp.md
+joplin_user_profile=$hexo_dir/joplin2hexo/joplin_user_profile.sh
 # hexo post resources directory.
 local_rsc_dir=$hexo_dir/source/resources/
 
-if [[ -e "$hexo_dir/joplin2hexo/joplin_user_profile.sh" ]];then
-        source $hexo_dir/joplin2hexo/joplin_user_profile.sh
-        echo -e "User profile successfully obtained!"
-	echo -e 'The following parameters were read:'
-	echo hexo_dir=$hexo_dir
-	echo joplin_srv_user=$joplin_srv_user
-	echo joplin_srv_ip=$joplin_srv_ip
-	echo joplin_srv_port=$joplin_srv_port
-	echo joplin_srv_token=$joplin_srv_token
-	echo joplin_rsc_dir=$joplin_rsc_dir
-	echo -e '\n'
-else
-        echo -e "User profile[$hexo_dir/joplin2hexo/joplin_user_profile.sh] not found,\nPlease enter your Joplin server user name:"
-        read joplin_srv_user
-        echo -e "Please enter your Joplin server IP:"
-        read joplin_srv_ip
-        echo -e "Please enter your Joplin server token:"
-        read joplin_srv_token
-        echo -e "Please enter your Joplin server OS(mac or win):"
-        read joplin_os
-        if [[ $joplin_os == win ]];then
-                joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/C:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
-        elif [[ $joplin_os == mac ]];then
-                joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
-        else
-                echo - "Input error!"
-        fi
-	echo '#!bin/bash' >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo hexo_dir=$hexo_dir >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo joplin_srv_user=$joplin_srv_user >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo joplin_srv_ip=$joplin_srv_ip >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo joplin_srv_port=$joplin_srv_port >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo joplin_srv_token=$joplin_srv_token >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
-	echo joplin_rsc_dir=$joplin_rsc_dir >> $hexo_dir/joplin2hexo/joplin_user_profile.sh
+# Import functions
+source $hexo_dir/joplin2hexo/functions.sh
 
-fi
+# Make directories
+mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
 
+
+# Read user profile for connect JoplinClipperServer 
+ReadConfig $joplin_user_profile
 
 # JoplinClipperServer Connection
 ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
 
-
 # JoplinClipperServer Connection Check
-#curl -o $hexo_dir/tmp/ping.json http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
+echo JoplinClipperServer Connection Check:
 curl -so $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
-
-if [ `cat $hexo_dir/tmp/ping.json` == "JoplinClipperServer" ];then
-	echo Connected to the JoplinClipperServer successfully!
+if [ `cat $hexo_dir/tmp/ping.json` == 'JoplinClipperServer' ];then
+	echo Connected successfully!
 	echo 
 else
-	echo Connection to the JoplinClipperServer failed!
+	echo Connection failed!
+	echo 
+	exit
+fi
+
+# JoplinClipperServer Authorisation Check
+echo JoplinClipperServer Authorisation Check:
+curl -so $hexo_dir/tmp/auth.json http://localhost:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
+if [ `cat $hexo_dir/tmp/auth.json` == '{"valid":true}' ];then
+	echo Token is valid!
+	echo 
+else
+	echo Token is invalid!
 	echo 
 	exit
 fi
 
 echo -e "Please enter note ID:"
 read note_id
-note_id=b76691e5a8f14c919360b5ed69b1c0c1
+#note_id=b76691e5a8f14c919360b5ed69b1c0c1
 echo note_id=$note_id
 
-# --- Useful ---
 # Get note body(json format) by note id.
-curl -so $hexo_dir/tmp/Goted_Note_body_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id?token=$joplin_srv_token\&fields=body
+GetNoteBody $note_body_json $note_id
+GetNoteTitle $note_title_json $note_id
+GetNoteDate $note_date_json $note_id
+GetNoteTag $note_tag_json $note_id
+GetNoteCat $note_cat_json $note_id
 
-#cat $hexo_dir/tmp/Goted_Note_body_tmp.json
-echo
-
-# Get note attached resources id;title;
-curl -so $hexo_dir/tmp/Goted_Note_resources_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id/resources/?token=$joplin_srv_token
-
-echo cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
-#cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
-echo
-
-curl -so $hexo_dir/tmp/192.168.64.130.png -X GET http://localhost:$joplin_srv_port/resources/18eeac093c384a13b0d3b849e41a6292/file?token=$joplin_srv_token
-
-# --- tested  ---
-# Testing if the service is available
-#curl http://$joplin_srv_ip:$joplin_srv_port/ping
-
-# Testing the token whether avalible
-#curl http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-
-# Gets all notes
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/\?token\=$joplin_srv_token
-
-# Gets note with ID :id
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/\?token\=$joplin_srv_token
-
-# Gets all the tags attached to this note.
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/tags/\?token\=$joplin_srv_token
-
-
-# Gets the IDs only of all the tags:
-#curl http://$joplin_srv_ip:$joplin_srv_port/tags/?fields=id\&token=$joplin_srv_token
-
-# Get token 
-#curl -XPOST http://$joplin_srv_ip:$joplin_srv_port/auth
-#curl  http://$joplin_srv_ip:$joplin_srv_port/auth/check?auth_token=AUTH_TOKEN
-
-# Get the note's location by note id
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?fields=longitude,latitude\&token=$joplin_srv_token
-
-#echo http://$joplin_srv_ip:$joplin_srv_port/tags?token=$joplin_srv_token
-
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/"$note_id?fields"=longitude,latitude?"token"=$joplin_srv_token
-#curl http://$joplin_srv_ip:$joplin_srv_port/tags?fields=id&token=$joplin_srv_token
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?"token"=$joplin_srv_token
+Json2MD $note_body_json $note_body_md
 
