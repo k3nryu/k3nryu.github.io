@@ -1,10 +1,9 @@
-#! /usr/bin/bash
+#!/bin/bash
 
+joplin_srv_location=remote #local
 joplin_srv_user=user
 joplin_srv_ip=192.168.1.1
 joplin_srv_port=41184
-# macOS Joplin desktop default directory
-#joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
-# Windows Joplin desktop default directory
-joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/C:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
+#joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/Users/$joplin_srv_user/.config/joplin-desktop/resources/ # macOS Joplin desktop default directory
+joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/C:/Users/$joplin_srv_user/.config/joplin-desktop/resources/ # Windows Joplin desktop default directory
 joplin_srv_token=abcdefg123456789

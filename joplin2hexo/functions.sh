@@ -1,12 +1,11 @@
 #!/bin/bash
 
 function ReadConfig {
-<<ReadConfig
-ReadConfig
 	if [[ -e "$1" ]];then
 	        source $1
 		echo -e 'The following parameters were successfully obtained:'
 		echo hexo_dir=$hexo_dir
+		echo joplin_srv_location=$joplin_srv_location
 		echo joplin_srv_user=$joplin_srv_user
 		echo joplin_srv_ip=$joplin_srv_ip
 		echo joplin_srv_port=$joplin_srv_port
@@ -14,28 +13,36 @@ ReadConfig
 		echo joplin_rsc_dir=$joplin_rsc_dir
 		echo ---
 	else
-	        echo -e "User profile[$1] not found,\nPlease enter your Joplin server user name:"
-	        read joplin_srv_user
-	        echo -e "Please enter your Joplin server IP:"
-	        read joplin_srv_ip
-	        echo -e "Please enter your Joplin server token:"
-	        read joplin_srv_token
-	        echo -e "Please enter your Joplin server OS(mac or win):"
-	        read joplin_os
-	        if [[ $joplin_os == win ]];then
-	                joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/C:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
-	        elif [[ $joplin_os == mac ]];then
-	                joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
-	        else
-	                echo - "Input error!"
-	        fi
+		echo -e "User profile[$1] not found.\nPlease enter your Joplin server location(remote|local):"
 		echo '#!bin/bash' >> $1
+	        read joplin_srv_location
+	        echo joplin_srv_location=$joplin_srv_location
 		echo hexo_dir=$hexo_dir >> $1
-		echo joplin_srv_user=$joplin_srv_user >> $1
-		echo joplin_srv_ip=$joplin_srv_ip >> $1
-		echo joplin_srv_port=$joplin_srv_port >> $1
-		echo joplin_srv_token=$joplin_srv_token >> $1
-		echo joplin_rsc_dir=$joplin_rsc_dir >> $1
+		if [[ $joplin_srv_location == "remote" ]];then
+	        	echo -e "Please enter your Joplin server user name:"
+	        	read joplin_srv_user
+			echo joplin_srv_user=$joplin_srv_user >> $1
+	        	echo -e "Please enter your Joplin server IP:"
+	        	read joplin_srv_ip
+			echo joplin_srv_ip=$joplin_srv_ip >> $1
+			echo -e "Please enter your Joplin server port(Defalt:41184):"
+			read joplin_srv_port
+			echo joplin_srv_port=$joplin_srv_port >> $1
+	        	echo -e "Please enter your Joplin server token:"
+	        	read joplin_srv_token
+			echo joplin_srv_token=$joplin_srv_token >> $1
+	        	echo -e "Please enter your Joplin server OS(mac or win):"
+	        	read joplin_os
+	        	if [[ $joplin_os == win ]];then
+	        	        joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/C:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
+				echo joplin_rsc_dir=$joplin_rsc_dir >> $1
+	        	elif [[ $joplin_os == mac ]];then
+	        	        joplin_rsc_dir=$joplin_srv_user@$joplin_srv_ip:/Users/$joplin_srv_user/.config/joplin-desktop/resources/
+				echo joplin_rsc_dir=$joplin_rsc_dir >> $1
+	        	else
+	        	        echo - "Input error!"
+	        	fi
+		fi
 	fi
 }
 
@@ -72,24 +79,17 @@ function GetNoteCat {
 <<GetNoteCat
 Get note categories(json format) by note id.
 GetNoteCat
-	# get category id by note id
-	echo 'get category id by note id by API:' > $1
-	curl -s -X GET http://localhost:$joplin_srv_port/notes/$2?token=$joplin_srv_token\&fields=parent_id >> $1
-	# edit json file
+	# get category id
+	curl -so $1 -X GET http://localhost:$joplin_srv_port/notes/$2?token=$joplin_srv_token\&fields=parent_id
 	echo >> $1
-	echo >> $1
-	echo "i.e." >> $1
-	folder_id=`egrep "\{\"parent_id\"\:\""  $1 | sed -e 's/{"parent_id":"//g' -e 's/","type_":1}//g'` 
-	echo $folder_id >> $1
-	echo >> $1
-	# get category information by category id
-	echo 'get category information by category id by API:' >> $1
-	curl -s -X GET http://localhost:$joplin_srv_port/folders/$folder_id?token=$joplin_srv_token >> $1
-	echo >> $1
-	# edit json file
+	p_id=`egrep "\{\"parent_id\"\:\""  $1 | sed -e 's/{"parent_id":"//g' -e 's/","type_":1}//g'` 
+	p_info=`curl -s -X GET http://localhost:$joplin_srv_port/folders/$p_id?token=$joplin_srv_token`
+	gp_id=`echo $p_info | awk -F\" '{print $26}'`
+	gp_info=`curl -s -X GET http://localhost:$joplin_srv_port/folders/$gp_id?token=$joplin_srv_token`
 	# get parent category id
-	# edit json file
-
+	#curl -s -X GET http://localhost:$joplin_srv_port/folders/$folder_id?token=$joplin_srv_token >> $1
+        echo $p_info >> $1
+        echo $gp_info >> $1
 }
 
 function Json2MD {

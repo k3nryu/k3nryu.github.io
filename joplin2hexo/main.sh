@@ -23,16 +23,28 @@ Joplin API
 flowchat
 
 # Get hexo server directory.
-hexo_dir=~/k3nryu.github.io
+hexo_dir=`realpath $(dirname $0) | sed -e 's/\/[0-9a-zA-Z]*$//'`
+# File paths
 hexo_post_dir=$hexo_dir/source/_posts
 hexo_rsc_dir=$hexo_dir/source/resources
-note_body_json=$hexo_dir/tmp/Goted_Note_body_tmp.json
-note_title_json=$hexo_dir/tmp/Goted_Note_title_tmp.json
-note_date_json=$hexo_dir/tmp/Goted_Note_date_tmp.json
-note_tag_json=$hexo_dir/tmp/Goted_Note_tag_tmp.json
-note_cat_json=$hexo_dir/tmp/Goted_Note_cat_tmp.json
-note_body_md=$hexo_dir/tmp/Goted_Note_body_tmp.md
+
+note_body_json=$hexo_dir/tmp/0_Goted_Note_body_tmp.json
+note_body_joplin_md=$hexo_dir/tmp/1_Converted_Note_body_tmp.md
+note_body_hexo_md=$hexo_dir/tmp/2_Edited_Note_body_tmp.md
+
+note_title_json=$hexo_dir/tmp/0_Goted_Note_title_tmp.json
+note_date_json=$hexo_dir/tmp/0_Goted_Note_date_tmp.json
+
+note_tag_json=$hexo_dir/tmp/0_Goted_Note_tag_tmp.json
+note_tag_yaml=$hexo_dir/tmp/Edited_Note_tag_tmp.yaml
+
+note_p_cat_json=$hexo_dir/tmp/0_Goted_Note_p_cat_tmp.json
+note_gp_cat_json=$hexo_dir/tmp/0_Goted_Note_gp_cat_tmp.json
+note_ggp_cat_json=$hexo_dir/tmp/0_Goted_Note_ggp_cat_tmp.json
+note_cat_yaml=$hexo_dir/tmp/Edited_Note_cat_tmp.json
+
 joplin_user_profile=$hexo_dir/joplin2hexo/joplin_user_profile.sh
+
 # hexo post resources directory.
 local_rsc_dir=$hexo_dir/source/resources/
 
@@ -47,12 +59,15 @@ mkdir -p $hexo_dir/tmp $hexo_dir/source/resources
 ReadConfig $joplin_user_profile
 
 # JoplinClipperServer Connection
-ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
+if [[ $joplin_srv_location == "remote" ]];then
+	echo JoplinClipperServer Connecting ...
+	ssh -fNL $joplin_srv_port:127.0.0.1:$joplin_srv_port $joplin_srv_user@$joplin_srv_ip
+fi
 
 # JoplinClipperServer Connection Check
 echo JoplinClipperServer Connection Check:
 curl -so $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
-if [ `cat $hexo_dir/tmp/ping.json` == 'JoplinClipperServer' ];then
+if [ `grep -c "JoplinClipperServer" $hexo_dir/tmp/ping.json` -ne '0' ];then
 	echo Connected successfully!
 	echo 
 else
@@ -64,7 +79,7 @@ fi
 # JoplinClipperServer Authorisation Check
 echo JoplinClipperServer Authorisation Check:
 curl -so $hexo_dir/tmp/auth.json http://localhost:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-if [ `cat $hexo_dir/tmp/auth.json` == '{"valid":true}' ];then
+if [ `grep -c "true" $hexo_dir/tmp/auth.json` -ne '0' ];then
 	echo Token is valid!
 	echo 
 else
@@ -83,7 +98,8 @@ GetNoteBody $note_body_json $note_id
 GetNoteTitle $note_title_json $note_id
 GetNoteDate $note_date_json $note_id
 GetNoteTag $note_tag_json $note_id
-GetNoteCat $note_cat_json $note_id
+GetNoteCat $note_p_cat_json $note_id
 
-Json2MD $note_body_json $note_body_md
+# Edit json resources
+Json2MD $note_body_json $note_body_joplin_md
 
