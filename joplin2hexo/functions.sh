@@ -196,5 +196,4 @@ function GetNoteAttachedFileIDTitle {
 # Get the note's location by note id
 #curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?fields=longitude,latitude\&token=$joplin_srv_token
 
-# Unix Time to local time
 #date +'%Y/%m/%d %H:%M:%S' -d "@1653542376"
