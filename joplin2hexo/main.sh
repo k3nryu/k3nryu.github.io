@@ -27,10 +27,11 @@ hexo_dir=`realpath $(dirname $0) | sed -e 's/\/[0-9a-zA-Z]*$//'`
 # File paths
 hexo_post_dir=$hexo_dir/source/_posts
 hexo_rsc_dir=$hexo_dir/source/resources
+hexo_tmp_dir=$hexo_dir/tmp
 
 note_body_json=$hexo_dir/tmp/0_Goted_Note_body_tmp.json
-note_body_joplin_md=$hexo_dir/tmp/1_Converted_Note_body_tmp.md
-note_body_hexo_md=$hexo_dir/tmp/2_Edited_Note_body_tmp.md
+note_body_joplin_md=$hexo_dir/tmp/1_Joplin_Note_body_tmp.md
+note_body_hexo_md=$hexo_dir/tmp/2_Hexo_Note_body_tmp.md
 
 note_title_json=$hexo_dir/tmp/0_Goted_Note_title_tmp.json
 note_date_json=$hexo_dir/tmp/0_Goted_Note_date_tmp.json
@@ -66,32 +67,15 @@ fi
 
 # JoplinClipperServer Connection Check
 echo JoplinClipperServer Connection Check:
-curl -so $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
-if [ `grep -c "JoplinClipperServer" $hexo_dir/tmp/ping.json` -ne '0' ];then
-	echo Connected successfully!
-	echo 
-else
-	echo Connection failed!
-	echo 
-	exit
-fi
+SrvCheck
 
 # JoplinClipperServer Authorisation Check
 echo JoplinClipperServer Authorisation Check:
-curl -so $hexo_dir/tmp/auth.json http://localhost:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-if [ `grep -c "true" $hexo_dir/tmp/auth.json` -ne '0' ];then
-	echo Token is valid!
-	echo 
-else
-	echo Token is invalid!
-	echo 
-	exit
-fi
+TokenCheck
 
 echo -e "Please enter note ID:"
 read note_id
 #note_id=b76691e5a8f14c919360b5ed69b1c0c1
-echo note_id=$note_id
 
 # Get note body(json format) by note id.
 GetNoteBody $note_body_json $note_id
@@ -103,3 +87,5 @@ GetNoteCat $note_p_cat_json $note_id
 # Edit json resources
 Json2MD $note_body_json $note_body_joplin_md
 
+JoplinMD2HexoMD $note_body_joplin_md $note_body_hexo_md
+GetRscForJoplinMDByAPI $note_body_joplin_md $hexo_dir/tmp

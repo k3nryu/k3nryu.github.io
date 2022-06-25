@@ -1,5 +1,31 @@
 #!/bin/bash
 
+function SrvCheck {
+	curl -so $hexo_dir/tmp/ping.json http://localhost:$joplin_srv_port/ping > $hexo_dir/tmp/ping.json
+	if [ `grep -c "JoplinClipperServer" $hexo_dir/tmp/ping.json` -ne '0' ];then
+	#if [ `cat $hexo_dir/tmp/ping.json` =~ Joplin ];then
+		echo JoplinClipperServer Connected!
+		echo
+	else
+		echo Connection failed!
+		echo
+		exit
+	fi
+}
+
+function TokenCheck {
+	curl -so $hexo_dir/tmp/auth.json http://localhost:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
+	if [ `grep -c "true" $hexo_dir/tmp/auth.json` -ne '0' ];then
+	#if [ `cat $hexo_dir/tmp/auth.json` =~ true ];then
+		echo Token is valid!
+		echo
+	else
+		echo Token is invald!
+		echo
+        	exit
+	fi
+}
+
 function ReadConfig {
 	if [[ -e "$1" ]];then
 	        source $1
@@ -92,86 +118,76 @@ GetNoteCat
         echo $gp_info >> $1
 }
 
+
 function Json2MD {
-<<Json2MD
+<<JsonToMD
 json转化为md
 1. 删除开头。
 2. 删除结尾。
 3. 把\n定义为换行。
-Json2MD
-
+JsonToMD
 	sed -e 's/{"body":"//g' -e 's/","type_":.*//g' -e 's/\\n/\n/g' $1 > $2
 }
-function JoplinMD2HexoMD {
-<<JoplinMD2HexoMD
-joplin的原始md文件中附加文件资源部分修改为真实文件名
-（例如: [fileName.ext](:/guid) -->[fileName.ext](/resources/guid.ext)
-JoplinMD2HexoMD
 
-	echo "What is the new post file path?"
-	read post_path
-	
+function JoplinMD2HexoMD {
+<<JoplinMDToHexoMD
+joplin的原始md文件中附加文件资源部分修改为真实文件名
+（例如: [fileName.ext](:/uuid) -->[fileName.ext](/resources/uuid.ext)
+JoplinMDToHexoMD
 	while read LINE
 	do
 	    if [[ $LINE =~ \!?\[.*\.[0-9a-zA-Z]*\]\(:\/.*\) ]];
 	    then
-	        post_rsc_name=`echo $LINE | egrep -o ':/\w*' | cut -c3-`
 	        ext=`echo $LINE | egrep  -o '\.\w*\]' | sed -e 's/.$//'`
-	        echo $LINE | sed -e 's/](:/](\/resources/g' -e 's/\s*$//' -e "s/)$/$ext)/g"
-	        scp $joplin_rsc_dir$post_rsc_name$ext $local_rsc_dir > /dev/null
+	        echo $LINE | sed -e 's/](:/](\/resources/g' -e 's/\s*$//' -e "s/)/$ext)/g"
 	    else
 	        echo $LINE
 	    fi
-	done < ${post_path} > $hexo_dir/tmp/tmp.md
-	\cp -f $hexo_dir/tmp/tmp.md $post_path
+	done < $1 > $2
 }
 
 <<AddFrontMatterByNoteID
 AddFrontMatterByNoteID
 
-function GetRscForHexoMDBySCP {
-<<GetRscForHexoMDBySCP
+function GetRscForJoplinMDBySCP {
+<<GetRsc
 通过SCP提取Joplin-Desktop中的附加文件（例如*.png|*.txt|*pdf...etc）放在hexo/source/resources/里面。
 *需要开启sshd，并设置好authorized_keys无密码使用scp
-GetRscForHexoMDBySCP
-
+GetRsc
+	while read LINE
+	do
+	    if [[ $LINE =~ \!?\[.*\.[0-9a-zA-Z]*\]\(:\/.*\) ]];
+	    then
+	        post_rsc_id=`echo $LINE | egrep -o ':/\w*' | cut -c3-`
+	        ext=`echo $LINE | egrep  -o '\.\w*\]' | sed -e 's/.$//'`
+		scp $joplin_rsc_dir$post_rsc_id$ext $2/$post_rsc_id$ext #> /dev/null
+	    fi
+	done < $1
 }
 
-function GetRscForHexoMDByAPI {
-<<GetRscForHexoMDByAPI
+function GetRscForJoplinMDByAPI {
+<<GetRscByAPI
 通过API提取Joplin-Desktop中的附加文件（例如*.png|*.txt|*pdf...etc）放在hexo/source/resources/里面。
-GetRscForHexoMDByAPI
-
+GetRscByAPI
+	while read LINE
+	do
+	    if [[ $LINE =~ \!?\[.*\.[0-9a-zA-Z]*\]\(:\/.*\) ]];
+	    then
+	        post_rsc_id=`echo $LINE | egrep -o ':/\w*' | cut -c3-`
+	        ext=`echo $LINE | egrep  -o '\.\w*\]' | sed -e 's/.$//'`
+		curl -so $2/$post_rsc_id$ext -X GET http://localhost:$joplin_srv_port/resources/$post_rsc_id/file?token=$joplin_srv_token
+	    fi
+	done < $1
 }
 
+function GetNoteAttachedFileIDTitle {
+# Get note attached resources id;title;
+	curl -so $1 -X GET http://localhost:$joplin_srv_port/notes/$2/resources/?token=$joplin_srv_token
+}
 
 # --- Useful ---
-#cat $hexo_dir/tmp/Goted_Note_body_tmp.json
-# Get note attached resources id;title;
-#curl -so $hexo_dir/tmp/Goted_Note_resources_tmp.json -X GET http://localhost:$joplin_srv_port/notes/$note_id/resources/?token=$joplin_srv_token
-
-#cat $hexo_dir/tmp/Goted_Note_resources_tmp.json
-
-#curl -so $hexo_dir/tmp/192.168.64.130.png -X GET http://localhost:$joplin_srv_port/resources/18eeac093c384a13b0d3b849e41a6292/file?token=$joplin_srv_token
-# --- tested  ---
-# Testing if the service is available
-#curl http://$joplin_srv_ip:$joplin_srv_port/ping
-
-# Testing the token whether avalible
-#curl http://$joplin_srv_ip:$joplin_srv_port/auth/check/\?token\=$joplin_srv_token
-
 # Gets all notes
 #curl http://$joplin_srv_ip:$joplin_srv_port/notes/\?token\=$joplin_srv_token
-
-# Gets note with ID :id
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/\?token\=$joplin_srv_token
-
-# Gets all the tags attached to this note.
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id/tags/\?token\=$joplin_srv_token
-
-
-# Gets the IDs only of all the tags:
-#curl http://$joplin_srv_ip:$joplin_srv_port/tags/?fields=id\&token=$joplin_srv_token
 
 # Get token 
 #curl -XPOST http://$joplin_srv_ip:$joplin_srv_port/auth
@@ -179,12 +195,6 @@ GetRscForHexoMDByAPI
 
 # Get the note's location by note id
 #curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?fields=longitude,latitude\&token=$joplin_srv_token
-
-#echo http://$joplin_srv_ip:$joplin_srv_port/tags?token=$joplin_srv_token
-
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/"$note_id?fields"=longitude,latitude?"token"=$joplin_srv_token
-#curl http://$joplin_srv_ip:$joplin_srv_port/tags?fields=id&token=$joplin_srv_token
-#curl http://$joplin_srv_ip:$joplin_srv_port/notes/$note_id?"token"=$joplin_srv_token
 
 # Unix Time to local time
 #date +'%Y/%m/%d %H:%M:%S' -d "@1653542376"
