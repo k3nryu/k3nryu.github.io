@@ -102,11 +102,14 @@ date +'%Y/%m/%d %H:%M:%S' -d "@$created_unix_time" | awk '{print "date: " $0}' >
 # tags
 egrep -o "title\"\:\"\w*" $note_tag_json | cut -c9- | awk '{print "  - " $0}' | sed '1i tags:' >> $hexo_tmp_dir/$fileName
 # categories
-egrep -o -m1 "title\"\:\".*\"\,\"" $note_p_cat_json | cut -c9- | sed -e 's/\",\".*//g' | awk '{print "  - " $0}' | sed '1i categories:' >> $hexo_tmp_dir/$fileName
+category=`egrep -o -m1 "title\"\:\".*\"\,\"" $note_p_cat_json | cut -c9- | sed -e 's/\",\".*//g'`
+echo $categore | awk '{print "  - " $0}' | sed '1i categories:' >> $hexo_tmp_dir/$fileName
 echo "toc: true" >> $hexo_tmp_dir/$fileName
 echo "#sidebar: none" >> $hexo_tmp_dir/$fileName
 echo --- >> $hexo_tmp_dir/$fileName
 echo >> $hexo_tmp_dir/$fileName
 cat $note_body_hexo_md >> $hexo_tmp_dir/$fileName
+mkdir -p $hexo_post_dir/$categore
+cp -f $hexo_tmp_dir/$fileName $hexo_post_dir/$categore
 
 
