@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Setup FTP server (vsftpd) | Kenryu</title>
+  <meta name="description" content="Socket Statistics 1234[root@localhost html]# ss -ntulNetid State Recv-Q Send-Q Local Address:Port Peer Address:Porttcp LISTEN 0 128 0.0.0.0:22 0.0.0.0:*tcp LISTEN 0 128 [::]:22 [::]:*  FTP server pake">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Setup FTP server (vsftpd)">
+<meta property="og:url" content="https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="Socket Statistics 1234[root@localhost html]# ss -ntulNetid State Recv-Q Send-Q Local Address:Port Peer Address:Porttcp LISTEN 0 128 0.0.0.0:22 0.0.0.0:*tcp LISTEN 0 128 [::]:22 [::]:*  FTP server pake">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2021-05-10T01:44:49.000Z">
+<meta property="article:modified_time" content="2022-06-26T01:47:52.300Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="検索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="なんのお探しでしょうか?" x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">ホーム</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">アーカイブ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">カテゴリー</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">タグ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">プロジェクト</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">リンク</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">私について</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">初めはして</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">カテゴリー</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13px;">PHP</a> <a href="/tags/Server/" style="font-size: 13px;">Server</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">5月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">11月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">5月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">9月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">索引</h3>
+      
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-File_Sharing_Servers/Setup_FTP_server__vsftpd_" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Setup FTP server (vsftpd)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/" class="article-date">
+	  <time datetime="2021-05-10T01:44:49.000Z" itemprop="datePublished">2021-05-10</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/#comments" class="article-comment-link">コメント</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">文字数: 1.5k(文字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">読む時間約: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>Socket Statistics</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# ss -ntul</span><br><span class="line">Netid State Recv-Q Send-Q Local Address:Port Peer Address:Port</span><br><span class="line">tcp LISTEN 0 128 0.0.0.0:22 0.0.0.0:*</span><br><span class="line">tcp LISTEN 0 128 [::]:22 [::]:*</span><br></pre></td></tr></table></figure>
+
+<p>FTP server pakege install</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install vsftpd -y</span><br></pre></td></tr></table></figure>
+<p>FW setting</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --add-service=ftp --permanent</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>必须设置selinux为关闭</p>
+<ol>
+<li>临时设置（重启失效）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# setenforce 0</span><br><span class="line">[root@centos8 ~]# getenforce</span><br><span class="line">Permissive</span><br></pre></td></tr></table></figure></li>
+<li>永久设置<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# vim /etc/selinux/config</span><br><span class="line">#SELINUX=enforcing</span><br><span class="line">SELINUX=disabled</span><br><span class="line">[root@centos8 ~]# reboot</span><br><span class="line">[root@centos8 ~]# getenforce</span><br><span class="line">Disabled</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>FTP的配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ls /etc/vsftpd/</span><br><span class="line">ftpusers user_list vsftpd.conf vsftpd_conf_migrate.sh</span><br></pre></td></tr></table></figure>
+
+<p>备份主配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.bak</span><br></pre></td></tr></table></figure>
+<p>FTP可以有三种登入方式分别是：</p>
+<blockquote>
+<p>匿名登录方式：不需要用户密码<br>本地用户登入：使用本地用户和密码登入<br>虚拟用户方式：也是使用用户和密码登入，但是该用户不是linux中创建的用户<br>vsftpd.conf: 主配置文件</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# vim /etc/vsftpd/vsftpd.conf</span><br><span class="line">anonymous_enable=YEStt#允许匿名用户登陆</span><br><span class="line">anon_upload_enable=YES tt#匿名用户可以上传文件</span><br><span class="line">anon_mkdir_write_enable=YESt#匿名用户可以修改文件夹</span><br><span class="line">anon_other_write_enable=YESt#匿名用户可以修改文件夹</span><br><span class="line">no_anon_password=YEStt#匿名用户login时不询问口令</span><br><span class="line">anon_umask=011tt#匿名用户创建文件的掩码，不指定时候为077</span><br><span class="line"></span><br><span class="line">local_enable=YES #vsftpd所在系统的用户可以登录vsftpd</span><br><span class="line">write_enable=YES #全局设置，是否容许写入（无论是匿名用户还是本地用户，若要启用上传权限的话，就要开启他）</span><br><span class="line">local_umask=002 #匿名用户新增文件的umask数值</span><br><span class="line">xferlog_enable=YES #启用一个日志文件，用于详细记录上传和下载。</span><br><span class="line">use_localtime=YES #使用本地时间而不是GMT</span><br><span class="line">vsftpd_log_file=/var/log/vsftpd.log #vsftpd日志存放位置</span><br><span class="line">dual_log_enable=YES #用户登陆日志</span><br><span class="line">connect_from_port_20=YES #开启20端口</span><br><span class="line">xferlog_file=/var/log/xferlog #记录上传下载文件的日志</span><br><span class="line">xferlog_std_format=YES #记录日志使用标准格式</span><br><span class="line">idle_session_timeout=600 #登陆之后超时时间60秒，登陆之后，一分钟不操作，就会断开连接。</span><br><span class="line">chroot_local_user=YES #用于指定用户列表文件中的用户,是否允许切换到上级目录</span><br><span class="line">listen=YES #开启监听</span><br><span class="line">pam_service_name=vsftpd.vu #验证文件的名字</span><br><span class="line">userlist_enable=YES #允许由user_list指定文件中的用户登录FTP服务器</span><br><span class="line">tcp_wrappers=YES #支持tcp_wrappers,限制访问(/etc/hosts.allow,/etc/hosts.deny)</span><br><span class="line">guest_enable=YES #起用虚拟用户</span><br><span class="line">guest_username=taokey #虚拟用户名</span><br><span class="line"></span><br><span class="line">#user_config_dir=/etc/vsftpd/vsftpuser #虚拟用户配置文件路径</span><br><span class="line">local_root=/home/ftpUser/ #自定义ftp上传路径（注意文件夹权限）</span><br><span class="line">pasv_min_port=35000</span><br><span class="line">pasv_max_port=45000</span><br><span class="line">pasv_enable=YES</span><br><span class="line">pasv_promiscuous=YES</span><br><span class="line">anon_other_write_enable=YES</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># 1. 监听相关</span><br><span class="line">#</span><br><span class="line">listen=&lt;YES/NO&gt; # YES: 服务以独立运行方式运行; NO: 运行在 xinetd 内。 默认为 YES</span><br><span class="line">listen_address=&lt;ip address&gt; # 服务监听地址, 如果有多个网卡, 需要将服务绑定到指定 IP 地址</span><br><span class="line">listen_port=&lt;port&gt; # 服务监听端口, 默认为 21</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># 2. 匿名用户相关</span><br><span class="line">#</span><br><span class="line">anonymous_enable=&lt;YES/NO&gt; # 是否允许匿名用户访问, 默认 NO</span><br><span class="line">no_anon_password=YES t # 匿名用户login时不询问口令</span><br><span class="line">anon_mkdir_write_enable=&lt;YES/NO&gt; # 是否允许匿名用户创建文件夹, 默认 NO</span><br><span class="line">anon_other_write_enable=&lt;YES/NO&gt; # 是否允许匿名用户重命名、删除文件夹等其他权限（默认为 NO, 基于安全性考虑这个权限一般不打开）</span><br><span class="line">anon_upload_enable=&lt;YES/NO&gt; # 是否允许匿名用户上传, 默认 NO</span><br><span class="line">anon_umask=&lt;nnn&gt; # 匿名用户上传的文件的生成掩码, 默认为077</span><br><span class="line">anon_max_rate=&lt;n&gt; # 匿名用户的最大传输速率, 单位为 Byte/s, 值为 0 表示不限制</span><br><span class="line">anon_world_readable_only=&lt;YES/NO&gt; # 是否允许匿名用户只读浏览</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># 3. 本地用户(Linux标准系统用户)相关</span><br><span class="line">#</span><br><span class="line">local_enable=&lt;YES/NO&gt; # 是否支持本地用户帐号访问</span><br><span class="line">write_enable=&lt;YES/NO&gt; # 是否开放本地用户的写权限</span><br><span class="line">local_umask=&lt;nnn&gt; # 本地用户上传的文件的生成掩码, 默认为077</span><br><span class="line">local_max_rate=&lt;n&gt; # 本地用户最大的传输速率, 单位为 Byte/s，值为 0 表示不限制</span><br><span class="line">local_root=&lt;file&gt; # 本地用户登陆后的目录，默认为 本地用户 的 主目录</span><br><span class="line"></span><br><span class="line">chroot_local_user=&lt;YES/NO&gt; # 本地用户是否可以执行 chroot, 默认为 NO</span><br><span class="line">chroot_list_enable=&lt;YES/NO&gt; # 是否只有指定的用户才能执行 chroot, 默认为 NO</span><br><span class="line">chroot_list_file=&lt;filename&gt; # 当 chroot_local_user=NO 且 chroot_list_enable=YES 时,</span><br><span class="line"># 只有 filename 文件内指定的用户（每行一个用户名）可以执行 chroot,</span><br><span class="line"># 默认值为 /etc/vsftpd.chroot_list</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># 4. 本地用户 黑/白名单管理</span><br><span class="line">#</span><br><span class="line">userlist_enable=&lt;YES/NO&gt; # 是否启用 userlist_file 用户列表, 默认为 YES，设置为NO的时候，并且用户名不在黑名单（user_list）可以登录，并查看ls ~中的文件</span><br><span class="line"></span><br><span class="line">userlist_deny=&lt;YES/NO&gt; # 当 userlist_enable=YES（即启用 userlist_file ）时, 则该字段才有效。</span><br><span class="line"># userlist_deny=YES: userlist_file 为 黑名单, 即在该文件内的用户均不可登录, 其他用户可以登录</span><br><span class="line"># userlist_deny=NO: userlist_file 为 白名单, 即在该文件内的用户才可以登录, 其他用户均不可登录</span><br><span class="line"></span><br><span class="line">userlist_file=&lt;filename&gt; # 黑/白名单用户列表文件（每行一个用户名）,</span><br><span class="line"># 是黑名单还是白名单, 根据 userlist_deny 的值决定,</span><br><span class="line"># 默认值为 /etc/vsftpd/user_list</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># 5. 连接相关</span><br><span class="line">#</span><br><span class="line">ftpd_banner=&lt;message&gt; # 客户端连接服务器后显示的欢迎信息</span><br><span class="line">connect_timeout=&lt;n&gt; # 远程客户端响应端口数据连接超时时间, 单位为秒, 默认 60</span><br><span class="line">accept_connection_timeout=&lt;n&gt; # 空闲的数据连接超时时间, 单位为秒, 默认 120</span><br><span class="line">data_connection_timeout=&lt;n&gt; # 空闲的用户会话超时时间, 单位为秒, 默认 300</span><br><span class="line">max_clients=&lt;n&gt; # 在独立模式运行时, 最大连接数, 0 表示无限制</span><br><span class="line">max_per_ip=&lt;n&gt; # 在独立模式运行时, 每 IP 的最大连接数, 0表示无限制</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>另外默认Vsftpd匿名用户有两个：anonymous、ftp，所以匿名用户如果需要上传文件、删除及修改等权限，需要ftp用户对/var/ftp/pub目录有写入权限，使用如下chown和chmod任意一种即可，设置命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chown -R ftp /var/ftp/pub/</span><br><span class="line">chgrp -R ftp /var/ftp/pub/</span><br><span class="line">chmod -R 766 /var/ftp/pub/</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>确认端口开启状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# systemctl start vsftpd</span><br><span class="line">[root@localhost html]# ss -ntul</span><br><span class="line">Netid State Recv-Q Send-Q Local Address:Port Peer Address:Port</span><br><span class="line">tcp LISTEN 0 128 0.0.0.0:22 0.0.0.0:*</span><br><span class="line">tcp LISTEN 0 32 *:21 *:*</span><br><span class="line">tcp LISTEN 0 128 [::]:22 [::]:*</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" title="Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;次へ</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/09/30/Sort-Algorithm/Binary-Search/" title="Binary Search"><span>戻る&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="索引" role="button">
+        <span>[&nbsp;</span><span>索引</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '記事',
+            PAGES: 'ページ',
+            CATEGORIES: 'カテゴリ',
+            TAGS: 'タグ',
+            UNTITLED: '(無名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/';
+        
+        this.page.identifier = 'File_Sharing_Servers/Setup_FTP_server__vsftpd_';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
