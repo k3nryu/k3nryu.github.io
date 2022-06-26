@@ -11,12 +11,10 @@ hexo clean
 # Generate i18n 'public' folder
 for lang in en zh ja
 do
-#ln -sf i18n/hexo_config_$lang.yml _config.yml
-#ln -sf ../../i18n/pure_config_$lang.yml themes/pure/_config.yml
-	ln -sf $hexo_dir/i18n/hexo_config_en.yml $hexo_dir/_config.yml
-	ln -sf $hexo_dir/i18n/pure_config_en.yml $hexo_dir/themes/pure/_config.yml
+	ln -sf i18n/hexo_config_$lang.yml _config.yml
+	ln -sf ../../i18n/pure_config_$lang.yml themes/pure/_config.yml
 	hexo g 
-	if [ $lang == en ]
+	if [ $lang == en ];
 	then
 		mv $hexo_dir/public $hexo_dir/public_en
 	else
@@ -26,5 +24,5 @@ done
 mv public_en public
 
 # Reset config file for 'hexo s'
-ln -sf $hexo_dir/i18n/hexo_config_en.yml $hexo_dir/_config.yml
-ln -sf $hexo_dir/i18n/pure_config_en.yml $hexo_dir/themes/pure/_config.yml
+ln -sf i18n/hexo_config_en.yml _config.yml
+ln -sf ../../i18n/pure_config_en.yml themes/pure/_config.yml
