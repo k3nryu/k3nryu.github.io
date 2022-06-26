@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Used iSCSI to connect storage | Kenryu</title>
+  <meta name="description" content="iSCSI Target Configuration:Step 0: Check the disk existslsblk Step 1:Prepare LVM12345678910[root@localhost ~]# vgcreate vgsan &#x2F;dev&#x2F;sdbPhysical volume &quot;&#x2F;dev&#x2F;sdb&quot; successfully createdVolume gr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Used iSCSI to connect storage">
+<meta property="og:url" content="https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="iSCSI Target Configuration:Step 0: Check the disk existslsblk Step 1:Prepare LVM12345678910[root@localhost ~]# vgcreate vgsan &#x2F;dev&#x2F;sdbPhysical volume &quot;&#x2F;dev&#x2F;sdb&quot; successfully createdVolume gr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kenryu.cc/resources/618a5fda45dd451e9d2a55279c1a497b.png">
+<meta property="article:published_time" content="2021-04-19T01:52:38.000Z">
+<meta property="article:modified_time" content="2022-06-26T03:30:24.665Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/618a5fda45dd451e9d2a55279c1a497b.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.5px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.5px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.5px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iSCSI-Target-Configuration"><span class="toc-number">1.</span> <span class="toc-text">iSCSI Target Configuration:</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-0-Check-the-disk-exists"><span class="toc-number">1.1.</span> <span class="toc-text">Step 0: Check the disk exists</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Prepare-LVM"><span class="toc-number">1.2.</span> <span class="toc-text">Step 1:Prepare LVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Install-software"><span class="toc-number">1.3.</span> <span class="toc-text">Step 2:Install software</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-Enter-the-targetcli-interface"><span class="toc-number">1.4.</span> <span class="toc-text">Step 3:Enter the targetcli interface</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-1-Configure-backstores"><span class="toc-number">1.4.1.</span> <span class="toc-text">Step 3.1: Configure backstores</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-2-Configure-IQN"><span class="toc-number">1.4.2.</span> <span class="toc-text">Step 3.2 :Configure IQN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-3-Create-ACL"><span class="toc-number">1.4.3.</span> <span class="toc-text">Step 3.3 : Create ACL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-3-4-Create-LUN"><span class="toc-number">1.4.4.</span> <span class="toc-text">Step 3.4 : Create LUN</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Service-amp-FW-Configuration"><span class="toc-number">1.5.</span> <span class="toc-text">Step 4: Service &amp; FW Configuration</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Initiator-Client-configuration"><span class="toc-number">2.</span> <span class="toc-text">Initiator(Client) configuration:</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-0-Check-the-disk-exists-1"><span class="toc-number">2.1.</span> <span class="toc-text">Step 0: Check the disk exists</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1-Install-Software"><span class="toc-number">2.2.</span> <span class="toc-text">Step 1: Install Software</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2-Edit-or-View-InitiatorName"><span class="toc-number">2.3.</span> <span class="toc-text">Step 2: Edit or View InitiatorName</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3-Discover-iscsi-target"><span class="toc-number">2.4.</span> <span class="toc-text">Step 3: Discover iscsi target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4-Log-into-the-target"><span class="toc-number">2.5.</span> <span class="toc-text">Step 4: Log into the target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-5-Specifically-check-the-iscsi-devices"><span class="toc-number">2.6.</span> <span class="toc-text">Step 5: Specifically check the iscsi devices</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-File_Sharing_Servers/Used_iSCSI_to_connect_storage" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Used iSCSI to connect storage
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/" class="article-date">
+	  <time datetime="2021-04-19T01:52:38.000Z" itemprop="datePublished">2021-04-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 411(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="iSCSI-Target-Configuration"><a href="#iSCSI-Target-Configuration" class="headerlink" title="iSCSI Target Configuration:"></a>iSCSI Target Configuration:</h1><h2 id="Step-0-Check-the-disk-exists"><a href="#Step-0-Check-the-disk-exists" class="headerlink" title="Step 0: Check the disk exists"></a>Step 0: Check the disk exists</h2><p><code>lsblk</code></p>
+<h2 id="Step-1-Prepare-LVM"><a href="#Step-1-Prepare-LVM" class="headerlink" title="Step 1:Prepare LVM"></a>Step 1:Prepare LVM</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vgcreate vgsan /dev/sdb</span><br><span class="line">Physical volume &quot;/dev/sdb&quot; successfully created</span><br><span class="line">Volume group &quot;vgsan&quot; successfully created</span><br><span class="line">[root@localhost ~]# lvcreate -n lvsan -l 100%VG /dev/vgsan</span><br><span class="line">Logical volume &quot;lvsan&quot; created.</span><br><span class="line">[root@localhost ~]# lvs</span><br><span class="line">LV VG Attr LSize Pool Origin Data% Meta% Move Log Cpy%Sync Convert</span><br><span class="line">root centos -wi-ao---- 6.67g</span><br><span class="line">swap centos -wi-ao---- 820.00m</span><br><span class="line">lvsan vgsan -wi-a----- 8.00g</span><br></pre></td></tr></table></figure>
+<h2 id="Step-2-Install-software"><a href="#Step-2-Install-software" class="headerlink" title="Step 2:Install software"></a>Step 2:Install software</h2><p><code>yum -y install targetcli</code></p>
+<h2 id="Step-3-Enter-the-targetcli-interface"><a href="#Step-3-Enter-the-targetcli-interface" class="headerlink" title="Step 3:Enter the targetcli interface"></a>Step 3:Enter the targetcli interface</h2><p><code>targetcli</code></p>
+<h3 id="Step-3-1-Configure-backstores"><a href="#Step-3-1-Configure-backstores" class="headerlink" title="Step 3.1: Configure backstores"></a>Step 3.1: Configure backstores</h3><p><code>/&gt; cd backstores</code><br>First thing is to configure a backstorage device from our previously configured lvm volume<br><code>/backstores&gt; block/ create block1 /dev/vgsan/lvsan</code></p>
+<h3 id="Step-3-2-Configure-IQN"><a href="#Step-3-2-Configure-IQN" class="headerlink" title="Step 3.2 :Configure IQN"></a>Step 3.2 :Configure IQN</h3><p>IQN is the unique identifier of each iSCSI-target. IQN follows strict naming convention. It is in iqn.YY-MM.[inverse-DNS]:[target name] format. We have to make to sure to follow this convention, otherwise iqn creation will fail. To create iqn, move to the iscsi section.<br><code>/backstores&gt; cd /iscsi</code><br><code>/iscsi&gt; create iqn.2017-09.com.example:rock</code></p>
+<h3 id="Step-3-3-Create-ACL"><a href="#Step-3-3-Create-ACL" class="headerlink" title="Step 3.3 : Create ACL"></a>Step 3.3 : Create ACL</h3><p>Create an ACL to allow “client1” to access this target<br><code>/iscsi/iqn.20....example:rock&gt; tpg1/acls/ create iqn.2017-09.com.example:client1</code></p>
+<h3 id="Step-3-4-Create-LUN"><a href="#Step-3-4-Create-LUN" class="headerlink" title="Step 3.4 : Create LUN"></a>Step 3.4 : Create LUN</h3><p><code>/iscsi/iqn.20....example:rock&gt; tpg1/luns/ create /backstores/block/block1</code><br>Now we will go back to targetcli root to get a whole picture of what we created so far.<br><img src="/resources/618a5fda45dd451e9d2a55279c1a497b.png" alt="faf9acc7bada5c4b0b7ecfd504892a72.png"><br>This completes the iscsi setup. Enter the command “exit” to come out of the targetcli prompt. this also saves the configuration.<br><code>/&gt; exit</code></p>
+<h2 id="Step-4-Service-amp-FW-Configuration"><a href="#Step-4-Service-amp-FW-Configuration" class="headerlink" title="Step 4: Service &amp; FW Configuration"></a>Step 4: Service &amp; FW Configuration</h2><p><code>systemctl start target</code><br><code>systemctl enable target</code><br><code>firewall-cmd --add-service=iscsi-target --zone=public --permanent</code><br><code>firewall-cmd --reload</code></p>
+<blockquote>
+<p>references<br><a target="_blank" rel="noopener" href="https://rmahmood.tech/configuring-iscsi-on-centos-systems/">https://rmahmood.tech/configuring-iscsi-on-centos-systems/</a></p>
+</blockquote>
+<h1 id="Initiator-Client-configuration"><a href="#Initiator-Client-configuration" class="headerlink" title="Initiator(Client) configuration:"></a>Initiator(Client) configuration:</h1><h2 id="Step-0-Check-the-disk-exists-1"><a href="#Step-0-Check-the-disk-exists-1" class="headerlink" title="Step 0: Check the disk exists"></a>Step 0: Check the disk exists</h2><p>use the “lsblk” command , so later we can see the difference<br><code>lsblk</code></p>
+<h2 id="Step-1-Install-Software"><a href="#Step-1-Install-Software" class="headerlink" title="Step 1: Install Software"></a>Step 1: Install Software</h2><p><code>yum -y install iscsi-initiator-utils</code></p>
+<h2 id="Step-2-Edit-or-View-InitiatorName"><a href="#Step-2-Edit-or-View-InitiatorName" class="headerlink" title="Step 2: Edit or View InitiatorName"></a>Step 2: Edit or View InitiatorName</h2><p><code>vi /etc/iscsi/initiatorname.iscsi</code><br>restart the iscsid service to configuration change to take effect.<br><code>systemctl restart iscsid</code></p>
+<h2 id="Step-3-Discover-iscsi-target"><a href="#Step-3-Discover-iscsi-target" class="headerlink" title="Step 3: Discover iscsi target"></a>Step 3: Discover iscsi target</h2><p><code>iscsiadm --mode discovery --type sendtargets --portal 192.168.1.56</code></p>
+<h2 id="Step-4-Log-into-the-target"><a href="#Step-4-Log-into-the-target" class="headerlink" title="Step 4: Log into the target"></a>Step 4: Log into the target</h2><p><code>iscsiadm --mode node --targetname iqn.2017-09.com.example:rock --portal 192.168.1.56:3260 --login</code></p>
+<blockquote>
+<p>Logout Target<br><code>iscsiadm --mode node --targetname iqn.2017-09.com.example:rock --portal 192.168.1.56:3260 --logout</code></p>
+</blockquote>
+<h2 id="Step-5-Specifically-check-the-iscsi-devices"><a href="#Step-5-Specifically-check-the-iscsi-devices" class="headerlink" title="Step 5: Specifically check the iscsi devices"></a>Step 5: Specifically check the iscsi devices</h2><p><code>lsblk</code></p>
+<blockquote>
+<p>reference</p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/" title="暗号化技術"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/09/30/Sort-Algorithm/Binary-Search/" title="Binary Search"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/';
+        
+        this.page.identifier = 'File_Sharing_Servers/Used_iSCSI_to_connect_storage';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

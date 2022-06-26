@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>SSL Certificates generation (On Linux use OpenSSL PKI) | Kenryu</title>
+  <meta name="description" content="[toc] Introduction Definitons PKI: Public Key InfrastructureSecurity architecture where trust is conveyed through the signature of a trusted CA.  CA: Certificate AuthorityEntity issuing certificates a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSL Certificates generation (On Linux use OpenSSL PKI)">
+<meta property="og:url" content="https://kenryu.cc/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="[toc] Introduction Definitons PKI: Public Key InfrastructureSecurity architecture where trust is conveyed through the signature of a trusted CA.  CA: Certificate AuthorityEntity issuing certificates a">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kenryu.cc/resources/1fa2a2eab1bc40278d446a4d051bf8e7.png">
+<meta property="article:published_time" content="2021-10-28T12:17:38.000Z">
+<meta property="article:modified_time" content="2022-06-26T03:37:47.258Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/1fa2a2eab1bc40278d446a4d051bf8e7.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.5px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.5px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.5px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Definitons"><span class="toc-number">2.</span> <span class="toc-text">Definitons</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Prerequisites"><span class="toc-number">3.</span> <span class="toc-text">Prerequisites</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Procedure"><span class="toc-number">4.</span> <span class="toc-text">Procedure</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-Edit-OpenSSL-conf-file"><span class="toc-number">4.1.</span> <span class="toc-text">0. Edit OpenSSL conf file</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Generate-Private-Key-amp-CSR"><span class="toc-number">4.2.</span> <span class="toc-text">1. Generate Private Key &amp; CSR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Signing"><span class="toc-number">4.3.</span> <span class="toc-text">2. Signing</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Other"><span class="toc-number">5.</span> <span class="toc-text">Other</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#File-Convert"><span class="toc-number">5.1.</span> <span class="toc-text">File Convert</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Certificate"><span class="toc-number">5.1.1.</span> <span class="toc-text">1. Certificate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Key"><span class="toc-number">5.1.2.</span> <span class="toc-text">2. Key</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CA%E3%81%A7%E7%99%BA%E8%A1%8C%E3%81%97%E3%81%9F%E3%82%B5%E3%83%BC%E3%83%90%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%82%92%E5%A4%B1%E5%8A%B9%E3%81%AB%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.</span> <span class="toc-text">CAで発行したサーバ証明書を失効にする方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Trouble-Shooting"><span class="toc-number">5.3.</span> <span class="toc-text">Trouble Shooting</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SSL Certificates generation (On Linux use OpenSSL PKI)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/" class="article-date">
+	  <time datetime="2021-10-28T12:17:38.000Z" itemprop="datePublished">2021-10-28</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Security/">Security</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 804(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 3(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>[toc]</p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p><img src="/resources/1fa2a2eab1bc40278d446a4d051bf8e7.png" alt="1449efa5e5facdd61663427a98e3a3a7.png"></p>
+<h1 id="Definitons"><a href="#Definitons" class="headerlink" title="Definitons"></a>Definitons</h1><ul>
+<li><p>PKI: Public Key Infrastructure<br>Security architecture where trust is conveyed through the signature of a trusted CA.</p>
+</li>
+<li><p>CA: Certificate Authority<br>Entity issuing certificates and CRLs.</p>
+</li>
+<li><p>TLS: 传输层安全协议 Transport Layer Security的缩写</p>
+</li>
+<li><p>SSL: 安全套接字层 Secure Socket Layer的缩写</p>
+</li>
+<li><p>KEY: 通常指私钥Private key。</p>
+</li>
+<li><p>CSR: 证书签名请求Certificate Signing Request的缩写，可以简单理解成公钥，生成证书时要把这个提交给权威的证书颁发机构。</p>
+</li>
+<li><p>CRT: 证书Certificate的缩写</p>
+</li>
+<li><p>CRL: 证书吊销列表 Certificate Revocation Lists的缩写。</p>
+</li>
+<li><p>X.509: 是一种证书格式。<br>对X.509证书来说，认证者总是CA或由CA指定的人，一份X.509证书是一些标准字段的集合，这些字段包含有关用户或设备及其相应公钥的信息。<br>X.509的证书文件，一般以.crt结尾，根据该文件的内容编码格式，可以分为以下二种格式：</p>
+</li>
+</ul>
+<p>t- PEM (Privacy Enhanced Mail)文本格式,以”—BEGIN—“开头, “—END—“结尾,内容是BASE64编码。Apache和Nginx服务器偏向于使用这种编码格式.</p>
+<p>t- DER (Distinguished Encoding Rules)二进制格式,不可读.Java和Windows服务器偏向于使用这种编码格式</p>
+<p>OpenSSL 相当于SSL的一个实现，如果把SSL规范看成OO中的接口，那么OpenSSL则认为是接口的实现。接口规范本身是安全没问题的，但是具体实现可能会有不完善的地方，比如之前的”心脏出血”漏洞，就是OpenSSL中的一个bug.</p>
+<h1 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h1><ul>
+<li>You have set up OpenSSL on your machine.</li>
+<li>You have established a process to sign trusted certificates. If you want to have the certificates signed by a certification authority, you have either established your own certification authority or you use an external certification authority. Alternatively, you can sign the generated certificate yourself.</li>
+</ul>
+<h1 id="Procedure"><a href="#Procedure" class="headerlink" title="Procedure"></a>Procedure</h1><h2 id="0-Edit-OpenSSL-conf-file"><a href="#0-Edit-OpenSSL-conf-file" class="headerlink" title="0. Edit OpenSSL conf file"></a>0. Edit OpenSSL <code>conf</code> file</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/pki/tls/</span><br><span class="line">cp openssl.cnf_org ca.conf</span><br><span class="line">vim ca.conf</span><br><span class="line"></span><br><span class="line">[ ca ]</span><br><span class="line">default_ca = CA_default #56行、何も変わらなかった</span><br><span class="line"></span><br><span class="line">[ CA_default ]</span><br><span class="line">...</span><br><span class="line">x509_extensions = usr_cert #76行、何も変わらなかった</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">[ req ] #123行から</span><br><span class="line">default_bits = 2048</span><br><span class="line"># 125 default_md = sha256 #この行をコメントアウト</span><br><span class="line">default_keyfile = privkey.pem</span><br><span class="line">distinguished_name = req_distinguished_name</span><br><span class="line">attributes = req_attributes</span><br><span class="line">x509_extensions = v3_ca</span><br><span class="line">req_extensions = v3_req #130この行を追記</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">[ usr_cert ]</span><br><span class="line">191 basicConstraints=CA:FALSE #コメントイン</span><br><span class="line">192 #basicConstraints=CA:TRUE #コメントアウト</span><br><span class="line"></span><br><span class="line">nsComment = &quot;OpenSSL Generated Certificate&quot; #212行、何も変わらなかった</span><br><span class="line"></span><br><span class="line">subjectKeyIdentifier = hash</span><br><span class="line">authorityKeyIdentifier=keyid,issuer:always #217行、最後の`:always`を追記</span><br><span class="line">subjectAltName = @alt_names #218行追記</span><br><span class="line"></span><br><span class="line">[ v3_req ]</span><br><span class="line">basicConstraints = CA:FALSE #244行、何も変わらなかった</span><br><span class="line">keyUsage = nonRepudiation, digitalSignature, keyEncipherment #245行、何も変わらなかった</span><br><span class="line">subjectAltName = @alt_names #246行、追記</span><br><span class="line"></span><br><span class="line">[alt_names] #このセクションは元々存在せず追記するもの</span><br><span class="line">DNS.1 = example.com</span><br><span class="line">DNS.2 = *.example.com</span><br><span class="line">IP.1 = 192.168.0.1</span><br><span class="line">IP.2 = 192.168.0.2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>CSRを作る際</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[req] req_extensions = v3_req</span><br><span class="line">↓</span><br><span class="line">[v3_req] subjectAltName = @alt_names</span><br><span class="line">↓</span><br><span class="line">[alt_names]</span><br><span class="line">DNS.1 = サーバのドメイン名</span><br><span class="line">IP.1 = サーバのIPアドレス</span><br></pre></td></tr></table></figure>
+<p>といった流れで参照します。この設定ファイルを -config で指定して CSR を作ると、CSR に X509v3 Subject Alternative Name:エントリが入ります。</p>
+<h2 id="1-Generate-Private-Key-amp-CSR"><a href="#1-Generate-Private-Key-amp-CSR" class="headerlink" title="1. Generate Private Key &amp; CSR"></a>1. Generate Private Key &amp; CSR</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -newkey rsa:2048 -nodes -sha256 \</span><br><span class="line">-subj &quot;/C=JP/ST=Saitama/L=Toda/O=Core Micro Systems, Inc./CN=cmsinc.co.jp/emailAddress=cjl@kensho.toda&quot; \</span><br><span class="line">-config server.conf \</span><br><span class="line">-keyout server.key \</span><br><span class="line">-out server.csr</span><br></pre></td></tr></table></figure>
+
+<p>View CSR details</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -noout -text -in /etc/pki/tls/server.csr</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-Signing"><a href="#2-Signing" class="headerlink" title="2. Signing"></a>2. Signing</h2><ul>
+<li>Submit the CSR to the certification authority.</li>
+<li>Alternatively, sign the certificate yourself.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">openssl ca -batch \</span><br><span class="line">-keyfile /etc/pki/CA/private/cakey.pem \</span><br><span class="line">-days 365 \</span><br><span class="line">-config ca.conf \</span><br><span class="line">-in server.csr \</span><br><span class="line">-out server.crt</span><br></pre></td></tr></table></figure>
+<p>View Certificate’s details</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -text -noout -in server.crt</span><br></pre></td></tr></table></figure>
+
+<h1 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h1><h2 id="File-Convert"><a href="#File-Convert" class="headerlink" title="File Convert"></a>File Convert</h2><h3 id="1-Certificate"><a href="#1-Certificate" class="headerlink" title="1. Certificate"></a>1. Certificate</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -in kvm-bmc.crt -out kvm-bmc.pem</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Key"><a href="#2-Key" class="headerlink" title="2. Key"></a>2. Key</h3><p>Public key or Private key</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -in kvm-bmc.key -out kvm-bmc-private.pem</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="CAで発行したサーバ証明書を失効にする方法"><a href="#CAで発行したサーバ証明書を失効にする方法" class="headerlink" title="CAで発行したサーバ証明書を失効にする方法"></a>CAで発行したサーバ証明書を失効にする方法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ca -revoke /etc/pki/CA/newcerts/xxx.pem #replacing the serial number</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Trouble-Shooting"><a href="#Trouble-Shooting" class="headerlink" title="Trouble Shooting"></a>Trouble Shooting</h2><h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs">OpenSSL Essentials: Working with SSL Certificates, Private Keys and CSRs
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.torico-corp.com/blog/chrome58-https-ssl-cert-san-error/">Chrome58で、HTTPSの自己証明書がNET::ERR_CERT_COMMON_NAME_INVALID になる場合の対応
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://pki-tutorial.readthedocs.io/en/latest/#">OpenSSL PKI Tutorial </a></li>
+<li><a target="_blank" rel="noopener" href="https://www.golinuxcloud.com/tutorial-pki-certificates-authority-ocsp/">OpenSSL Certificate Manager</a></li>
+</ol>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" title="Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/" title="Setup NFS client (nfs-utils)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/';
+        
+        this.page.identifier = 'Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

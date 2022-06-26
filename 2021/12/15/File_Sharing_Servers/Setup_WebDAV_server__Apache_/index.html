@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Setup WebDAV server (Apache) | Kenryu</title>
+  <meta name="description" content="Premise Installed Apache . Installed SSL&#x2F;TLS server Private key &amp; Certificate. Disabled SELinux. Allowed Firewall.  Enviroment1234567[root@rhel8 ~]# cat &#x2F;etc&#x2F;redhat-releaseRed Hat Enterprise Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Setup WebDAV server (Apache)">
+<meta property="og:url" content="https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="Premise Installed Apache . Installed SSL&#x2F;TLS server Private key &amp; Certificate. Disabled SELinux. Allowed Firewall.  Enviroment1234567[root@rhel8 ~]# cat &#x2F;etc&#x2F;redhat-releaseRed Hat Enterprise Linux">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://kenryu.cc/resources/c66e506b80dc4c7696a76e2d002a2f72.png">
+<meta property="og:image" content="https://kenryu.cc/resources/4c10e6a842fd4da0bb434d30eeeb9122.png">
+<meta property="og:image" content="https://kenryu.cc/resources/56645ff907b0427fb4dcbd2cc397ef12.png">
+<meta property="og:image" content="https://kenryu.cc/resources/d7271438ef97408e953e8cf3ee39777f.png">
+<meta property="article:published_time" content="2021-12-15T12:17:52.000Z">
+<meta property="article:modified_time" content="2022-06-26T03:35:08.469Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/c66e506b80dc4c7696a76e2d002a2f72.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.5px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.5px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.5px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Premise"><span class="toc-number">1.</span> <span class="toc-text">Premise</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Enviroment"><span class="toc-number">2.</span> <span class="toc-text">Enviroment</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Make-Share-Folder"><span class="toc-number">3.</span> <span class="toc-text">Make Share Folder</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Configure-WebDAV"><span class="toc-number">4.</span> <span class="toc-text">Configure WebDAV</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-new-config-file-follwing"><span class="toc-number">4.0.1.</span> <span class="toc-text">Create new config file follwing:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-WebDAV-User"><span class="toc-number">4.0.2.</span> <span class="toc-text">Create WebDAV User</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optional-Edit-Apache-run-user"><span class="toc-number">4.0.3.</span> <span class="toc-text">(Optional) Edit Apache run user</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Start-Apache"><span class="toc-number">4.0.4.</span> <span class="toc-text">Start Apache</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Optional-Configure-SMB"><span class="toc-number">5.</span> <span class="toc-text">(Optional) Configure SMB</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WebDAV-Client"><span class="toc-number">6.</span> <span class="toc-text">WebDAV Client</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows11"><span class="toc-number">6.1.</span> <span class="toc-text">Windows11</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%8D%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95"><span class="toc-number">7.</span> <span class="toc-text">免密码登录</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-File_Sharing_Servers/Setup_WebDAV_server__Apache_" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Setup WebDAV server (Apache)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/" class="article-date">
+	  <time datetime="2021-12-15T12:17:52.000Z" itemprop="datePublished">2021-12-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/#comments" class="article-comment-link">Comments</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 343(words)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Premise"><a href="#Premise" class="headerlink" title="Premise"></a>Premise</h1><ul>
+<li>Installed <strong>Apache</strong> .</li>
+<li>Installed SSL/TLS server <strong>Private key &amp; Certificate</strong>.</li>
+<li>Disabled SELinux.</li>
+<li>Allowed Firewall.</li>
+</ul>
+<h1 id="Enviroment"><a href="#Enviroment" class="headerlink" title="Enviroment"></a>Enviroment</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@rhel8 ~]# cat /etc/redhat-release</span><br><span class="line">Red Hat Enterprise Linux release 8.5 (Ootpa)</span><br><span class="line">[root@rhel8 ~]# httpd -v</span><br><span class="line">Server version: Apache/2.4.37 (Red Hat Enterprise Linux)</span><br><span class="line">Server built: Oct 26 2021 14:18:06</span><br><span class="line">[root@rhel8 ~]# smbstatus --version</span><br><span class="line">Version 4.14.5</span><br></pre></td></tr></table></figure>
+
+<h1 id="Make-Share-Folder"><a href="#Make-Share-Folder" class="headerlink" title="Make Share Folder"></a>Make Share Folder</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /share</span><br><span class="line">chmod -R 775 /share</span><br><span class="line">chown -R apache. /share</span><br></pre></td></tr></table></figure>
+
+<h1 id="Configure-WebDAV"><a href="#Configure-WebDAV" class="headerlink" title="Configure WebDAV"></a>Configure WebDAV</h1><h3 id="Create-new-config-file-follwing"><a href="#Create-new-config-file-follwing" class="headerlink" title="Create new config file follwing:"></a>Create new config file follwing:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf.d/webdav.conf</span><br><span class="line"></span><br><span class="line"># create new</span><br><span class="line">&lt;IfModule mod_dav_fs.c&gt;</span><br><span class="line">DAVLockDB /var/lib/dav/lockdb</span><br><span class="line">&lt;/IfModule&gt;</span><br><span class="line">Alias /share /share</span><br><span class="line">&lt;Location /share&gt;</span><br><span class="line">DAV On</span><br><span class="line">SSLRequireSSL</span><br><span class="line">Options None</span><br><span class="line">AuthType Basic</span><br><span class="line">AuthName WebDAV</span><br><span class="line">AuthUserFile /etc/httpd/conf/.htpasswd</span><br><span class="line">&lt;RequireAny&gt;</span><br><span class="line">Require method GET POST OPTIONS</span><br><span class="line">Require valid-user</span><br><span class="line">&lt;/RequireAny&gt;</span><br><span class="line">&lt;/Location&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Create-WebDAV-User"><a href="#Create-WebDAV-User" class="headerlink" title="Create WebDAV User"></a>Create WebDAV User</h3><blockquote>
+<p>Note: This user is not your operating system’s user.</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">htpasswd -c /etc/httpd/conf/.htpasswd &lt;InputYourUserName&gt;</span><br><span class="line">New password: &lt;InputYourPassword&gt;</span><br><span class="line">Re-type new password: &lt;InputYourPassword&gt;</span><br><span class="line">Adding password for user &lt;HereIsYourUserName&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Optional-Edit-Apache-run-user"><a href="#Optional-Edit-Apache-run-user" class="headerlink" title="(Optional) Edit Apache run user"></a><del>(Optional) Edit Apache run user</del></h3><p>It doesn’t work.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf/httpd.conf</span><br><span class="line"></span><br><span class="line">69 #User apache</span><br><span class="line">70 #Group apache</span><br><span class="line">71 User cjl</span><br><span class="line">72 Group cjl</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Start-Apache"><a href="#Start-Apache" class="headerlink" title="Start Apache"></a>Start Apache</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable --now httpd</span><br></pre></td></tr></table></figure>
+
+<h1 id="Optional-Configure-SMB"><a href="#Optional-Configure-SMB" class="headerlink" title="(Optional) Configure SMB"></a>(Optional) Configure SMB</h1><p>When we want SMB to coexist with WebDAV.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/samba/smb.conf</span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">workgroup = WORKGROUP</span><br><span class="line">security=user</span><br><span class="line">map to guest =Bad User</span><br><span class="line"></span><br><span class="line">#添加名为share的共享文件夹</span><br><span class="line">[share]</span><br><span class="line">comment = share all</span><br><span class="line">path = /share</span><br><span class="line">browseable = yes</span><br><span class="line">public = yes</span><br><span class="line">writable = yes</span><br><span class="line">create mode = 0744</span><br><span class="line">force create mode = 0744</span><br><span class="line">directory mode = 0744</span><br><span class="line">force directory mode = 0744</span><br><span class="line">force user = apache</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart smb</span><br></pre></td></tr></table></figure>
+
+<h1 id="WebDAV-Client"><a href="#WebDAV-Client" class="headerlink" title="WebDAV Client"></a>WebDAV Client</h1><h2 id="Windows11"><a href="#Windows11" class="headerlink" title="Windows11"></a>Windows11</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net use W: https://192.168.64.84:10443/share /user:cjh Passw0rd</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注：此时该使用率为 C 盘使用率</p>
+</blockquote>
+<p><img src="/resources/c66e506b80dc4c7696a76e2d002a2f72.png" alt="93f97ccc15849f38f8bc1e02178d4b98.png"></p>
+<p><img src="/resources/4c10e6a842fd4da0bb434d30eeeb9122.png" alt="48b98cb67ab001de8adead97de6605f4.png"></p>
+<p><img src="/resources/56645ff907b0427fb4dcbd2cc397ef12.png" alt="0e185d4f4e020542ea4470cbb2879782.png"><br><img src="/resources/d7271438ef97408e953e8cf3ee39777f.png" alt="91c59f85f40de20ac4df8b55650b5d99.png"><br>]</p>
+<h1 id="免密码登录"><a href="#免密码登录" class="headerlink" title="免密码登录"></a>免密码登录</h1><blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/mod/mod_dav.html">https://httpd.apache.org/docs/2.4/mod/mod_dav.html</a></p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf.d/webdav.conf</span><br><span class="line"></span><br><span class="line"># create new</span><br><span class="line">DAVLockDB /var/lib/dav/lockdb</span><br><span class="line">Alias /share /share</span><br><span class="line">&lt;Directory &quot;/share&quot;&gt;</span><br><span class="line">Require all granted</span><br><span class="line">Dav On</span><br><span class="line"></span><br><span class="line">AuthType Basic</span><br><span class="line">AuthName DAV</span><br><span class="line">AuthUserFile &quot;user.passwd&quot;</span><br><span class="line"></span><br><span class="line">&lt;LimitExcept GET POST OPTIONS&gt;</span><br><span class="line">Require user admin</span><br><span class="line">&lt;/LimitExcept&gt;</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/" title="Postfix Dovecot MySQL Mail Server"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" title="Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/';
+        
+        this.page.identifier = 'File_Sharing_Servers/Setup_WebDAV_server__Apache_';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
