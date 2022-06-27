@@ -91,7 +91,7 @@ JoplinMD2HexoMD $note_body_joplin_md $note_body_hexo_md
 GetRscForJoplinMDByAPI $note_body_joplin_md $hexo_rsc_dir
 
 # file name
-fileName=`egrep -o "title\"\:\".*\"\,\"" $note_title_json | cut -c9- | sed -e 's/\",\"$//g' -e 's/[ -・]/_/g' | awk '{print $0 ".md"}'`
+fileName=`egrep -o "title\"\:\".*\"\,\"" $note_title_json | cut -c9- | sed -e 's/\",\"$//g' -e 's/[ ]/_/g' | awk '{print $0 ".md"}'`
 
 echo --- > $hexo_tmp_dir/$fileName
 # title
