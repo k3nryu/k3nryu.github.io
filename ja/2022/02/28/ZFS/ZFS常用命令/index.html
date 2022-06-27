@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ZFS常用命令 | Kenryu</title>
+  <meta name="description" content="1. 创建pool和ZFS文件系统 创建名为 “tank” 的存储池 (type: ,mirror,raidz,raidz2,raidz3) 1# zpool create tank &lt;type&gt; sdb sdc sdd sde  注意： Linux的大多数情况下，sda，sdb，sdc并没有按照slot的顺序排列，是乱序的。  1find -L &#x2F;dev&#x2F;disk&#x2F;by-id -sa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZFS常用命令">
+<meta property="og:url" content="https://kenryu.cc/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="1. 创建pool和ZFS文件系统 创建名为 “tank” 的存储池 (type: ,mirror,raidz,raidz2,raidz3) 1# zpool create tank &lt;type&gt; sdb sdc sdd sde  注意： Linux的大多数情况下，sda，sdb，sdc并没有按照slot的顺序排列，是乱序的。  1find -L &#x2F;dev&#x2F;disk&#x2F;by-id -sa">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2022-02-28T06:52:32.000Z">
+<meta property="article:modified_time" content="2022-06-27T16:26:33.526Z">
+<meta property="article:author" content="Kenryu">
+<meta property="article:tag" content="Server">
+<meta property="article:tag" content="ZFS">
+<meta property="article:tag" content="Storage">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="検索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="なんのお探しでしょうか?" x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">ホーム</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">アーカイブ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">カテゴリー</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">タグ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">プロジェクト</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">リンク</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">私について</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">初めはして</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">カテゴリー</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.33px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.33px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.33px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.67px;">Server</a> <a href="/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/tags/linux/" style="font-size: 13px;">linux</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">5月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">2月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">12月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">11月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">10月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">5月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">4月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">9月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">索引</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BApool%E5%92%8CZFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">1. 创建pool和ZFS文件系统</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">2. 设置属性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-ZFS-snapshot"><span class="toc-number">3.</span> <span class="toc-text">3. ZFS snapshot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-ZFS-Clone"><span class="toc-number">4.</span> <span class="toc-text">4. ZFS Clone</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-ZFS-send-receive"><span class="toc-number">5.</span> <span class="toc-text">5. ZFS send&#x2F;receive</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-ZFS-%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB"><span class="toc-number">6.</span> <span class="toc-text">6. ZFS 数据迁移</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">7. 设备管理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-ZFS-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="toc-number">8.</span> <span class="toc-text">8. ZFS 权限管理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E5%85%B6%E5%AE%83%E5%91%BD%E4%BB%A4"><span class="toc-number">9.</span> <span class="toc-text">9. 其它命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">10.</span> <span class="toc-text">参考</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ZFS/ZFS常用命令" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ZFS常用命令
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="article-date">
+	  <time datetime="2022-02-28T06:52:32.000Z" itemprop="datePublished">2022-02-28</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/ZFS/">ZFS</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/Server/" rel="tag">Server</a>, <a class="article-tag-link-link" href="/tags/Storage/" rel="tag">Storage</a>, <a class="article-tag-link-link" href="/tags/ZFS/" rel="tag">ZFS</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#comments" class="article-comment-link">コメント</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">文字数: 1.2k(文字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">読む時間約: 5(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="1-创建pool和ZFS文件系统"><a href="#1-创建pool和ZFS文件系统" class="headerlink" title="1. 创建pool和ZFS文件系统"></a>1. 创建pool和ZFS文件系统</h1><ul>
+<li><p>创建名为 “tank” 的存储池 (type: ,mirror,raidz,raidz2,raidz3)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool create tank &lt;type&gt; sdb sdc sdd sde</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意： Linux的大多数情况下，sda，sdb，sdc并没有按照slot的顺序排列，是乱序的。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -L /dev/disk/by-id -samefile /dev/sda</span><br></pre></td></tr></table></figure></li>
+<li><p>向池中添加更多空间</p>
+<blockquote>
+<p>池(pool)中的其他空间(vdev)要相同type，相同数量。否则出现”mismatched replication level”错误。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool add tank mirror sdf sdg</span><br></pre></td></tr></table></figure></li>
+<li><p>创建文件系统，挂载在 /export/home 下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># zfs create tank/home</span><br><span class="line"># df -Th</span><br><span class="line"># zfs set mountpoint=/export/home tank/home</span><br></pre></td></tr></table></figure></li>
+<li><p>为多个用户创建起始目录<br>t&gt; 请注意：由于继承而自动挂载在 /export/home/{ahrens,bonwick,billm} 下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># zfs create tank/home/ahrens</span><br><span class="line"># zfs create tank/home/bonwick</span><br><span class="line"># zfs create tank/home/billm</span><br></pre></td></tr></table></figure></li>
+<li><p>修改文件系统名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs rename tank/home/ahrens tank/home/nahrens</span><br></pre></td></tr></table></figure></li>
+<li><p>删除文件系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs destroy -Rf tank/fs</span><br></pre></td></tr></table></figure></li>
+<li><p>修改存储池的名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># zpool export tank</span><br><span class="line"></span><br><span class="line"># zpool import tank newpool</span><br></pre></td></tr></table></figure>
+<h1 id="2-设置属性"><a href="#2-设置属性" class="headerlink" title="2. 设置属性"></a>2. 设置属性</h1></li>
+<li><p>自动以 NFS 方式共享该文件系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs set sharenfs=rw tank/home</span><br></pre></td></tr></table></figure></li>
+<li><p>对文件系统中所有数据启用压缩</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs set compression=on tank</span><br></pre></td></tr></table></figure></li>
+<li><p>将用户 A的最大空间限制为 10g</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs set quota=10g tank/home/userA</span><br></pre></td></tr></table></figure></li>
+<li><p>保证用户 B有 20g 的预留空间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs set reservation=20g tank/home/userB</span><br></pre></td></tr></table></figure></li>
+<li><p>可通过命令查询文件系统的所有属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs get all tank/home</span><br></pre></td></tr></table></figure></li>
+<li><p>可通过命令查询存储池的所有属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool get all tank</span><br></pre></td></tr></table></figure></li>
+<li><p>大多数属性可通过继承方式自动设置 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs inherit &lt;property&gt; tank/home/eschrock</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="3-ZFS-snapshot"><a href="#3-ZFS-snapshot" class="headerlink" title="3. ZFS snapshot"></a>3. ZFS snapshot</h1><ul>
+<li><p>文件系统的只读副本<br>即时创建、数量不限,不占用额外空间 - 块仅在发生更改时才会被复制<br>可通过每个文件系统根目录下的 .zfs/snapshot 访问<br>使用户可在没有系统管理员介入的情况下恢复文件<br>对用户Ａ 的起始目录执行快照捕获</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs snapshot tank/home/usera@tuesday</span><br></pre></td></tr></table></figure></li>
+<li><p>回滚到前一个快照</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs rollback tank/home/usera@monday</span><br></pre></td></tr></table></figure></li>
+<li><p>查看星期三的 foo.c 版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /tank/home/usera/.zfs/snapshot/wednesday/foo.c</span><br></pre></td></tr></table></figure></li>
+<li><p>删除快照</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs destroy -R tank/home/usera@monday</span><br></pre></td></tr></table></figure>
+<h1 id="4-ZFS-Clone"><a href="#4-ZFS-Clone" class="headerlink" title="4. ZFS Clone"></a>4. ZFS Clone</h1></li>
+<li><p>快照的可写副本<br>即时创建、数量不限<br>存储大部分为共享数据的众多专用副本的理想方法<br>软件安装<br>工作区<br>无盘客户机</p>
+</li>
+<li><p>创建 OpenSolaris 源代码的克隆</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs clone tank/solaris@monday tank/ws/lori/fix</span><br></pre></td></tr></table></figure>
+<h1 id="5-ZFS-send-receive"><a href="#5-ZFS-send-receive" class="headerlink" title="5. ZFS send/receive"></a>5. ZFS send/receive</h1></li>
+<li><p>基于快照点<br>完整备份：任何快照<br>增量备份：任何快照增量<br>速度很快 - 开销与更改的数据成比例<br>非常高效，可执行远程复制</p>
+</li>
+<li><p>生成完整备份</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs send tank/fs@A &gt;/backup/A    </span><br></pre></td></tr></table></figure></li>
+<li><p>生成增量备份</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs send -i tank/fs@A tank/fs@B &gt;/backup/B-A</span><br></pre></td></tr></table></figure></li>
+<li><p>远程复制：每分钟发送一次增量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs send -i tank/fs@11:31 tank/fs@11:32 | ssh host zfs receive -d /tank/fs</span><br></pre></td></tr></table></figure>
+<h1 id="6-ZFS-数据迁移"><a href="#6-ZFS-数据迁移" class="headerlink" title="6. ZFS 数据迁移"></a>6. ZFS 数据迁移</h1></li>
+<li><p>独立于主机的磁盘格式<br>将服务器从 x86 更改为 SPARC，也能运行<br>自适应字节存储顺序 (Adaptive endianness)：在两个平台上都无需额外成本<br>写入总是使用本地字节存储顺序 (native endianness)，在块指针中设置位<br>仅当主机字节存储顺序 (endianness) != 块字节存储顺序时，才会针对读取进行字节交换
+ </p>
+</li>
+<li><p>ZFS 负责所有处理<br>无需考虑设备路径、配置文件、/etc/vfstab 等等<br>ZFS 会在必要时进行共享/取消共享、挂载/取消挂载等等</p>
+</li>
+<li><p>从旧服务器上导出池tank</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">old# zpool export tank</span><br></pre></td></tr></table></figure></li>
+<li><p>物理移动磁盘并将池导入到新服务器中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new# zpool import tank</span><br></pre></td></tr></table></figure>
+<h1 id="7-设备管理"><a href="#7-设备管理" class="headerlink" title="7. 设备管理"></a>7. 设备管理</h1></li>
+<li><p>添加/替换新设备 (type: ,mirror,raidz,raidz2,raidz3)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># zpool add tank &lt;type&gt; c0t2d0 c0t3d0 c0t4d0</span><br><span class="line"></span><br><span class="line"># zpool replace tank c0t1d0 c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>添加/移除镜像设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zpool attach tank c0t1d0 c0t2d0</span><br><span class="line"># zpool detach tank c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>将设备停止或手工启动 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zpool offline tank c0t2d0</span><br><span class="line"># zpool online tank c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>查看存储池当前状态和 I/O 状况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zpool status -v tank</span><br><span class="line"># zpool iostat tank 1</span><br></pre></td></tr></table></figure></li>
+<li><p>添加热备设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool add tank spare c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>指定热备启动/停止热备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zpool replace tank c0t1d0 c0t2d0</span><br><span class="line"># zpool detach tank c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>将热备设备删除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool remove tank c0t2d0</span><br></pre></td></tr></table></figure></li>
+<li><p>添加/删除独立的日志设备（性能改善）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zpool add tank log c0t3d0</span><br><span class="line"># zpool remove tank c0t3d0</span><br></pre></td></tr></table></figure>
+<h1 id="8-ZFS-权限管理"><a href="#8-ZFS-权限管理" class="headerlink" title="8. ZFS 权限管理"></a>8. ZFS 权限管理</h1></li>
+<li><p>可以将zfs(1M) 的管理权限分派给普通用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">      &#x27;zfs allow&#x27;</span><br><span class="line">      &#x27;zfs unallow&#x27;</span><br></pre></td></tr></table></figure></li>
+<li><p>将权限授予一个普通用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs allow marks create,snapshot tank/marks</span><br></pre></td></tr></table></figure></li>
+<li><p>将指定权限回收</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs unallow marks create,snapshot tank/marks</span><br></pre></td></tr></table></figure></li>
+<li><p>查看文件系统当前的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs allow tank/marks</span><br></pre></td></tr></table></figure>
+<h1 id="9-其它命令"><a href="#9-其它命令" class="headerlink" title="9. 其它命令"></a>9. 其它命令</h1></li>
+<li><p>显示存储池所有操作历史记录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool history tank</span><br></pre></td></tr></table></figure></li>
+<li><p>升级存储池到指定 SPA 版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zpool upgrade -V &lt;version&gt; tank</span><br></pre></td></tr></table></figure></li>
+<li><p>升级文件系统到指定 ZPL 版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># zfs upgrade -V &lt;version&gt; tank/fs</span><br></pre></td></tr></table></figure></li>
+<li><p>手工挂载/卸载文件系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># zfs mount -a</span><br><span class="line"># zfs unmount tank/fs</span><br><span class="line"># zfs unmount -a</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://chegva.com/1337.html">ZFS常用命令</a></li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/" title="Postfix Dovecot MySQL Mail Server"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;次へ</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/" title="Setup WebDAV server (Apache)"><span>戻る&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="索引" role="button">
+        <span>[&nbsp;</span><span>索引</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '記事',
+            PAGES: 'ページ',
+            CATEGORIES: 'カテゴリ',
+            TAGS: 'タグ',
+            UNTITLED: '(無名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/';
+        
+        this.page.identifier = 'ZFS/ZFS常用命令';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
