@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>搭建OpenVPN Over FRP | Kenryu</title>
+  <meta name="description" content="前言在学校或者公司外部的，或者出差在外地，想访问学校或者公司内网的服务器，但是没用网络管理员的权限，或者网络管理员不配合设定的情况下，如何突破NAT网络防火墙，达到访问内部网络。这是搭建这个服务的目的。 关于frp  A fast reverse proxy to help you expose a local server behind a NAT or firewall to the inte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建OpenVPN Over FRP">
+<meta property="og:url" content="https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="前言在学校或者公司外部的，或者出差在外地，想访问学校或者公司内网的服务器，但是没用网络管理员的权限，或者网络管理员不配合设定的情况下，如何突破NAT网络防火墙，达到访问内部网络。这是搭建这个服务的目的。 关于frp  A fast reverse proxy to help you expose a local server behind a NAT or firewall to the inte">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://kenryu.cc/resources/eade905969e34b7f9deed26d8a9c6dd0.png">
+<meta property="article:published_time" content="2021-10-31T05:08:47.000Z">
+<meta property="article:modified_time" content="2022-06-27T16:16:08.863Z">
+<meta property="article:author" content="Kenryu">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="network">
+<meta property="article:tag" content="vpn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/eade905969e34b7f9deed26d8a9c6dd0.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="検索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="なんのお探しでしょうか?" x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">ホーム</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">アーカイブ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">カテゴリー</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">タグ</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">プロジェクト</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">リンク</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">私について</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-中文">
+          <a href="https://kenryu.cc/zh">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">中文</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">初めはして</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">カテゴリー</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.5px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.5px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.5px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/linux/" style="font-size: 13px;">linux</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">5月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">12月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">11月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">10月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">5月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">4月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">9月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">索引</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0-demo%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text">0. demo环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E9%83%A8%E7%BD%B2Reverse-Proxy-Server"><span class="toc-number">3.</span> <span class="toc-text">1. 部署Reverse Proxy Server</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E9%83%A8%E7%BD%B2frpc"><span class="toc-number">3.1.</span> <span class="toc-text">1.1 部署frpc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-1-%E8%A7%A3%E5%8E%8B%E5%AE%89%E8%A3%85%E5%8C%85"><span class="toc-number">3.2.</span> <span class="toc-text">1.1.1 解压安装包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-2-%E9%85%8D%E7%BD%AE%E4%BB%A5%E5%8F%8A%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.3.</span> <span class="toc-text">1.1.2 配置以及启动服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-3-%E9%83%A8%E7%BD%B2openvpn"><span class="toc-number">3.4.</span> <span class="toc-text">1.1.3 部署openvpn</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%90%AD%E5%BB%BAProxy-Server"><span class="toc-number">4.</span> <span class="toc-text">2. 搭建Proxy Server</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%8C%85"><span class="toc-number">4.1.</span> <span class="toc-text">2.1 下载安装包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E8%A7%A3%E5%8E%8B%E5%AE%89%E8%A3%85%E5%8C%85"><span class="toc-number">4.2.</span> <span class="toc-text">2.2 解压安装包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.3.</span> <span class="toc-text">2.3 配置文件以及启动服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E9%85%8D%E7%BD%AE%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">4.4.</span> <span class="toc-text">2.4 配置防火墙</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%B5%8B%E8%AF%95%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">3. 测试以及使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%90%8E%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%EF%BC%9A"><span class="toc-number">5.1.</span> <span class="toc-text">3.1 开启服务后进行端口扫描：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%951"><span class="toc-number">5.1.1.</span> <span class="toc-text">方法1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%952"><span class="toc-number">5.1.2.</span> <span class="toc-text">方法2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8"><span class="toc-number">5.2.</span> <span class="toc-text">3.2 开始使用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Network/搭建OpenVPN_Over_FRP" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      搭建OpenVPN Over FRP
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/" class="article-date">
+	  <time datetime="2021-10-31T05:08:47.000Z" itemprop="datePublished">2021-10-31</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Network/">Network</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/linux/" rel="tag">linux</a>, <a class="article-tag-link-link" href="/tags/network/" rel="tag">network</a>, <a class="article-tag-link-link" href="/tags/vpn/" rel="tag">vpn</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/#comments" class="article-comment-link">コメント</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">文字数: 1.4k(文字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">読む時間約: 5(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在学校或者公司外部的，或者出差在外地，想访问学校或者公司内网的服务器，但是没用网络管理员的权限，或者网络管理员不配合设定的情况下，如何突破NAT网络防火墙，达到访问内部网络。这是搭建这个服务的目的。</p>
+<p>关于frp</p>
+<blockquote>
+<p>A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet. <a target="_blank" rel="noopener" href="https://github.com/fatedier/frp">https://github.com/fatedier/frp</a></p>
+</blockquote>
+<p>它是一个反向代理程序。它可以将借助存在于公网上的代理服务器，中继 NAT 和防火墙后面的服务，实现内网穿透（NAT Traversal、ファイアウォール透過＆貫通）的一种手段。</p>
+<p><img src="/resources/eade905969e34b7f9deed26d8a9c6dd0.png" alt="Openvpn over frp.png"></p>
+<p>在接下来搭建好的Proxy服务器中，sockstat命令（摘录；考虑隐私公网IP随便写的）中可以了解到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[2.5.2-RELEASE][root@Proxy]/root: sockstat | grep frp</span><br><span class="line"></span><br><span class="line"># 监听7000端口</span><br><span class="line">root frps 67615 3 tcp46 *:7000 *:*</span><br><span class="line"># 在内网的Proxy Server经过路由NAT转换之后的公网IP与Proxy Server进行了连接</span><br><span class="line">root frps 67615 11 tcp4 110.120.119.1:7000 119.120.110.1:61662</span><br><span class="line"># 监听6000端口（SSH服务）</span><br><span class="line">root frps 67615 10 tcp46 *:6000 *:*</span><br><span class="line"># 接受了客户端的连接</span><br><span class="line">root frps 67615 14 tcp4 110.120.119.1:6000 192.168.10.10:68623</span><br><span class="line"># 监听1194端口（OpenVPN服务）</span><br><span class="line">root frps 67615 9 tcp46 *:1194 *:*</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Client与Proxy建立连接，Reverse Proxy也与Proxy建立连接，通过这种围魏救赵的方式实现Client与Reverse Proxy建立连接。</p>
+<p>以下是使用frp反向代理openvpn突破防火墙的一个demo。</p>
+<h1 id="0-demo环境"><a href="#0-demo环境" class="headerlink" title="0. demo环境"></a>0. demo环境</h1><table>
+<thead>
+<tr>
+<th>Host</th>
+<th>OS</th>
+<th>Service</th>
+<th>IP</th>
+<th>Allow Port (Inbound)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reverse Proxy Server</td>
+<td>CentOS Linux release 8.4.2105</td>
+<td>frpc (frp_0.38.0_linux_amd64), openvpn</td>
+<td>P:172.16.10.10 (G:119.120.110.1)</td>
+<td>/</td>
+</tr>
+<tr>
+<td>Proxy Server</td>
+<td>FreeBSD 12.2-STABLE</td>
+<td>frps (frp_0.38.0_freebsd_amd64)</td>
+<td>110.120.119.1</td>
+<td>#7000(from RPS) &amp; #6000(from client) &amp; #1194(from client)</td>
+</tr>
+<tr>
+<td>Client</td>
+<td>macOS</td>
+<td>openvpn-client</td>
+<td>192.168.10.10</td>
+<td>/</td>
+</tr>
+</tbody></table>
+<p><em>OS基本可以无视，因为不管是frp或者OpenVPN基本全平台适配</em></p>
+<h1 id="1-部署Reverse-Proxy-Server"><a href="#1-部署Reverse-Proxy-Server" class="headerlink" title="1. 部署Reverse Proxy Server"></a>1. 部署Reverse Proxy Server</h1><p>在想要突破的内网环境（公司，学校）的机器上安装必要的frp，和其他服务这里用openvpn演示。防火墙策略允许outbound。</p>
+<h2 id="1-1-部署frpc"><a href="#1-1-部署frpc" class="headerlink" title="1.1 部署frpc"></a>1.1 部署frpc</h2><p>目前可以在 Github 的 Release 页面中下载到最新版本的二进制文件。 <a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases/">https://github.com/fatedier/frp/releases/</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/fatedier/frp/releases/download/v0.38.0/frp_0.38.0_linux_amd64.tar.gz</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-1-1-解压安装包"><a href="#1-1-1-解压安装包" class="headerlink" title="1.1.1 解压安装包"></a>1.1.1 解压安装包</h2><p>解压缩下载的压缩包， 放置在任意目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf frp_0.38.0_linux_amd64.tar.gz</span><br><span class="line">cd frp_0.38.0_linux_amd64</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里（Reverse Proxy Server）上只用到frpc相关的文件，frps用不到。</p>
+</blockquote>
+<h2 id="1-1-2-配置以及启动服务"><a href="#1-1-2-配置以及启动服务" class="headerlink" title="1.1.2 配置以及启动服务"></a>1.1.2 配置以及启动服务</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@ServerC /]# cat frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = 110.120.119.1 # Proxy Server的公网IP</span><br><span class="line">server_port = 7000 # Proxy Server上的frps监听frpc连接的端口</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 127.0.0.1 # 指向本机IP</span><br><span class="line">local_port = 22 # 指向本机的SSH端口</span><br><span class="line">remote_port = 6000 # Proxy Server监听的端口。之后Client可以通过访问Proxy Server的6000端口，端口转发到上面的本机端口</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code> ./frpc -c ./frpc.ini &amp;</code> 启动服务端。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@cjl-docker frp_0.37.1_linux_amd64]# ./frpc -c ./frpc.ini</span><br><span class="line">2021/08/25 00:00:40 [I] [service.go:304] [a0e6112664ab2527] login to server success, get run id [a0e6112664ab2527], server udp port [0]</span><br><span class="line">2021/08/25 00:00:40 [I] [proxy_manager.go:144] [a0e6112664ab2527] proxy added: [ssh]</span><br><span class="line">2021/08/25 00:00:40 [I] [control.go:180] [a0e6112664ab2527] [ssh] start proxy success</span><br></pre></td></tr></table></figure>
+<p>如果需要在后台长期运行，建议结合其他工具使用，例如 systemd 和 supervisor。</p>
+<h2 id="1-1-3-部署openvpn"><a href="#1-1-3-部署openvpn" class="headerlink" title="1.1.3 部署openvpn"></a>1.1.3 部署openvpn</h2><p>这里不做演示了，详细请参阅搭建openvpn教程。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.gingerdoc.com/tutorials/how-to-set-up-and-configure-an-openvpn-server-on-centos-8">如何在 CentOS 8 上设置和配置 OpenVPN 服务器
+</a></p>
+</blockquote>
+<h1 id="2-搭建Proxy-Server"><a href="#2-搭建Proxy-Server" class="headerlink" title="2. 搭建Proxy Server"></a>2. 搭建Proxy Server</h1><p>在用有公网IP的机器安装frps服务，设定好防火墙。<br>这里用的是FreeBSD，公网IP为110.120.119.1，防火墙策略为：允许来自Reverse Proxy Server公网IP的连接，和允许来自Client的连接。</p>
+<h2 id="2-1-下载安装包"><a href="#2-1-下载安装包" class="headerlink" title="2.1 下载安装包"></a>2.1 下载安装包</h2><p>目前可以在 Github 的 Release 页面中下载到最新版本的客户端和服务端二进制文件，所有文件被打包在一个压缩包中。 <a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases/tag/v0.37.1">https://github.com/fatedier/frp/releases/tag/v0.37.1</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/fatedier/frp/releases/download/v0.37.1/frp_0.37.1_linux_amd64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-解压安装包"><a href="#2-2-解压安装包" class="headerlink" title="2.2 解压安装包"></a>2.2 解压安装包</h2><p>解压缩下载的压缩包，放置在任意目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf frp_0.37.1_linux_amd64.tar.gz</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Proxy只用到frps。</p>
+</blockquote>
+<h2 id="2-3-配置文件以及启动服务"><a href="#2-3-配置文件以及启动服务" class="headerlink" title="2.3 配置文件以及启动服务"></a>2.3 配置文件以及启动服务</h2><p>编写配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat frp_0.37.1_linux_amd64/frps.ini</span><br><span class="line">---</span><br><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code> ./frps -c ./frps.ini &amp;</code> 启动服务端，之后再通过 <code>ss -ntul</code> 查看是否开启监听7000端口。如果需要在后台长期运行，建议结合其他工具使用，例如 systemd 和 supervisor。</p>
+<h2 id="2-4-配置防火墙"><a href="#2-4-配置防火墙" class="headerlink" title="2.4 配置防火墙"></a>2.4 配置防火墙</h2><ul>
+<li>策略1：让Proxy的7000端口暴露在公网上，才能让Reverse Proxy经行握手连接。</li>
+<li>策略2：6000端口要暴露给Client。</li>
+</ul>
+<blockquote>
+<p>具体设置的话要根据情况不同，如果Proxy或者Client也经过NAT，路由或者防火墙的话，除了本机防火之外，路由器的防火墙也要设定。</p>
+</blockquote>
+<h1 id="3-测试以及使用"><a href="#3-测试以及使用" class="headerlink" title="3. 测试以及使用"></a>3. 测试以及使用</h1><h2 id="3-1-开启服务后进行端口扫描："><a href="#3-1-开启服务后进行端口扫描：" class="headerlink" title="3.1 开启服务后进行端口扫描："></a>3.1 开启服务后进行端口扫描：</h2><p>先开启frps，再开启frpc。当frpc连接上frps的时候，frps的6000号端口才会开启了监听。</p>
+<h3 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h3><p>在线端口扫描<br><a target="_blank" rel="noopener" href="https://www.cman.jp/network/support/go_port.cgi">https://www.cman.jp/network/support/go_port.cgi</a></p>
+<h3 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h3><p>通过nmap工具端口扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nmap -p 7000 110.120.119.1</span><br><span class="line">nmap -p 6000 110.120.119.1</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-开始使用"><a href="#3-2-开始使用" class="headerlink" title="3.2 开始使用"></a>3.2 开始使用</h2><p>Server A或者任意设备通过SSH访问Server B的6000端口，即可转发到Server C的22端口！</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh 110.120.119.1 -p 6000</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>内网服务器上部署frpc服务（可以设置为systemctl开机自启），与reverse proxy服务器frps建立握手连接，通过SSH访问frps的端口转发，最终达到访问frpc所在服务器的目的。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/" title="Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;次へ</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/" title="SSL Certificates generation (On Linux use OpenSSL PKI)"><span>戻る&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="索引" role="button">
+        <span>[&nbsp;</span><span>索引</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '記事',
+            PAGES: 'ページ',
+            CATEGORIES: 'カテゴリ',
+            TAGS: 'タグ',
+            UNTITLED: '(無名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/';
+        
+        this.page.identifier = 'Network/搭建OpenVPN_Over_FRP';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
