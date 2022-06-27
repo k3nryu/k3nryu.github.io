@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Redmine搭建（PostgreSQL+Apache版） | Kenryu</title>
+  <meta name="description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redmine搭建（PostgreSQL+Apache版）">
+<meta property="og:url" content="https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-10-27T07:41:47.000Z">
+<meta property="article:modified_time" content="2022-06-27T16:09:35.109Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.5px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.5px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.5px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E"><span class="toc-number">1.</span> <span class="toc-text">0. 环境说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redmine%E9%9C%80%E8%A6%81%E7%9A%84%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">Redmine需要的环境：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E6%AC%A1%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-number">1.0.2.</span> <span class="toc-text">本次搭建环境：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%B8%8B%E8%BD%BD%E9%9C%80%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">2.</span> <span class="toc-text">1. 下载需要的软件包</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">3.</span> <span class="toc-text">2. 安装数据库</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%85%B3%E9%97%ADSelinux"><span class="toc-number">4.</span> <span class="toc-text">3. 关闭Selinux</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85Redmine"><span class="toc-number">5.</span> <span class="toc-text">4. 下载安装Redmine</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E4%B8%8B%E8%BD%BD%E4%BB%A5%E5%8F%8A%E8%A7%A3%E5%8E%8B"><span class="toc-number">5.1.</span> <span class="toc-text">4.1. 下载以及解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E9%85%8D%E7%BD%AEdatabase-yml%E6%96%87%E4%BB%B6"><span class="toc-number">5.2.</span> <span class="toc-text">4.2. 配置database.yml文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-%E9%80%9A%E8%BF%87Ruby%E9%83%A8%E7%BD%B2"><span class="toc-number">5.3.</span> <span class="toc-text">4.3. 通过Ruby部署</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E9%85%8D%E7%BD%AEApache"><span class="toc-number">6.</span> <span class="toc-text">5. 配置Apache</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E5%AE%89%E8%A3%85passenger"><span class="toc-number">6.1.</span> <span class="toc-text">5.1. 安装passenger</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E5%AE%89%E8%A3%85snippet"><span class="toc-number">6.2.</span> <span class="toc-text">5.2. 安装snippet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-%E8%AE%BE%E7%BD%AERedmine%E4%B8%BAApache%E7%9A%84%E6%A0%B9%E7%9B%AE%E5%BD%95%EF%BC%8C%E5%B9%B6%E6%8A%8A%E4%B8%8A%E4%B8%80%E6%AD%A55-2%E7%9A%84%E7%BB%93%E6%9E%9C%E5%A4%8D%E5%88%B6%E4%B8%8B%E6%9D%A5%E7%B2%98%E8%B4%B4%E5%88%B0redmine-conf%E6%96%87%E4%BB%B6%E4%B8%AD"><span class="toc-number">6.3.</span> <span class="toc-text">5.3. 设置Redmine为Apache的根目录，并把上一步5.2的结果复制下来粘贴到redmine.conf文件中</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-4"><span class="toc-number">6.4.</span> <span class="toc-text">5.4.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-5-%E7%BB%99Apache%E6%9D%83%E9%99%90"><span class="toc-number">6.5.</span> <span class="toc-text">5.5. 给Apache权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-6-%E9%87%8D%E5%90%AFApache"><span class="toc-number">6.6.</span> <span class="toc-text">5.6. 重启Apache</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">7.</span> <span class="toc-text">6. 防火墙</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E6%8E%92%E9%94%99"><span class="toc-number">8.</span> <span class="toc-text">7. 排错</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-1-%E5%88%A0%E9%99%A4PostgreSQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%A5%E5%8F%8A%E7%94%A8%E6%88%B7"><span class="toc-number">8.1.</span> <span class="toc-text">7.1. 删除PostgreSQL数据库以及用户</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Redmine/Redmine搭建（PostgreSQL+Apache版）" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redmine搭建（PostgreSQL+Apache版）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/" class="article-date">
+	  <time datetime="2021-10-27T07:41:47.000Z" itemprop="datePublished">2021-10-27</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/Redmine/">Redmine</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 919(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="0-环境说明"><a href="#0-环境说明" class="headerlink" title="0. 环境说明"></a>0. 环境说明</h1><h3 id="Redmine需要的环境："><a href="#Redmine需要的环境：" class="headerlink" title="Redmine需要的环境："></a>Redmine需要的环境：</h3><ul>
+<li>能运行Ruby的OS</li>
+<li>数据库（MySQL / PostgreSQL / SQLite / SQL服务器）</li>
+<li>网站服务（Apache / Nginx ）</li>
+</ul>
+<h3 id="本次搭建环境："><a href="#本次搭建环境：" class="headerlink" title="本次搭建环境："></a>本次搭建环境：</h3><table>
+<thead>
+<tr>
+<th>Software</th>
+<th>Version</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OS</td>
+<td>CentOS Linux release 8.4.2105</td>
+<td>cat /etc/os-release /etc/redhat-release /etc/system-release</td>
+</tr>
+<tr>
+<td>Redmine</td>
+<td>4.2.3</td>
+<td></td>
+</tr>
+<tr>
+<td>Postgresql</td>
+<td>postgres (PostgreSQL) 10.17</td>
+<td>postgres -V</td>
+</tr>
+<tr>
+<td>Ruby</td>
+<td>ruby 2.5.9p229 (2021-04-05 revision 67939) [x86_64-linux]</td>
+<td>ruby -v</td>
+</tr>
+<tr>
+<td>Apache</td>
+<td>Apache/2.4.37 (centos)</td>
+<td>apachectl -v</td>
+</tr>
+</tbody></table>
+<h1 id="1-下载需要的软件包"><a href="#1-下载需要的软件包" class="headerlink" title="1. 下载需要的软件包"></a>1. 下载需要的软件包</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dnf -y update</span><br><span class="line">dnf -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">dnf -y install vim wget tar openssl* httpd httpd-devel ruby ruby-devel libcurl-devel</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-安装数据库"><a href="#2-安装数据库" class="headerlink" title="2. 安装数据库"></a>2. 安装数据库</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dnf -y install postgresql-server postgresql-devel</span><br><span class="line">rpm -qa | grep postgresql</span><br></pre></td></tr></table></figure>
+<p>初始化数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">postgresql-setup initdb</span><br></pre></td></tr></table></figure>
+<p>开机自动启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable --now postgresql</span><br><span class="line">systemctl status postgresql</span><br></pre></td></tr></table></figure>
+
+<p>创建redmine用户以及redmine数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# su - postgres</span><br><span class="line">[postgres@localhost ~]$ psql</span><br><span class="line">CREATE ROLE redmine LOGIN ENCRYPTED PASSWORD &#x27;Your_Password&#x27; NOINHERIT VALID UNTIL &#x27;infinity&#x27;;</span><br><span class="line">CREATE DATABASE redmine WITH ENCODING=&#x27;UTF8&#x27; OWNER=redmine;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\du #查看用户</span><br><span class="line">\l #查看数据库</span><br><span class="line">\q #退出</span><br></pre></td></tr></table></figure>
+
+<p>编辑pg_hba.conf文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /var/lib/pgsql/data/pg_hba.conf</span><br><span class="line"># configuration parameter, or via the -i or -h command line switches.</span><br><span class="line"></span><br><span class="line">host redmine redmine 127.0.0.1/32 md5</span><br><span class="line">host redmine redmine ::1/128 md5</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：<br>添加的规则放在73行的: configuration parameter…下面。否则会出现<code>psql: FATAL: Ident authentication failed for user &quot;postgres&quot;</code> 的错误而且无法访问数据库的问题。</p>
+</blockquote>
+<p>重启数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart postgresql</span><br></pre></td></tr></table></figure>
+<p>验证看看能不能正常访问数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">psql -U redmine -d redmine -h 127.0.0.1</span><br><span class="line">Password for user redmine: #←正常情况下会提示输入密码</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="3-关闭Selinux"><a href="#3-关闭Selinux" class="headerlink" title="3. 关闭Selinux"></a>3. 关闭Selinux</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/selinux/config</span><br><span class="line">#SELINUX=enforcing</span><br><span class="line"></span><br><span class="line">SELINUX=disabled</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br><span class="line">getenforce # 确认结果</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-下载安装Redmine"><a href="#4-下载安装Redmine" class="headerlink" title="4. 下载安装Redmine"></a>4. 下载安装Redmine</h1><blockquote>
+<p>获取最新版本:<br><a target="_blank" rel="noopener" href="https://www.redmine.org/projects/redmine/wiki/Download">Redmine官方下载地址</a></p>
+</blockquote>
+<h2 id="4-1-下载以及解压"><a href="#4-1-下载以及解压" class="headerlink" title="4.1. 下载以及解压"></a>4.1. 下载以及解压</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://www.redmine.org/releases/redmine-4.2.3.tar.gz</span><br><span class="line">tar -zxvf redmine-4.2.3.tar.gz</span><br><span class="line">mv redmine-4.2.3 /redmine</span><br></pre></td></tr></table></figure>
+<h2 id="4-2-配置database-yml文件"><a href="#4-2-配置database-yml文件" class="headerlink" title="4.2. 配置database.yml文件"></a>4.2. 配置database.yml文件</h2><p>根据数据库设置，配置Redmine的连接数据库设定文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cd /redmine/config/</span><br><span class="line">cp database.yml.example database.yml</span><br><span class="line">vim database.yml</span><br><span class="line"></span><br><span class="line">###postgresql</span><br><span class="line">production:</span><br><span class="line">adapter: postgresql</span><br><span class="line">database: redmine</span><br><span class="line">host: localhost</span><br><span class="line">username: redmine</span><br><span class="line">password: &quot;Your_Password&quot;</span><br><span class="line">encoding: utf8</span><br><span class="line">t#pool: 5</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：<br>要把development，test等区域给删了<br>排版缩进要正确！</p>
+</blockquote>
+<h2 id="4-3-通过Ruby部署"><a href="#4-3-通过Ruby部署" class="headerlink" title="4.3. 通过Ruby部署"></a>4.3. 通过Ruby部署</h2><p>我对Ruby不了解，这些命令不是很懂，似乎可以自动导入 Redmine 操作所需的 Ruby 软件包，为 MySQL 数据库创建所需的表或加载默认数据？注意不能忘了，在执行操作前移动到Redmine目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd /redmine</span><br><span class="line">gem install bundler --no-rdoc --no-ri</span><br><span class="line">gem install bundler</span><br><span class="line">bundle install --without development test rmagick</span><br><span class="line">bundle exec rake generate_secret_token</span><br><span class="line">RAILS_ENV=production bundle exec rake db:migrate</span><br><span class="line">RAILS_ENV=production bundle exec rake redmine:load_default_data</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>执行最后一行的时候选择想要的语言。</p>
+<h1 id="5-配置Apache"><a href="#5-配置Apache" class="headerlink" title="5. 配置Apache"></a>5. 配置Apache</h1><h2 id="5-1-安装passenger"><a href="#5-1-安装passenger" class="headerlink" title="5.1. 安装passenger"></a>5.1. 安装passenger</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gem install passenger</span><br><span class="line">passenger-install-apache2-module --auto --languages ruby</span><br></pre></td></tr></table></figure>
+<p>有大量的日志在画面上滚动，需要花一点时间。虽然有很多警告，但是如果不因错误而掉落的话应该没什么问题。</p>
+<h2 id="5-2-安装snippet"><a href="#5-2-安装snippet" class="headerlink" title="5.2. 安装snippet"></a>5.2. 安装snippet</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost redmine]# passenger-install-apache2-module --snippet</span><br><span class="line">LoadModule passenger_module /usr/local/share/gems/gems/passenger-6.0.11/buildout/apache2/mod_passenger.so</span><br><span class="line">&lt;IfModule mod_passenger.c&gt;</span><br><span class="line">PassengerRoot /usr/local/share/gems/gems/passenger-6.0.11</span><br><span class="line">PassengerDefaultRuby /usr/bin/ruby</span><br><span class="line">&lt;/IfModule&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-3-设置Redmine为Apache的根目录，并把上一步5-2的结果复制下来粘贴到redmine-conf文件中"><a href="#5-3-设置Redmine为Apache的根目录，并把上一步5-2的结果复制下来粘贴到redmine-conf文件中" class="headerlink" title="5.3. 设置Redmine为Apache的根目录，并把上一步5.2的结果复制下来粘贴到redmine.conf文件中"></a>5.3. 设置Redmine为Apache的根目录，并把上一步5.2的结果复制下来粘贴到redmine.conf文件中</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf.d/redmine.conf</span><br><span class="line"></span><br><span class="line">&lt;Directory &quot;/redmine/public&quot;&gt;</span><br><span class="line">Require all granted</span><br><span class="line">&lt;/Directory&gt;</span><br><span class="line"></span><br><span class="line">LoadModule passenger_module /usr/local/share/gems/gems/passenger-6.0.11/buildout/apache2/mod_passenger.so</span><br><span class="line">&lt;IfModule mod_passenger.c&gt;</span><br><span class="line">PassengerRoot /usr/local/share/gems/gems/passenger-6.0.11</span><br><span class="line">PassengerDefaultRuby /usr/bin/ruby</span><br><span class="line">&lt;/IfModule&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="5-4"><a href="#5-4" class="headerlink" title="5.4."></a>5.4.</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/httpd/conf/httpd.conf</span><br><span class="line"></span><br><span class="line">DocumentRoot &quot;/redmine/public&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-5-给Apache权限"><a href="#5-5-给Apache权限" class="headerlink" title="5.5. 给Apache权限"></a>5.5. 给Apache权限</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R apache:apache /redmine</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-6-重启Apache"><a href="#5-6-重启Apache" class="headerlink" title="5.6. 重启Apache"></a>5.6. 重启Apache</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable httpd</span><br><span class="line">systemctl start httpd</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="6-防火墙"><a href="#6-防火墙" class="headerlink" title="6. 防火墙"></a>6. 防火墙</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --permanent --add-service=http</span><br><span class="line">firewall-cmd --zone=public --permanent --add-service=https</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<h1 id="7-排错"><a href="#7-排错" class="headerlink" title="7. 排错"></a>7. 排错</h1><h2 id="7-1-删除PostgreSQL数据库以及用户"><a href="#7-1-删除PostgreSQL数据库以及用户" class="headerlink" title="7.1. 删除PostgreSQL数据库以及用户"></a>7.1. 删除PostgreSQL数据库以及用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# su - postgres</span><br><span class="line">[postgres@localhost ~]$ psql</span><br><span class="line">drop database redmine;</span><br><span class="line">drop role redmine;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\du #查看用户</span><br><span class="line">\l #查看数据库</span><br><span class="line">\q #退出</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考：<br><a target="_blank" rel="noopener" href="https://www.redmine.org/projects/redmine/wiki/redmineinstall">Redmine官方安装教程</a><br><a target="_blank" rel="noopener" href="https://chiritsumon.net/contents/archives/2072">CentOS8にRedmine4.1をインストールする</a><br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1626834">如何在 CentOS 8 上安装 Postgresql
+</a></p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/" title="SSL Certificates generation (On Linux use OpenSSL PKI)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/" title="Redmine搭建（MySQL+Apache版）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/';
+        
+        this.page.identifier = 'Redmine/Redmine搭建（PostgreSQL+Apache版）';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

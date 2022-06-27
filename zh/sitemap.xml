@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/</loc>
+    
+    <lastmod>2022-06-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kenryu.cc/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/</loc>
     
     <lastmod>2022-06-27</lastmod>
