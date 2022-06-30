@@ -18,15 +18,15 @@
   
   
   <title>Redmine搭建（PostgreSQL+Apache版） | Kenryu</title>
-  <meta name="description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-">
+  <meta name="description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;et">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redmine搭建（PostgreSQL+Apache版）">
 <meta property="og:url" content="https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/index.html">
 <meta property="og:site_name" content="Kenryu">
-<meta property="og:description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-">
+<meta property="og:description" content="0. 环境说明Redmine需要的环境： 能运行Ruby的OS 数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器） 网站服务（Apache &#x2F; Nginx ）  本次搭建环境：   Software Version Command    OS CentOS Linux release 8.4.2105 cat &#x2F;et">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2021-10-27T07:41:47.000Z">
-<meta property="article:modified_time" content="2022-06-27T16:09:35.109Z">
+<meta property="article:modified_time" content="2022-06-30T13:52:05.425Z">
 <meta property="article:author" content="Kenryu">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
@@ -44,7 +44,7 @@
   
   
   
-<meta name="generator" content="Hexo 5.4.0"></head>
+<meta name="generator" content="Hexo 6.2.0"></head>
 
 
 <body class="main-center" itemscope itemtype="http://schema.org/WebPage">
@@ -214,7 +214,7 @@
   <div class="widget">
     <h3 class="widget-title">カテゴリー</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Storage/">Storage</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Storage/">Storage</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -224,7 +224,7 @@
   <div class="widget">
     <h3 class="widget-title">タグ</h3>
     <div class="widget-body">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/server/" rel="tag">server</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/storage/" rel="tag">storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/server/" rel="tag">server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/storage/" rel="tag">storage</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -234,7 +234,7 @@
   <div class="widget">
     <h3 class="widget-title">タグクラウド</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.33px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.33px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.33px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.67px;">Server</a> <a href="/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/tags/linux/" style="font-size: 13.67px;">linux</a> <a href="/tags/network/" style="font-size: 13.33px;">network</a> <a href="/tags/server/" style="font-size: 13.33px;">server</a> <a href="/tags/storage/" style="font-size: 13px;">storage</a> <a href="/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.25px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.25px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.25px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/tags/linux/" style="font-size: 13.75px;">linux</a> <a href="/tags/network/" style="font-size: 13.25px;">network</a> <a href="/tags/server/" style="font-size: 13.5px;">server</a> <a href="/tags/storage/" style="font-size: 13.25px;">storage</a> <a href="/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
     </div>
   </div>
 
@@ -243,7 +243,7 @@
   <div class="widget">
     <h3 class="widget-title">アーカイブ</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">6月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">5月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">2月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">12月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">11月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">10月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">5月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">4月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">9月 2020</a><span class="archive-list-count">11</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">6月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">5月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">2月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">12月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">11月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">10月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">5月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">4月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">9月 2020</a><span class="archive-list-count">11</span></li></ul>
     </div>
   </div>
 
@@ -304,7 +304,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/#comments" class="article-comment-link">コメント</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">文字数: 919(文字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">文字数: 930(文字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">読む時間約: 4(分)</span>
@@ -316,8 +316,8 @@
       
         <h1 id="0-环境说明"><a href="#0-环境说明" class="headerlink" title="0. 环境说明"></a>0. 环境说明</h1><h3 id="Redmine需要的环境："><a href="#Redmine需要的环境：" class="headerlink" title="Redmine需要的环境："></a>Redmine需要的环境：</h3><ul>
 <li>能运行Ruby的OS</li>
-<li>数据库（MySQL / PostgreSQL / SQLite / SQL服务器）</li>
-<li>网站服务（Apache / Nginx ）</li>
+<li>数据库（MySQL &#x2F; PostgreSQL &#x2F; SQLite &#x2F; SQL服务器）</li>
+<li>网站服务（Apache &#x2F; Nginx ）</li>
 </ul>
 <h3 id="本次搭建环境："><a href="#本次搭建环境：" class="headerlink" title="本次搭建环境："></a>本次搭建环境：</h3><table>
 <thead>
@@ -330,7 +330,7 @@
 <tbody><tr>
 <td>OS</td>
 <td>CentOS Linux release 8.4.2105</td>
-<td>cat /etc/os-release /etc/redhat-release /etc/system-release</td>
+<td>cat &#x2F;etc&#x2F;os-release &#x2F;etc&#x2F;redhat-release &#x2F;etc&#x2F;system-release</td>
 </tr>
 <tr>
 <td>Redmine</td>
@@ -349,7 +349,7 @@
 </tr>
 <tr>
 <td>Apache</td>
-<td>Apache/2.4.37 (centos)</td>
+<td>Apache&#x2F;2.4.37 (centos)</td>
 <td>apachectl -v</td>
 </tr>
 </tbody></table>
