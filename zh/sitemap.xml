@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kenryu.cc/2022/05/25/Linux/Make_Unix_terminal_beautiful_&_productive/</loc>
+    
+    <lastmod>2022-06-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kenryu.cc/2021/12/11/Storage/SMART_Monitoring_Tools/</loc>
     
     <lastmod>2022-06-30</lastmod>
