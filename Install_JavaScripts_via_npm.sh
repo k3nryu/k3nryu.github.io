@@ -1,7 +1,8 @@
 #! /bin/bash
 
-nvm install 12
+nvm install 16
 npm install -g hexo-cli
+npm install -g npm-check npm-upgrade
 npm install hexo-deployer-git --save
 npm install hexo-wordcount --save
 npm install hexo-generator-json-content --save
