@@ -336,6 +336,32 @@
   </entry>
   
   <entry>
+    <title>PCI pass though (Ethernet port)</title>
+    <link href="https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/"/>
+    <id>https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/</id>
+    <published>2021-08-26T06:51:28.000Z</published>
+    <updated>2022-07-01T05:03:47.449Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure><p><img src="/resources/1b17f06e0c5e4b5f874e8d75f202e0a3.png" alt="58d2fbc072f3f7bf1ce2a499b5351171.png"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@SMC-KVM ~]# ethtool -i eno2</span><br><span class="line">driver: ixgbe</span><br><span class="line">version: 4.18.0-305.10.2.el8_4.x86_64</span><br><span class="line">firmware-version: 0x800007f6, 1.1747.0</span><br><span class="line">expansion-rom-version:</span><br><span class="line">bus-info: 0000:01:00.1</span><br><span class="line">supports-statistics: yes</span><br><span class="line">supports-test: yes</span><br><span class="line">supports-eeprom-access: yes</span><br><span class="line">supports-register-dump: yes</span><br><span class="line">supports-priv-flags: yes</span><br></pre></td></tr></table></figure><p><img src="/resources/27aace41d26041b79a0f5d80136e96e9.png" alt="3211af94caf301c7b3f8e2c6733a0a41.png"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/grub2-efi.cfg</span><br><span class="line"># vim /etc/grub2.cfg</span><br><span class="line">set kernelopts=&quot;...iommu.passthrough=1&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p><img src="/resources/98a5588d33c6466885873b358a593124.png" alt="9ab23b9c1a1cf4a1a7c3112cf9b149c7.png"></p><p>Enable intel iommu:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/default/grub</span><br><span class="line"></span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;... intel_iommu=on iommu=pt</span><br><span class="line">#GRUB_CMDLINE_LINUX=&quot; ... amd_iommu=on</span><br></pre></td></tr></table></figure><blockquote><p>If intel_iommu&#x3D;on or amd_iommu&#x3D;on works, you can try replacing them with iommu&#x3D;pt or amd_iommu&#x3D;pt.</p></blockquote><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkconfig -o /boot/grub2/grub.cfg</span><br><span class="line">cat /etc/grub2.cfg | grep &#x27;set kernelopt&#x27; # 这时候上面的设置已经被映射过来了</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmesg | grep IOMMU</span><br></pre></td></tr></table></figure><p><img src="/resources/ccce25e9c35147de801cf73e4dad14bd.png" alt="c7a7c4f84766890e7a208a172e89536f.png"></p><p>Modify VM’s specification:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/libvirt/qemu/cjl-test.xml /etc/libvirt/qemu/cjl-test.xml.bak</span><br><span class="line">vim /etc/libvirt/qemu/cjl-test.xml</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;hostdev mode=&#x27;subsystem&#x27; type=&#x27;pci&#x27; managed=&#x27;yes&#x27;&gt;</span><br><span class="line">&lt;source&gt;</span><br><span class="line">&lt;address domain=&#x27;0x0000&#x27; bus=&#x27;0x01&#x27; slot=&#x27;0x00&#x27; function=&#x27;0x1&#x27;/&gt;</span><br><span class="line">&lt;/source&gt;</span><br><span class="line">##&lt;address type=&#x27;pci&#x27; domain=&#x27;0x0000&#x27; bus=&#x27;0x01&#x27; slot=&#x27;0x02&#x27; function=&#x27;0x0&#x27;/&gt;</span><br><span class="line">&lt;/hostdev&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p><img src="/resources/8bef6e49dd35419e87752e04ca76910f.png" alt="b78244be8645b79ac8943a0048b30856.png"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh define &amp;VMname</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ethtool -i eno2</span><br><span class="line">ethtool -i eno1</span><br></pre></td></tr></table></figure><h1 id="Guest-VM"><a href="#Guest-VM" class="headerlink" title="Guest (VM)"></a>Guest (VM)</h1><p><img src="/resources/908b43347b8f434da7ed603cdabb2206.png" alt="287e347b89b51b80dd46d4a9d1e9651c.png"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# lspci | grep Ethernet</span><br><span class="line">00:02.0 Ethernet controller: Intel Corporation Ethernet Controller 10G X550T (rev 01)</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ethtool -i ens2</span><br><span class="line">driver: ixgbe</span><br><span class="line">version: 4.18.0-305.10.2.el8_4.x86_64</span><br><span class="line">firmware-version: 0x800007f6, 1.1747.0</span><br><span class="line">expansion-rom-version:</span><br><span class="line">bus-info: 0000:00:02.0</span><br><span class="line">supports-statistics: yes</span><br><span class="line">supports-test: yes</span><br><span class="line">supports-eeprom-access: yes</span><br><span class="line">supports-register-dump: yes</span><br><span class="line">supports-priv-flags: yes</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span</summary>
+      
+    
+    
+    
+    <category term="Virtualization" scheme="https://kenryu.cc/categories/Virtualization/"/>
+    
+    
+    <category term="kvm" scheme="https://kenryu.cc/tags/kvm/"/>
+    
+    <category term="hypervisor" scheme="https://kenryu.cc/tags/hypervisor/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Setup NFS client (nfs-utils)</title>
     <link href="https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/"/>
     <id>https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/</id>
@@ -504,34 +530,6 @@
     
     <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
     
-    
-  </entry>
-  
-  <entry>
-    <title>Storage Benchmark (fio command)</title>
-    <link href="https://kenryu.cc/2021/04/08/Storage/Storage_Benchmark_(fio_command)/"/>
-    <id>https://kenryu.cc/2021/04/08/Storage/Storage_Benchmark_(fio_command)/</id>
-    <published>2021-04-08T05:40:00.000Z</published>
-    <updated>2022-07-01T01:10:58.403Z</updated>
-    
-    <content type="html"><![CDATA[<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 顺序写：</span><br><span class="line">fio -filename=/dev/md -direct=1 -iodepth 1 -thread -rw=write -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file</span><br><span class="line"># 顺序读：</span><br><span class="line">fio -filename=/dev/md -direct=1 -iodepth 1 -thread -rw=read -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file</span><br><span class="line"># 随机写：</span><br><span class="line">fio -filename=/dev/md -direct=1 -iodepth 1 -thread -rw=randwrite -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file</span><br><span class="line"># 随机读：</span><br><span class="line">fio -filename=/dev/md -direct=1 -iodepth 1 -thread -rw=randread -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file</span><br><span class="line"># 混合随机读写：</span><br><span class="line">fio -filename=/dev/md -direct=1 -iodepth 1 -thread -rw=randrw -rwmixread=30 -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file -ioscheduler=noop</span><br><span class="line"># 当目标为Directory的时候</span><br><span class="line">fio -directory=/mnt/ -direct=1 -iodepth 1 -thread -rw=write -ioengine=psync -bs=8M -size=60G -numjobs=64 -runtime=10 -group_reporting -name=file</span><br></pre></td></tr></table></figure><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">umount -l 10.0.1.2:/mnt/nas/nas</span><br><span class="line">mount -t nfs 10.0.1.2:/mnt/nas/nas /mnt</span><br><span class="line">mount -t nfs -o nolock,timeo=15 10.0.1.2:/mnt/nas/nas /mnt</span><br><span class="line">mount -t nfs 10.0.1.2:/mnt/nas/nas /mnt -o nolock, rsize=1024,wsize=1024,timeo=15</span><br><span class="line">mount -t nfs -o rsize=131072,wsize=131072 10.0.1.2:/mnt/nas/nas /mnt</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span c</summary>
-      
-    
-    
-    
-    <category term="Storage" scheme="https://kenryu.cc/categories/Storage/"/>
-    
-    
-    <category term="linux" scheme="https://kenryu.cc/tags/linux/"/>
-    
-    <category term="server" scheme="https://kenryu.cc/tags/server/"/>
-    
-    <category term="storage" scheme="https://kenryu.cc/tags/storage/"/>
     
   </entry>
   
