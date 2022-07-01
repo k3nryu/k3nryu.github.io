@@ -209,33 +209,38 @@ profile:
     link_tooltip: false # enable the social link tooltip, options: true, false
 # My Skills 
   skills:
+    Chinese: ★★★★★
+    Japanese: ★★★★☆
+    English: ★★★☆☆
+    Java: ★★★★☆
+    Linux: ★★★★☆
+    Shell Script: ★★★☆☆
+    C: ★★☆☆☆
+    Python: ★★☆☆☆
+    LUA: ★★☆☆☆
+    WEB: ★★☆☆☆
     Git: ★★★☆☆
-    Gulp: ★★★☆☆
-    Javascript: ★★★☆☆
-    HTML+CSS: ★★★☆☆
-    Bootstrap: ★★★☆☆
-    ThinkPHP: ★★★☆☆
-    平面设计: ★★★☆☆
   # My Personal Links
   links:
     Github: https://github.com/k3nryu
     Blog: https://kenryu.cc
-    微博: https://weibo.com/512308520 
+    Linkedin: https://www.linkedin.com/in/建隆-陳-4939b2201/
+   #微博: https://weibo.com/512308520 
    #花瓣: http://huaban.com/stcjl717
    #Behance: https://www.behance.net/stcjl717
   # My Personal Labels
   labels:
-    - 前端
-    - 前端开发
-    - 前端重构
-    - Web前端
-    - 网页重构
+    - Engineer
+    - Infra
+    - Linux
+    - Server
+    - Storage
+    - Network
   # My Personal Works
-  works:
-    name:
-      link: http://www.example.com
-      date: 2016
+  #works:
+  # name:
+  #   link: http://www.example.com
+  #   date: 2016
   # My Personal Projects
-  projects:
-    cofess/gulp-startpro: https://github.com/
-    cofess/hexo-theme-pure: https://github.com/cofess/hexo-theme-pure
+  #projects:
+  #  k3nryu/joplin2hexo: https://github.com/k3nryu/joplin2hexo/
