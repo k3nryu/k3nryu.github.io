@@ -1,5 +1,4 @@
 https://kenryu.cc/zh/about/index.html
-https://kenryu.cc/zh/links/index.html
 https://kenryu.cc/zh/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/
 https://kenryu.cc/zh/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/
 https://kenryu.cc/zh/2022/05/25/Linux/Make_Unix_terminal_beautiful_&_productive/
