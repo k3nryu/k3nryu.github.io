@@ -3,11 +3,11 @@
   <title>Kenryu</title>
   
   <subtitle>hello there.</subtitle>
-  <link href="https://kenryu.cc/atom.xml" rel="self"/>
+  <link href="https://kenryu.cc/ja/atom.xml" rel="self"/>
   
-  <link href="https://kenryu.cc/"/>
+  <link href="https://kenryu.cc/ja/"/>
   <updated>2022-06-30T08:44:03.320Z</updated>
-  <id>https://kenryu.cc/</id>
+  <id>https://kenryu.cc/ja/</id>
   
   <author>
     <name>Kenryu</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>LSI Storage Authority (LSA) on Linux</title>
-    <link href="https://kenryu.cc/2022/06/30/Storage/LSI_Storage_Authority_(LSA)_on_Linux/"/>
-    <id>https://kenryu.cc/2022/06/30/Storage/LSI_Storage_Authority_(LSA)_on_Linux/</id>
+    <link href="https://kenryu.cc/ja/2022/06/30/Storage/LSI_Storage_Authority_(LSA)_on_Linux/"/>
+    <id>https://kenryu.cc/ja/2022/06/30/Storage/LSI_Storage_Authority_(LSA)_on_Linux/</id>
     <published>2022-06-30T07:55:45.000Z</published>
     <updated>2022-06-30T08:44:03.320Z</updated>
     
@@ -35,15 +35,15 @@
     
     
     
-    <category term="Storage" scheme="https://kenryu.cc/categories/Storage/"/>
+    <category term="Storage" scheme="https://kenryu.cc/ja/categories/Storage/"/>
     
     
   </entry>
   
   <entry>
     <title>Make Unix terminal beautiful &amp; productive</title>
-    <link href="https://kenryu.cc/2022/05/25/Linux/Make_Unix_terminal_beautiful_&amp;_productive/"/>
-    <id>https://kenryu.cc/2022/05/25/Linux/Make_Unix_terminal_beautiful_&amp;_productive/</id>
+    <link href="https://kenryu.cc/ja/2022/05/25/Linux/Make_Unix_terminal_beautiful_&amp;_productive/"/>
+    <id>https://kenryu.cc/ja/2022/05/25/Linux/Make_Unix_terminal_beautiful_&amp;_productive/</id>
     <published>2022-05-25T04:12:17.000Z</published>
     <updated>2022-07-01T01:10:58.403Z</updated>
     
@@ -58,15 +58,15 @@
     
     
     
-    <category term="Linux" scheme="https://kenryu.cc/categories/Linux/"/>
+    <category term="Linux" scheme="https://kenryu.cc/ja/categories/Linux/"/>
     
     
   </entry>
   
   <entry>
     <title>Windows11 の「Num Lock」キーを無効化</title>
-    <link href="https://kenryu.cc/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/"/>
-    <id>https://kenryu.cc/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/</id>
+    <link href="https://kenryu.cc/ja/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/"/>
+    <id>https://kenryu.cc/ja/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/</id>
     <published>2022-05-20T08:02:05.000Z</published>
     <updated>2022-07-01T04:45:16.889Z</updated>
     
@@ -80,17 +80,17 @@
     
     
     
-    <category term="Windows" scheme="https://kenryu.cc/categories/Windows/"/>
+    <category term="Windows" scheme="https://kenryu.cc/ja/categories/Windows/"/>
     
     
-    <category term="windows" scheme="https://kenryu.cc/tags/windows/"/>
+    <category term="windows" scheme="https://kenryu.cc/ja/tags/windows/"/>
     
   </entry>
   
   <entry>
     <title>Postfix Dovecot MySQL Mail Server</title>
-    <link href="https://kenryu.cc/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/"/>
-    <id>https://kenryu.cc/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/</id>
+    <link href="https://kenryu.cc/ja/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/"/>
+    <id>https://kenryu.cc/ja/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/</id>
     <published>2022-05-01T15:00:00.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -105,23 +105,23 @@
     
     
     
-    <category term="Linux" scheme="https://kenryu.cc/categories/Linux/"/>
+    <category term="Linux" scheme="https://kenryu.cc/ja/categories/Linux/"/>
     
     
-    <category term="Server" scheme="https://kenryu.cc/tags/Server/"/>
+    <category term="Server" scheme="https://kenryu.cc/ja/tags/Server/"/>
     
-    <category term="Nginx" scheme="https://kenryu.cc/tags/Nginx/"/>
+    <category term="Nginx" scheme="https://kenryu.cc/ja/tags/Nginx/"/>
     
-    <category term="MySQL" scheme="https://kenryu.cc/tags/MySQL/"/>
+    <category term="MySQL" scheme="https://kenryu.cc/ja/tags/MySQL/"/>
     
-    <category term="PHP" scheme="https://kenryu.cc/tags/PHP/"/>
+    <category term="PHP" scheme="https://kenryu.cc/ja/tags/PHP/"/>
     
   </entry>
   
   <entry>
     <title>ZFS常用命令</title>
-    <link href="https://kenryu.cc/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
-    <id>https://kenryu.cc/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
+    <link href="https://kenryu.cc/ja/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>https://kenryu.cc/ja/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
     <published>2022-02-28T06:52:32.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -136,21 +136,21 @@
     
     
     
-    <category term="ZFS" scheme="https://kenryu.cc/categories/ZFS/"/>
+    <category term="ZFS" scheme="https://kenryu.cc/ja/categories/ZFS/"/>
     
     
-    <category term="Server" scheme="https://kenryu.cc/tags/Server/"/>
+    <category term="Server" scheme="https://kenryu.cc/ja/tags/Server/"/>
     
-    <category term="ZFS" scheme="https://kenryu.cc/tags/ZFS/"/>
+    <category term="ZFS" scheme="https://kenryu.cc/ja/tags/ZFS/"/>
     
-    <category term="Storage" scheme="https://kenryu.cc/tags/Storage/"/>
+    <category term="Storage" scheme="https://kenryu.cc/ja/tags/Storage/"/>
     
   </entry>
   
   <entry>
     <title>Setup WebDAV server (Apache)</title>
-    <link href="https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/"/>
-    <id>https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/</id>
+    <link href="https://kenryu.cc/ja/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/"/>
+    <id>https://kenryu.cc/ja/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/</id>
     <published>2021-12-15T12:17:52.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -166,15 +166,15 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
   
   <entry>
     <title>SMART Monitoring Tools</title>
-    <link href="https://kenryu.cc/2021/12/11/Storage/SMART_Monitoring_Tools/"/>
-    <id>https://kenryu.cc/2021/12/11/Storage/SMART_Monitoring_Tools/</id>
+    <link href="https://kenryu.cc/ja/2021/12/11/Storage/SMART_Monitoring_Tools/"/>
+    <id>https://kenryu.cc/ja/2021/12/11/Storage/SMART_Monitoring_Tools/</id>
     <published>2021-12-11T03:09:02.000Z</published>
     <updated>2022-07-01T01:10:58.403Z</updated>
     
@@ -189,21 +189,21 @@
     
     
     
-    <category term="Storage" scheme="https://kenryu.cc/categories/Storage/"/>
+    <category term="Storage" scheme="https://kenryu.cc/ja/categories/Storage/"/>
     
     
-    <category term="linux" scheme="https://kenryu.cc/tags/linux/"/>
+    <category term="linux" scheme="https://kenryu.cc/ja/tags/linux/"/>
     
-    <category term="server" scheme="https://kenryu.cc/tags/server/"/>
+    <category term="server" scheme="https://kenryu.cc/ja/tags/server/"/>
     
-    <category term="storage" scheme="https://kenryu.cc/tags/storage/"/>
+    <category term="storage" scheme="https://kenryu.cc/ja/tags/storage/"/>
     
   </entry>
   
   <entry>
     <title>Deploy Nginx, MySQL, PHP on Linux (LEMP/LNMP stack)</title>
-    <link href="https://kenryu.cc/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/"/>
-    <id>https://kenryu.cc/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/</id>
+    <link href="https://kenryu.cc/ja/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/"/>
+    <id>https://kenryu.cc/ja/2021/11/22/Linux/Deploy-Linux-Nginx-MySQL-PHP-Server/</id>
     <published>2021-11-21T15:00:00.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -227,23 +227,23 @@
     
     
     
-    <category term="Linux" scheme="https://kenryu.cc/categories/Linux/"/>
+    <category term="Linux" scheme="https://kenryu.cc/ja/categories/Linux/"/>
     
     
-    <category term="Server" scheme="https://kenryu.cc/tags/Server/"/>
+    <category term="Server" scheme="https://kenryu.cc/ja/tags/Server/"/>
     
-    <category term="Nginx" scheme="https://kenryu.cc/tags/Nginx/"/>
+    <category term="Nginx" scheme="https://kenryu.cc/ja/tags/Nginx/"/>
     
-    <category term="MySQL" scheme="https://kenryu.cc/tags/MySQL/"/>
+    <category term="MySQL" scheme="https://kenryu.cc/ja/tags/MySQL/"/>
     
-    <category term="PHP" scheme="https://kenryu.cc/tags/PHP/"/>
+    <category term="PHP" scheme="https://kenryu.cc/ja/tags/PHP/"/>
     
   </entry>
   
   <entry>
     <title>搭建OpenVPN Over FRP</title>
-    <link href="https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/"/>
-    <id>https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/</id>
+    <link href="https://kenryu.cc/ja/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/"/>
+    <id>https://kenryu.cc/ja/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/</id>
     <published>2021-10-31T05:08:47.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -257,21 +257,21 @@
     
     
     
-    <category term="Network" scheme="https://kenryu.cc/categories/Network/"/>
+    <category term="Network" scheme="https://kenryu.cc/ja/categories/Network/"/>
     
     
-    <category term="linux" scheme="https://kenryu.cc/tags/linux/"/>
+    <category term="linux" scheme="https://kenryu.cc/ja/tags/linux/"/>
     
-    <category term="network" scheme="https://kenryu.cc/tags/network/"/>
+    <category term="network" scheme="https://kenryu.cc/ja/tags/network/"/>
     
-    <category term="vpn" scheme="https://kenryu.cc/tags/vpn/"/>
+    <category term="vpn" scheme="https://kenryu.cc/ja/tags/vpn/"/>
     
   </entry>
   
   <entry>
     <title>SSL Certificates generation (On Linux use OpenSSL PKI)</title>
-    <link href="https://kenryu.cc/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/"/>
-    <id>https://kenryu.cc/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/</id>
+    <link href="https://kenryu.cc/ja/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/"/>
+    <id>https://kenryu.cc/ja/2021/10/28/Security/SSL_Certificates_generation__On_Linux_use_OpenSSL_PKI_/</id>
     <published>2021-10-28T12:17:38.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -286,15 +286,15 @@
     
     
     
-    <category term="Security" scheme="https://kenryu.cc/categories/Security/"/>
+    <category term="Security" scheme="https://kenryu.cc/ja/categories/Security/"/>
     
     
   </entry>
   
   <entry>
     <title>Redmine搭建（PostgreSQL+Apache版）</title>
-    <link href="https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/"/>
-    <id>https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/</id>
+    <link href="https://kenryu.cc/ja/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/"/>
+    <id>https://kenryu.cc/ja/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/</id>
     <published>2021-10-27T07:41:47.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -308,15 +308,15 @@
     
     
     
-    <category term="Redmine" scheme="https://kenryu.cc/categories/Redmine/"/>
+    <category term="Redmine" scheme="https://kenryu.cc/ja/categories/Redmine/"/>
     
     
   </entry>
   
   <entry>
     <title>Redmine搭建（MySQL+Apache版）</title>
-    <link href="https://kenryu.cc/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/"/>
-    <id>https://kenryu.cc/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/</id>
+    <link href="https://kenryu.cc/ja/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/"/>
+    <id>https://kenryu.cc/ja/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/</id>
     <published>2021-10-26T06:42:55.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -330,15 +330,15 @@
     
     
     
-    <category term="Redmine" scheme="https://kenryu.cc/categories/Redmine/"/>
+    <category term="Redmine" scheme="https://kenryu.cc/ja/categories/Redmine/"/>
     
     
   </entry>
   
   <entry>
     <title>PCI pass though (Ethernet port)</title>
-    <link href="https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/"/>
-    <id>https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/</id>
+    <link href="https://kenryu.cc/ja/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/"/>
+    <id>https://kenryu.cc/ja/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/</id>
     <published>2021-08-26T06:51:28.000Z</published>
     <updated>2022-07-01T05:03:47.449Z</updated>
     
@@ -352,19 +352,19 @@
     
     
     
-    <category term="Virtualization" scheme="https://kenryu.cc/categories/Virtualization/"/>
+    <category term="Virtualization" scheme="https://kenryu.cc/ja/categories/Virtualization/"/>
     
     
-    <category term="kvm" scheme="https://kenryu.cc/tags/kvm/"/>
+    <category term="kvm" scheme="https://kenryu.cc/ja/tags/kvm/"/>
     
-    <category term="hypervisor" scheme="https://kenryu.cc/tags/hypervisor/"/>
+    <category term="hypervisor" scheme="https://kenryu.cc/ja/tags/hypervisor/"/>
     
   </entry>
   
   <entry>
     <title>Setup NFS client (nfs-utils)</title>
-    <link href="https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/"/>
-    <id>https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/</id>
+    <link href="https://kenryu.cc/ja/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/"/>
+    <id>https://kenryu.cc/ja/2021/05/11/File_Sharing_Servers/Setup_NFS_client__nfs_utils_/</id>
     <published>2021-05-11T06:01:24.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -380,15 +380,15 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
   
   <entry>
     <title>Setup NFS server (nfs-utils)</title>
-    <link href="https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_server__nfs_utils_/"/>
-    <id>https://kenryu.cc/2021/05/11/File_Sharing_Servers/Setup_NFS_server__nfs_utils_/</id>
+    <link href="https://kenryu.cc/ja/2021/05/11/File_Sharing_Servers/Setup_NFS_server__nfs_utils_/"/>
+    <id>https://kenryu.cc/ja/2021/05/11/File_Sharing_Servers/Setup_NFS_server__nfs_utils_/</id>
     <published>2021-05-11T05:06:04.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -403,15 +403,15 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
   
   <entry>
     <title>Setup SMB server (samba)</title>
-    <link href="https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_SMB_server__samba_/"/>
-    <id>https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_SMB_server__samba_/</id>
+    <link href="https://kenryu.cc/ja/2021/05/10/File_Sharing_Servers/Setup_SMB_server__samba_/"/>
+    <id>https://kenryu.cc/ja/2021/05/10/File_Sharing_Servers/Setup_SMB_server__samba_/</id>
     <published>2021-05-10T08:16:45.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -426,15 +426,15 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
   
   <entry>
     <title>Setup FTP server (vsftpd)</title>
-    <link href="https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/"/>
-    <id>https://kenryu.cc/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/</id>
+    <link href="https://kenryu.cc/ja/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/"/>
+    <id>https://kenryu.cc/ja/2021/05/10/File_Sharing_Servers/Setup_FTP_server__vsftpd_/</id>
     <published>2021-05-10T01:44:49.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -449,15 +449,15 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
   
   <entry>
     <title>暗号化技術</title>
-    <link href="https://kenryu.cc/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/"/>
-    <id>https://kenryu.cc/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/</id>
+    <link href="https://kenryu.cc/ja/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/"/>
+    <id>https://kenryu.cc/ja/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/</id>
     <published>2021-04-23T13:31:10.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -474,19 +474,19 @@
     
     
     
-    <category term="Security" scheme="https://kenryu.cc/categories/Security/"/>
+    <category term="Security" scheme="https://kenryu.cc/ja/categories/Security/"/>
     
     
-    <category term="网络" scheme="https://kenryu.cc/tags/%E7%BD%91%E7%BB%9C/"/>
+    <category term="网络" scheme="https://kenryu.cc/ja/tags/%E7%BD%91%E7%BB%9C/"/>
     
-    <category term="技术" scheme="https://kenryu.cc/tags/%E6%8A%80%E6%9C%AF/"/>
+    <category term="技术" scheme="https://kenryu.cc/ja/tags/%E6%8A%80%E6%9C%AF/"/>
     
   </entry>
   
   <entry>
     <title>Linux edit Route Table</title>
-    <link href="https://kenryu.cc/2021/04/22/Linux/Linux_edit_Route_Table/"/>
-    <id>https://kenryu.cc/2021/04/22/Linux/Linux_edit_Route_Table/</id>
+    <link href="https://kenryu.cc/ja/2021/04/22/Linux/Linux_edit_Route_Table/"/>
+    <id>https://kenryu.cc/ja/2021/04/22/Linux/Linux_edit_Route_Table/</id>
     <published>2021-04-22T08:21:42.000Z</published>
     <updated>2022-06-30T00:45:55.820Z</updated>
     
@@ -500,21 +500,21 @@
     
     
     
-    <category term="Linux" scheme="https://kenryu.cc/categories/Linux/"/>
+    <category term="Linux" scheme="https://kenryu.cc/ja/categories/Linux/"/>
     
     
-    <category term="linux" scheme="https://kenryu.cc/tags/linux/"/>
+    <category term="linux" scheme="https://kenryu.cc/ja/tags/linux/"/>
     
-    <category term="network" scheme="https://kenryu.cc/tags/network/"/>
+    <category term="network" scheme="https://kenryu.cc/ja/tags/network/"/>
     
-    <category term="server" scheme="https://kenryu.cc/tags/server/"/>
+    <category term="server" scheme="https://kenryu.cc/ja/tags/server/"/>
     
   </entry>
   
   <entry>
     <title>Used iSCSI to connect storage</title>
-    <link href="https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/"/>
-    <id>https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/</id>
+    <link href="https://kenryu.cc/ja/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/"/>
+    <id>https://kenryu.cc/ja/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/</id>
     <published>2021-04-19T01:52:38.000Z</published>
     <updated>2022-06-30T00:45:55.810Z</updated>
     
@@ -528,7 +528,7 @@
     
     
     
-    <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
+    <category term="File Sharing Servers" scheme="https://kenryu.cc/ja/categories/File-Sharing-Servers/"/>
     
     
   </entry>
