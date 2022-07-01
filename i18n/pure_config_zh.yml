@@ -9,6 +9,7 @@ menu:
   Links: links  # 友链
   About: about  # 关于
   日本語: https://kenryu.cc/ja
+# English: https://kenryu.cc
 
 # Enable/Disable menu icons
 menu_icons:
@@ -22,6 +23,7 @@ menu_icons:
   links: icon-friendship
   about: icon-cup-fill
   日本語: icon-more
+# English: icon-more
 # rss
 rss: /atom.xml
 
