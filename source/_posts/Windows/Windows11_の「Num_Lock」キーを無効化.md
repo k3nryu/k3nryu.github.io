@@ -14,6 +14,7 @@ toc: true
 
 ![chrome_1107x414_220701.png](/resources/aaacdc5a69f04999bfe471d7febc4517.png)
 
+## 解決方法
 1. <kbd>Win</kbd>+<kbd>R</kbd>を同時に押して、`regedit`　と入力し、「レジストリ エディター」を開きます。　
 ![explorer_456x272_220701.png](/resources/42353ad6d2a34de89a552598c2093117.png)
 
