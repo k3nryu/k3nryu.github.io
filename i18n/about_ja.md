@@ -1,8 +1,9 @@
 ---
-title: 私について
-description: 自己紹介
-layout: about
+#layout: false
+title: 履歴
+description: Personal Profile
 comments: false
 sidebar: custom
 ---
-こんにちは
+
+<embed src="resume_ja.pdf" width="100%" height="1000" type="application/pdf">

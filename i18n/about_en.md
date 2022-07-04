@@ -1,10 +1,9 @@
 ---
-title: About Me
+#layout: false
+title: Resume
 description: Personal Profile
-layout: about
 comments: false
 sidebar: custom
 ---
-Coming soon.
-Coming soon.
-Coming soon.
+
+<embed src="resume_en.pdf" width="100%" height="1000" type="application/pdf">

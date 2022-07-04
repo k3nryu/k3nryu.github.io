@@ -1,8 +1,9 @@
 ---
-title: 关于
-description: 个人简介
-layout: about
+#layout: false
+title: 简历
+description: Personal Profile
 comments: false
 sidebar: custom
 ---
-个人详细介绍
+
+<embed src="resume_zh.pdf" width="100%" height="1000" type="application/pdf">
