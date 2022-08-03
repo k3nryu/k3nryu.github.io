@@ -1,3 +1,5 @@
+https://kenryu.cc/2022/08/03/Linux/Amazon_Linux_2%EF%BC%88AWS%EF%BC%89%E3%81%AEroot&%E3%83%91%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E3%81%AESSH%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3/
+https://kenryu.cc/2022/04/19/Linux/phpipam/
 https://kenryu.cc/about/index.html
 https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/
 https://kenryu.cc/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/
@@ -51,6 +53,7 @@ https://kenryu.cc/tags/hypervisor/
 https://kenryu.cc/tags/windows/
 https://kenryu.cc/tags/ZFS/
 https://kenryu.cc/tags/Storage/
+https://kenryu.cc/tags/aws/
 https://kenryu.cc/categories/File-Sharing-Servers/
 https://kenryu.cc/categories/Linux/
 https://kenryu.cc/categories/Network/
