@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>phpipam | Kenryu</title>
+  <meta name="description" content="LNMP[toc]    Name Version Command    phpIPAM 1.5 cd &#x2F;var&#x2F;www&#x2F;phpipam&#x2F; &amp;&amp; git log   Linux Rocky Linux release 8.5 (Green Obsidian) cat &#x2F;etc&#x2F;lsb-release &#x2F;etc&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="phpipam">
+<meta property="og:url" content="https://kenryu.cc/zh/2022/04/19/Linux/phpipam/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="LNMP[toc]    Name Version Command    phpIPAM 1.5 cd &#x2F;var&#x2F;www&#x2F;phpipam&#x2F; &amp;&amp; git log   Linux Rocky Linux release 8.5 (Green Obsidian) cat &#x2F;etc&#x2F;lsb-release &#x2F;etc&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kenryu.cc/resources/e20d331a346c4df1a9d79f0280535d60.png">
+<meta property="og:image" content="https://kenryu.cc/resources/2efc6bc066444483937a6857aa8290bc.png">
+<meta property="article:published_time" content="2022-04-19T08:58:10.000Z">
+<meta property="article:modified_time" content="2025-12-17T10:20:06.385Z">
+<meta property="article:author" content="Kenryu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenryu.cc/resources/e20d331a346c4df1a9d79f0280535d60.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/zh/2022/04/19/Linux/phpipam/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/zh/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/zh/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Tokyo, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/zh/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/zh/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/zh/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/zh/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/zh/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/zh/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/zh/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Linux/">Linux</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Storage/">Storage</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Virtualization/">Virtualization</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Windows/">Windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/aws/" rel="tag">aws</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/hypervisor/" rel="tag">hypervisor</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/kvm/" rel="tag">kvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/linux/" rel="tag">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/server/" rel="tag">server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/storage/" rel="tag">storage</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/windows/" rel="tag">windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/zh/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/zh/tags/C/" style="font-size: 14px;">C</a> <a href="/zh/tags/FE/" style="font-size: 14px;">FE</a> <a href="/zh/tags/MySQL/" style="font-size: 13.25px;">MySQL</a> <a href="/zh/tags/Nginx/" style="font-size: 13.25px;">Nginx</a> <a href="/zh/tags/PHP/" style="font-size: 13.25px;">PHP</a> <a href="/zh/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/zh/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/zh/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/zh/tags/aws/" style="font-size: 13px;">aws</a> <a href="/zh/tags/hypervisor/" style="font-size: 13px;">hypervisor</a> <a href="/zh/tags/kvm/" style="font-size: 13px;">kvm</a> <a href="/zh/tags/linux/" style="font-size: 13.75px;">linux</a> <a href="/zh/tags/network/" style="font-size: 13.25px;">network</a> <a href="/zh/tags/server/" style="font-size: 13.5px;">server</a> <a href="/zh/tags/storage/" style="font-size: 13.25px;">storage</a> <a href="/zh/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/zh/tags/windows/" style="font-size: 13px;">windows</a> <a href="/zh/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/zh/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/05/">五月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/02/">二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/12/">十二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/04/">四月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#phpipam"><span class="toc-number">1.</span> <span class="toc-text">phpipam</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-number">2.</span> <span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP"><span class="toc-number">3.</span> <span class="toc-text">PHP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx"><span class="toc-number">4.</span> <span class="toc-text">Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Complete-the-initial-configuration-wizard"><span class="toc-number">5.</span> <span class="toc-text">Complete the initial configuration wizard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Toubleshoting"><span class="toc-number">6.</span> <span class="toc-text">Toubleshoting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Schedule-check-ip-via-cron"><span class="toc-number">7.</span> <span class="toc-text">Schedule check-ip via cron</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Reference"><span class="toc-number"></span> <span class="toc-text">Reference</span></a>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/phpipam" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      phpipam
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/zh/2022/04/19/Linux/phpipam/" class="article-date">
+	  <time datetime="2022-04-19T08:58:10.000Z" itemprop="datePublished">2022-04-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/zh/categories/Linux/">Linux</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/zh/2022/04/19/Linux/phpipam/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 667(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>LNMP<br>[toc]</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>phpIPAM</td>
+<td>1.5</td>
+<td>cd &#x2F;var&#x2F;www&#x2F;phpipam&#x2F; &amp;&amp; git log</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>Rocky Linux release 8.5 (Green Obsidian)</td>
+<td>cat &#x2F;etc&#x2F;lsb-release &#x2F;etc&#x2F;os-release</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>nginx version: nginx&#x2F;1.20.2</td>
+<td>nginx -v</td>
+</tr>
+<tr>
+<td>MySQL</td>
+<td>mysql Ver 8.0.28 for Linux on x86_64 (MySQL Community Server - GPL)</td>
+<td>mysql –version</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>PHP 7.3.20 (cli) (built: Jul 7 2020 07:53:49) ( NTS )</td>
+<td>php -v</td>
+</tr>
+</tbody></table>
+<h2 id="phpipam"><a href="#phpipam" class="headerlink" title="phpipam"></a>phpipam</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dnf -y install php-gmp git</span><br><span class="line">git clone https://github.com/phpipam/phpipam.git /var/www/phpipam</span><br><span class="line">chown -R nginx:nginx /var/www/phpipam</span><br><span class="line">cp /var/www/phpipam/config.dist.php /var/www/phpipam/config.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /var/www/phpipam/config.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$db[&#x27;host&#x27;] = &#x27;127.0.0.1&#x27;;</span><br><span class="line">$db[&#x27;user&#x27;] = &#x27;phpipam&#x27;;</span><br><span class="line">$db[&#x27;pass&#x27;] = &#x27;Your_Password&#x27;;</span><br><span class="line">$db[&#x27;name&#x27;] = &#x27;phpipam&#x27;;</span><br><span class="line">$db[&#x27;port&#x27;] = 3306;</span><br></pre></td></tr></table></figure>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># mysql -u root -p</span><br><span class="line">mysql&gt; create database phpipam;</span><br><span class="line">mysql&gt; create user phpipam@localhost identified with mysql_native_password by &#x27;P@ssw0rd&#x27;;</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON phpipam.* TO phpipam@localhost;</span><br><span class="line">mysql&gt; flush privileges;</span><br></pre></td></tr></table></figure>
+<h2 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/php-fpm.d/www.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- user = apache</span><br><span class="line">- group = apache</span><br><span class="line">+ user = nginx</span><br><span class="line">+ group = nginx</span><br><span class="line">+ listen.owner = nginx</span><br><span class="line">+ listen.group = nginx</span><br><span class="line">+ listen.mode = 0660</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;&lt;?php phpinfo(); ?&gt;&quot; &gt;&gt; /usr/share/nginx/html/index.php</span><br><span class="line">systemctl restart php-fpm.service</span><br></pre></td></tr></table></figure>
+<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>Backup nginx default config file.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak</span><br></pre></td></tr></table></figure>
+<p>Edit site config file .</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/conf.d/ipam.kensho.toda.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">listen 443 ssl http2;</span><br><span class="line">server_name ipam.kensho.toda;</span><br><span class="line">root /var/www/phpipam;</span><br><span class="line">index index.php;</span><br><span class="line"></span><br><span class="line">ssl_certificate &quot;/etc/pki/nginx/ipam.kensho.toda.crt&quot;;</span><br><span class="line">ssl_certificate_key &quot;/etc/pki/nginx/private/ipam.kensho.toda.key&quot;;</span><br><span class="line">ssl_session_cache shared:SSL:1m;</span><br><span class="line">ssl_session_timeout 10m;</span><br><span class="line">ssl_ciphers PROFILE=SYSTEM;</span><br><span class="line">ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">try_files $uri $uri/ /phpipam/index.php;</span><br><span class="line">index index.php;</span><br><span class="line">&#125;</span><br><span class="line">location /api/ &#123;</span><br><span class="line">try_files $uri $uri/ /phpipam/api/index.php;</span><br><span class="line">&#125;</span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">fastcgi_pass unix:/run/php-fpm/www.sock;</span><br><span class="line">fastcgi_index index.php;</span><br><span class="line">try_files $uri $uri/ index.php = 404;</span><br><span class="line">fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">include fastcgi_params;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">listen 80;</span><br><span class="line">server_name ipam.kensho.toda;</span><br><span class="line">return 301 https://ipam.kensho.toda$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -t</span><br><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<h2 id="Complete-the-initial-configuration-wizard"><a href="#Complete-the-initial-configuration-wizard" class="headerlink" title="Complete the initial configuration wizard"></a>Complete the initial configuration wizard</h2><p><img src="/resources/e20d331a346c4df1a9d79f0280535d60.png" alt="c82bd586d5a8c037e3ae38c9c9e04aaa.png"></p>
+<p><img src="/resources/2efc6bc066444483937a6857aa8290bc.png" alt="73a9d5e21d38e3d58c7cd9d6778e4a67.png"></p>
+<p>The default Login credentials are:</p>
+<ul>
+<li>Username: admin</li>
+<li>Password: ipamadmin</li>
+</ul>
+<h2 id="Toubleshoting"><a href="#Toubleshoting" class="headerlink" title="Toubleshoting"></a>Toubleshoting</h2><p>Reset phpipam admin password.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php /var/www/phpipam/functions/scripts/reset-admin-password.php</span><br></pre></td></tr></table></figure>
+<p>Check database’s user.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># mysql -u root -p</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; select user,host,plugin from user;</span><br></pre></td></tr></table></figure>
+<h2 id="Schedule-check-ip-via-cron"><a href="#Schedule-check-ip-via-cron" class="headerlink" title="Schedule check-ip via cron"></a>Schedule check-ip via cron</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># crontab -e</span><br><span class="line">*/15 Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp root /usr/bin/php /var/www/phpipam/functions/scripts/pingCheck.php</span><br><span class="line">*/15 Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp Install_JavaScripts_via_npm.sh README.md _config.landscape.yml _config.yml db.json i18n joplin2hexo node_modules package.json public scaffolds source themes tmp root /usr/bin/php /var/www/phpipam/functions/scripts/discoveryCheck.php</span><br><span class="line"># crontab -l</span><br></pre></td></tr></table></figure>
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/phpipam/phpipam">https://github.com/phpipam/phpipam</a></li>
+<li><a target="_blank" rel="noopener" href="https://phpipam.net/documents/installation/">https://phpipam.net/documents/installation/</a></li>
+<li><a target="_blank" rel="noopener" href="https://phpipam.net/news/phpipam-on-nginx/">https://phpipam.net/news/phpipam-on-nginx/</a></li>
+<li><a target="_blank" rel="noopener" href="https://computingforgeeks.com/install-and-configure-phpipam-on-ubuntu-debian-linux/">https://computingforgeeks.com/install-and-configure-phpipam-on-ubuntu-debian-linux/</a></li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/zh/2022/05/02/Linux/Mail-Server/Postfix-Dovecot-MySQL-Mail-Server/" title="Postfix Dovecot MySQL Mail Server"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/zh/2022/02/28/ZFS/ZFS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="ZFS常用命令"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/zh/js/plugin.min.js"></script>
+
+
+<script src="/zh/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/zh/',
+        CONTENT_URL: '/zh/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/zh/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/zh/2022/04/19/Linux/phpipam/';
+        
+        this.page.identifier = 'Linux/phpipam';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>

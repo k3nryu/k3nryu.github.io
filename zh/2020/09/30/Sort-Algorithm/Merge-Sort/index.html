@@ -21,19 +21,19 @@
   <meta name="description" content="1234567891011121314151617181920212223242526272829303132333435363738394041#ifndef ALGORITHM_MERGE_SORT_H#define ALGORITHM_MERGE_SORT_H&#x2F;* マージソート *&#x2F;void merge_sort (int array[], int left, int right) &amp;#12">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Merge Sort">
-<meta property="og:url" content="https://kenryu.cc/2020/09/30/Sort-Algorithm/Merge-Sort/index.html">
+<meta property="og:url" content="https://kenryu.cc/zh/2020/09/30/Sort-Algorithm/Merge-Sort/index.html">
 <meta property="og:site_name" content="Kenryu">
 <meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041#ifndef ALGORITHM_MERGE_SORT_H#define ALGORITHM_MERGE_SORT_H&#x2F;* マージソート *&#x2F;void merge_sort (int array[], int left, int right) &amp;#12">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-29T15:00:00.000Z">
-<meta property="article:modified_time" content="2022-06-30T13:52:05.424Z">
+<meta property="article:modified_time" content="2022-06-30T13:52:05.000Z">
 <meta property="article:author" content="Kenryu">
 <meta property="article:tag" content="C">
 <meta property="article:tag" content="Algorithm">
 <meta property="article:tag" content="FE">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://kenryu.cc/2020/09/30/Sort-Algorithm/Merge-Sort/index.html">
+  <link rel="canonical" href="https://kenryu.cc/zh/2020/09/30/Sort-Algorithm/Merge-Sort/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
   
@@ -41,7 +41,7 @@
     <link rel="icon" href="/favicon.png" type="image/x-icon">
   
   
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/zh/css/style.css">
 
   
   
@@ -58,11 +58,11 @@
       
       <div class="profile-block text-center">
         <a id="avatar" href="https://github.com/k3nryu" target="_blank">
-          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+          <img class="img-circle img-rotate" src="/zh/images/avatar.jpg" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
         <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
-        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Saitama, Japan</small>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Tokyo, Japan</small>
       </div>
       
       <div class="search" id="search-form-wrap">
@@ -102,7 +102,7 @@
         
         
         <li class="menu-item menu-item-home">
-          <a href="/.">
+          <a href="/zh/.">
             
             <i class="icon icon-home-fill"></i>
             
@@ -112,7 +112,7 @@
         
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives">
+          <a href="/zh/archives">
             
             <i class="icon icon-archives-fill"></i>
             
@@ -122,7 +122,7 @@
         
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories">
+          <a href="/zh/categories">
             
             <i class="icon icon-folder"></i>
             
@@ -132,7 +132,7 @@
         
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags">
+          <a href="/zh/tags">
             
             <i class="icon icon-tags"></i>
             
@@ -142,7 +142,7 @@
         
         
         <li class="menu-item menu-item-repository">
-          <a href="/repository">
+          <a href="/zh/repository">
             
             <i class="icon icon-project"></i>
             
@@ -152,7 +152,7 @@
         
         
         <li class="menu-item menu-item-links">
-          <a href="/links">
+          <a href="/zh/links">
             
             <i class="icon icon-friendship"></i>
             
@@ -162,7 +162,7 @@
         
         
         <li class="menu-item menu-item-about">
-          <a href="/about">
+          <a href="/zh/about">
             
             <i class="icon icon-cup-fill"></i>
             
@@ -217,7 +217,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Storage/">Storage</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Linux/">Linux</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Storage/">Storage</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Virtualization/">Virtualization</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Windows/">Windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -227,7 +227,7 @@
   <div class="widget">
     <h3 class="widget-title">标签</h3>
     <div class="widget-body">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/server/" rel="tag">server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/storage/" rel="tag">storage</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/aws/" rel="tag">aws</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/hypervisor/" rel="tag">hypervisor</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/kvm/" rel="tag">kvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/linux/" rel="tag">linux</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/server/" rel="tag">server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/storage/" rel="tag">storage</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/windows/" rel="tag">windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -237,7 +237,7 @@
   <div class="widget">
     <h3 class="widget-title">标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/tags/C/" style="font-size: 14px;">C</a> <a href="/tags/FE/" style="font-size: 14px;">FE</a> <a href="/tags/MySQL/" style="font-size: 13.25px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 13.25px;">Nginx</a> <a href="/tags/PHP/" style="font-size: 13.25px;">PHP</a> <a href="/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/tags/linux/" style="font-size: 13.75px;">linux</a> <a href="/tags/network/" style="font-size: 13.25px;">network</a> <a href="/tags/server/" style="font-size: 13.5px;">server</a> <a href="/tags/storage/" style="font-size: 13.25px;">storage</a> <a href="/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+      <a href="/zh/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/zh/tags/C/" style="font-size: 14px;">C</a> <a href="/zh/tags/FE/" style="font-size: 14px;">FE</a> <a href="/zh/tags/MySQL/" style="font-size: 13.25px;">MySQL</a> <a href="/zh/tags/Nginx/" style="font-size: 13.25px;">Nginx</a> <a href="/zh/tags/PHP/" style="font-size: 13.25px;">PHP</a> <a href="/zh/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/zh/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/zh/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/zh/tags/aws/" style="font-size: 13px;">aws</a> <a href="/zh/tags/hypervisor/" style="font-size: 13px;">hypervisor</a> <a href="/zh/tags/kvm/" style="font-size: 13px;">kvm</a> <a href="/zh/tags/linux/" style="font-size: 13.75px;">linux</a> <a href="/zh/tags/network/" style="font-size: 13.25px;">network</a> <a href="/zh/tags/server/" style="font-size: 13.5px;">server</a> <a href="/zh/tags/storage/" style="font-size: 13.25px;">storage</a> <a href="/zh/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/zh/tags/windows/" style="font-size: 13px;">windows</a> <a href="/zh/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/zh/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
     </div>
   </div>
 
@@ -246,7 +246,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/05/">五月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/02/">二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/12/">十二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/04/">四月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
     </div>
   </div>
 
@@ -283,20 +283,20 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/09/30/Sort-Algorithm/Merge-Sort/" class="article-date">
+	<a href="/zh/2020/09/30/Sort-Algorithm/Merge-Sort/" class="article-date">
 	  <time datetime="2020-09-29T15:00:00.000Z" itemprop="datePublished">2020-09-30</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    <a class="article-category-link" href="/zh/categories/Algorithm/">Algorithm</a>
   </span>
 
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/Algorithm/" rel="tag">Algorithm</a>, <a class="article-tag-link-link" href="/tags/C/" rel="tag">C</a>, <a class="article-tag-link-link" href="/tags/FE/" rel="tag">FE</a>
+	<a class="article-tag-link-link" href="/zh/tags/Algorithm/" rel="tag">Algorithm</a>, <a class="article-tag-link-link" href="/zh/tags/C/" rel="tag">C</a>, <a class="article-tag-link-link" href="/zh/tags/FE/" rel="tag">FE</a>
   </span>
 
 
@@ -309,7 +309,7 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/09/30/Sort-Algorithm/Merge-Sort/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/zh/2020/09/30/Sort-Algorithm/Merge-Sort/#comments" class="article-comment-link">评论</a></span>
         
 	
 		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 177(字)</span>
@@ -350,12 +350,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/09/30/Sort-Algorithm/Main.c/" title="Main.c"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/zh/2020/09/30/Sort-Algorithm/Main.c/" title="Main.c"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2020/09/30/Sort-Algorithm/Quick-Sort/" title="Quick Sort"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/zh/2020/09/30/Sort-Algorithm/Quick-Sort/" title="Quick Sort"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
@@ -388,10 +388,10 @@
 window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 </script>
 
-<script src="/js/plugin.min.js"></script>
+<script src="/zh/js/plugin.min.js"></script>
 
 
-<script src="/js/application.js"></script>
+<script src="/zh/js/application.js"></script>
 
 
     <script>
@@ -404,14 +404,14 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
             TAGS: '标签',
             UNTITLED: '(未命名)',
         },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
+        ROOT_URL: '/zh/',
+        CONTENT_URL: '/zh/content.json',
     };
     window.INSIGHT_CONFIG = INSIGHT_CONFIG;
 })(window);
 </script>
 
-<script src="/js/insight.js"></script>
+<script src="/zh/js/insight.js"></script>
 
 
 
@@ -430,7 +430,7 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
     <script defer>
     var disqus_config = function () {
         
-            this.page.url = 'https://kenryu.cc/2020/09/30/Sort-Algorithm/Merge-Sort/';
+            this.page.url = 'https://kenryu.cc/zh/2020/09/30/Sort-Algorithm/Merge-Sort/';
         
         this.page.identifier = 'Sort-Algorithm/Merge-Sort';
     };

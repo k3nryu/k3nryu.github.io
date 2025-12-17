@@ -2,25 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://kenryu.cc/2022/08/03/Linux/Amazon_Linux_2%EF%BC%88AWS%EF%BC%89%E3%81%AEroot&%E3%83%91%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E3%81%AESSH%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3/</loc>
+    
+    <lastmod>2025-12-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/2022/04/19/Linux/phpipam/</loc>
+    
+    <lastmod>2025-12-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/about/index.html</loc>
+    
+    <lastmod>2022-07-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/2021/08/26/Virtualization/PCI_pass_though_(Ethernet_port)/</loc>
+    
+    <lastmod>2022-07-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/2022/05/20/Windows/Windows11_%E3%81%AE%E3%80%8CNum_Lock%E3%80%8D%E3%82%AD%E3%83%BC%E3%82%92%E7%84%A1%E5%8A%B9%E5%8C%96/</loc>
+    
+    <lastmod>2022-07-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kenryu.cc/2021/04/08/Storage/Storage_Benchmark_(fio_command)/</loc>
-    
-    <lastmod>2022-06-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://kenryu.cc/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/</loc>
-    
-    <lastmod>2022-06-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/</loc>
     
     <lastmod>2022-06-30</lastmod>
     
@@ -65,15 +92,6 @@
   </url>
   
   <url>
-    <loc>https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/</loc>
-    
-    <lastmod>2022-06-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://kenryu.cc/2021/12/15/File_Sharing_Servers/Setup_WebDAV_server__Apache_/</loc>
     
     <lastmod>2022-06-30</lastmod>
@@ -83,7 +101,7 @@
   </url>
   
   <url>
-    <loc>https://kenryu.cc/2021/04/22/Linux/Linux_edit_Route_Table/</loc>
+    <loc>https://kenryu.cc/2021/04/19/File_Sharing_Servers/Used_iSCSI_to_connect_storage/</loc>
     
     <lastmod>2022-06-30</lastmod>
     
@@ -101,7 +119,7 @@
   </url>
   
   <url>
-    <loc>https://kenryu.cc/2022/05/25/Linux/Make_Unix_terminal_beautiful_&_productive/</loc>
+    <loc>https://kenryu.cc/2021/04/22/Linux/Linux_edit_Route_Table/</loc>
     
     <lastmod>2022-06-30</lastmod>
     
@@ -110,7 +128,7 @@
   </url>
   
   <url>
-    <loc>https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/</loc>
+    <loc>https://kenryu.cc/2022/05/25/Linux/Make_Unix_terminal_beautiful_&_productive/</loc>
     
     <lastmod>2022-06-30</lastmod>
     
@@ -128,7 +146,34 @@
   </url>
   
   <url>
+    <loc>https://kenryu.cc/2021/10/31/Network/%E6%90%AD%E5%BB%BAOpenVPN_Over_FRP/</loc>
+    
+    <lastmod>2022-06-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://kenryu.cc/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/</loc>
+    
+    <lastmod>2022-06-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/2021/10/26/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88MySQL_Apache%E7%89%88%EF%BC%89/</loc>
+    
+    <lastmod>2022-06-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/2021/10/27/Redmine/Redmine%E6%90%AD%E5%BB%BA%EF%BC%88PostgreSQL+Apache%E7%89%88%EF%BC%89/</loc>
     
     <lastmod>2022-06-30</lastmod>
     
@@ -274,7 +319,7 @@
 
   <url>
     <loc>https://kenryu.cc/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -282,112 +327,140 @@
   
   <url>
     <loc>https://kenryu.cc/tags/linux/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://kenryu.cc/tags/network/</loc>
-    <lastmod>2022-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kenryu.cc/tags/server/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <loc>https://kenryu.cc/tags/aws/</loc>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/Server/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/Nginx/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/MySQL/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/PHP/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/tags/network/</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/tags/server/</loc>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/vpn/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/C/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/Algorithm/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/FE/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/storage/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/tags/kvm/</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/tags/hypervisor/</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/tags/windows/</loc>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/ZFS/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/tags/Storage/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -396,56 +469,70 @@
   
   <url>
     <loc>https://kenryu.cc/categories/File-Sharing-Servers/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/categories/Linux/</loc>
-    <lastmod>2022-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kenryu.cc/categories/Network/</loc>
-    <lastmod>2022-06-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://kenryu.cc/categories/Redmine/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/categories/Security/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/categories/Network/</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/categories/Redmine/</loc>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/categories/Algorithm/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/categories/Storage/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/categories/Virtualization/</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://kenryu.cc/categories/Windows/</loc>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://kenryu.cc/categories/ZFS/</loc>
-    <lastmod>2022-06-30</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
