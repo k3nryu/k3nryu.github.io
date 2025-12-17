@@ -6,7 +6,7 @@
   <link href="https://kenryu.cc/atom.xml" rel="self"/>
   
   <link href="https://kenryu.cc/"/>
-  <updated>2025-12-17T10:20:06.385Z</updated>
+  <updated>2025-12-17T12:11:31.415Z</updated>
   <id>https://kenryu.cc/</id>
   
   <author>
@@ -15,6 +15,45 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>三步配置（我们喜欢的）终端软件 for macOS/ Windows</title>
+    <link href="https://kenryu.cc/2025/12/17/Windows/%E4%B8%89%E6%AD%A5%E9%85%8D%E7%BD%AE%EF%BC%88%E6%88%91%E4%BB%AC%E5%96%9C%E6%AC%A2%E7%9A%84%EF%BC%89%E7%BB%88%E7%AB%AF%E8%BD%AF%E4%BB%B6_for_macOS_or_Windows/"/>
+    <id>https://kenryu.cc/2025/12/17/Windows/%E4%B8%89%E6%AD%A5%E9%85%8D%E7%BD%AE%EF%BC%88%E6%88%91%E4%BB%AC%E5%96%9C%E6%AC%A2%E7%9A%84%EF%BC%89%E7%BB%88%E7%AB%AF%E8%BD%AF%E4%BB%B6_for_macOS_or_Windows/</id>
+    <published>2025-12-17T11:30:30.000Z</published>
+    <updated>2025-12-17T12:11:31.415Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="大概思路"><a href="#大概思路" class="headerlink" title="大概思路"></a>大概思路</h2><ol><li>安装依赖</li><li>配置Git&#x2F;GitHUB</li><li>从GitHub克隆Dotfiles</li></ol><h2 id="Step1-安装依赖"><a href="#Step1-安装依赖" class="headerlink" title="Step1. 安装依赖"></a>Step1. 安装依赖</h2><h3 id="下载我们喜欢Console软件"><a href="#下载我们喜欢Console软件" class="headerlink" title="下载我们喜欢Console软件"></a>下载我们喜欢Console软件</h3><p>随意选择你喜欢的：<br>MacOS：iTerm2，alacrrity，Tabby，etc。<br>Windows：Terminal，TeraTerm，etc。</p><h3 id="Zsh"><a href="#Zsh" class="headerlink" title="Zsh"></a>Zsh</h3><ul><li>Oh-my-zsh(zsh manager)</li><li>Powerlevel10k(zsh theme)</li><li>Zsh-syntax-highlighting</li><li>Zsh-autosuggestions</li></ul><h3 id="Nerd-Font"><a href="#Nerd-Font" class="headerlink" title="Nerd Font"></a>Nerd Font</h3><ul><li><a href="https://github.com/romkatv/powerlevel10k#meslo-nerd-font-patched-for-powerlevel10k">MesloLGS NF</a> (Install on your OS and set terminal emulator font for powerlevel10k theme)</li></ul><h2 id="Step2-配置Git-x2F-GitHub"><a href="#Step2-配置Git-x2F-GitHub" class="headerlink" title="Step2. 配置Git&#x2F;GitHub"></a>Step2. 配置Git&#x2F;GitHub</h2><p>登陆GitHUB</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure><p>Before<br><img src="/resources/ssh_test_before.png" alt="ssh_test_before.png"><br>After<br><img src="/resources/ssh_test_after.png" alt="ssh_test_after.png"></p><p>在设置git的用户名&amp;邮箱账号</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;k3nryu&quot;</span><br><span class="line">git config --global user.email &quot;tinkenryu@gmail.com&quot;</span><br></pre></td></tr></table></figure><p>本机上生成一对公开密钥，之后我们把公钥放进个人GitHub的账户里，告诉GitHub这台机器是自己人，从而可以进行ssh协议的各项操作。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -C &quot;tinkenryu@gmail.com&quot;</span><br><span class="line">cat .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure><p>登录我们的Github账号，并粘贴上面的公钥。<br><a href="https://github.com/settings/keys">https://github.com/settings/keys</a><br>确认能不能通过ssh连上GitHub的服务器</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure><h2 id="Step3-从GitHub克隆Dotfiles"><a href="#Step3-从GitHub克隆Dotfiles" class="headerlink" title="Step3. 从GitHub克隆Dotfiles"></a>Step3. 从GitHub克隆Dotfiles</h2><p>Clone repositories to local.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive -b macOS git@github.com:k3nryu/dotfiles.git</span><br></pre></td></tr></table></figure><p>Execute ‘install.sh’ shell script.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docfiles/install.sh</span><br></pre></td></tr></table></figure><h2 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># git拉取远程到本地</span></span><br><span class="line">git status</span><br><span class="line">git pull origin main/ master/ develop</span><br><span class="line"></span><br><span class="line"><span class="comment"># (Option/Recommand)创建分支</span></span><br><span class="line">git checkout -b bugfix/xxx</span><br><span class="line">git checkout -b feature/yyy</span><br><span class="line">git checkout -b forZZZ/zzz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地编辑Dotfiles</span></span><br><span class="line">vim xxx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看改了什么</span></span><br><span class="line">git diff</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分段提交</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Fix few Bugs&quot;</span></span><br><span class="line"><span class="comment">#一次commit只做一件事情（Fix/Add/Updata/Refactor）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 同步主分支</span></span><br><span class="line">git fetch origin <span class="comment">#</span></span><br><span class="line">git rebase origin/main</span><br><span class="line">or </span><br><span class="line">git merge origin/main</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送远端分支</span></span><br><span class="line">git push origin feature/yyy</span><br></pre></td></tr></table></figure><h2 id="Uninstall"><a href="#Uninstall" class="headerlink" title="Uninstall"></a>Uninstall</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf ~/dotfiles</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.oh-my-zsh</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;大概思路&quot;&gt;&lt;a href=&quot;#大概思路&quot; class=&quot;headerlink&quot; title=&quot;大概思路&quot;&gt;&lt;/a&gt;大概思路&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;安装依赖&lt;/li&gt;
+&lt;li&gt;配置Git&amp;#x2F;GitHUB&lt;/li&gt;
+&lt;li&gt;从GitHub克隆Dotfil</summary>
+      
+    
+    
+    
+    <category term="macOS" scheme="https://kenryu.cc/categories/macOS/"/>
+    
+    
+    <category term="windows" scheme="https://kenryu.cc/tags/windows/"/>
+    
+    <category term="macOS" scheme="https://kenryu.cc/tags/macOS/"/>
+    
+    <category term="git" scheme="https://kenryu.cc/tags/git/"/>
+    
+    <category term="blog" scheme="https://kenryu.cc/tags/blog/"/>
+    
+    <category term="shell" scheme="https://kenryu.cc/tags/shell/"/>
+    
+    <category term="zsh" scheme="https://kenryu.cc/tags/zsh/"/>
+    
+    <category term="console" scheme="https://kenryu.cc/tags/console/"/>
+    
+  </entry>
   
   <entry>
     <title>Amazon Linux 2（AWS）のroot&amp;パスワードのSSHログイン</title>
@@ -511,35 +550,6 @@
     
     <category term="File Sharing Servers" scheme="https://kenryu.cc/categories/File-Sharing-Servers/"/>
     
-    
-  </entry>
-  
-  <entry>
-    <title>暗号化技術</title>
-    <link href="https://kenryu.cc/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/"/>
-    <id>https://kenryu.cc/2021/04/23/Security/%E6%9A%97%E5%8F%B7%E5%8C%96%E6%8A%80%E8%A1%93/</id>
-    <published>2021-04-23T13:31:10.000Z</published>
-    <updated>2022-06-30T13:52:05.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="共通鍵"><a href="#共通鍵" class="headerlink" title="共通鍵"></a>共通鍵</h1><ul><li>一对能上锁并且解锁的钥匙</li></ul><h1 id="公開鍵"><a href="#公開鍵" class="headerlink" title="公開鍵"></a>公開鍵</h1><p><img src="/resources/fc730f36a1ee42fcb1ca45576747a3c3.png" alt="4b7cd10b4d5bd3c6dca147bcc2f9aa2c.png"></p><ul><li>公开钥：谁都可以拥有，只能上锁🔒，不能开锁❌🔓</li><li>密钥：接收者自己1人拥有，能开锁🔓</li></ul><ol><li>发送者先得到接收者的公开钥</li><li>给内容上锁后发给接收者</li><li>接收者用自己的密钥开锁</li></ol><h1 id="混合式"><a href="#混合式" class="headerlink" title="混合式"></a>混合式</h1><h1 id="SSH修改公开钥匙"><a href="#SSH修改公开钥匙" class="headerlink" title="SSH修改公开钥匙"></a>SSH修改公开钥匙</h1><h2 id="MAC"><a href="#MAC" class="headerlink" title="MAC"></a>MAC</h2><h3 id="钥匙位置"><a href="#钥匙位置" class="headerlink" title="钥匙位置"></a>钥匙位置</h3><p>Offending RSA key <code>/Users/cjl/.ssh/known_hosts</code><br><img src="/resources/ed2d34c0b3b04989b0e1af213ae2a0af.png" alt="b049874d642aba982976537b47645da9.png"></p><h3 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h3><p>删除本地的钥匙,并备份旧钥匙列表<br><code>ssh-keygen -R 192.168.1.1</code></p><h3 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h3><p>手动删除本地的钥匙<br><code>vi /Users/cjl/.ssh/known_hosts</code></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;共通鍵&quot;&gt;&lt;a href=&quot;#共通鍵&quot; class=&quot;headerlink&quot; title=&quot;共通鍵&quot;&gt;&lt;/a&gt;共通鍵&lt;/h1&gt;&lt;ul&gt;
-&lt;li&gt;一对能上锁并且解锁的钥匙&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id=&quot;公開鍵&quot;&gt;&lt;a href=&quot;#公開鍵&quot; class=&quot;h</summary>
-      
-    
-    
-    
-    <category term="Security" scheme="https://kenryu.cc/categories/Security/"/>
-    
-    
-    <category term="网络" scheme="https://kenryu.cc/tags/%E7%BD%91%E7%BB%9C/"/>
-    
-    <category term="技术" scheme="https://kenryu.cc/tags/%E6%8A%80%E6%9C%AF/"/>
     
   </entry>
   
