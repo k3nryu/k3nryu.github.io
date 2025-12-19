@@ -1,3 +1,6 @@
 [submodule "joplin2hexo"]
 	path = joplin2hexo
 	url = git@github.com:k3nryu/joplin2hexo.git
+[submodule "themes/pure"]
+	path = themes/pure
+	url = https://github.com/cofess/hexo-theme-pure.git
