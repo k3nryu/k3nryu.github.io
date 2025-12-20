@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>多协议共享目录（WebDAV / Samba / SFTP）的 ZFS on Linux权限设计实践 | Kenryu</title>
+  <meta name="description" content="一、背景（Background）在家庭或小型团队环境中，经常会遇到一个共享目录需要同时被多种协议访问同一个文件夹的情况。例如：  WebDAV：用于网页或移动端访问（Apache &#x2F; Nginx） **Samba (SMB)**：用于 Windows &#x2F; macOS 文件共享 SFTP：用于 SSH 方式的文件管理  本文以 &#x2F;share 目录为例，用户非常简单：  我：k3n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多协议共享目录（WebDAV &#x2F; Samba &#x2F; SFTP）的 ZFS on Linux权限设计实践">
+<meta property="og:url" content="https://kenryu.cc/zh/2025/12/20/Linux/%E5%A4%9A%E5%8D%8F%E8%AE%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95%EF%BC%88WebDAV-Samba-SFTP%EF%BC%89%E7%9A%84ZFS-On-Linux%E6%9D%83%E9%99%90%E8%AE%A1%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Kenryu">
+<meta property="og:description" content="一、背景（Background）在家庭或小型团队环境中，经常会遇到一个共享目录需要同时被多种协议访问同一个文件夹的情况。例如：  WebDAV：用于网页或移动端访问（Apache &#x2F; Nginx） **Samba (SMB)**：用于 Windows &#x2F; macOS 文件共享 SFTP：用于 SSH 方式的文件管理  本文以 &#x2F;share 目录为例，用户非常简单：  我：k3n">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-20T09:27:00.000Z">
+<meta property="article:modified_time" content="2025-12-20T09:34:00.566Z">
+<meta property="article:author" content="Kenryu">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="storage">
+<meta property="article:tag" content="smb">
+<meta property="article:tag" content="webdav">
+<meta property="article:tag" content="sftp">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://kenryu.cc/zh/2025/12/20/Linux/%E5%A4%9A%E5%8D%8F%E8%AE%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95%EF%BC%88WebDAV-Samba-SFTP%EF%BC%89%E7%9A%84ZFS-On-Linux%E6%9D%83%E9%99%90%E8%AE%A1%E5%AE%9E%E8%B7%B5/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Kenryu" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/zh/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/k3nryu" target="_blank">
+          <img class="img-circle img-rotate" src="/zh/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Kenryu</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Infra Engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Tokyo, Japan</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/zh/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/zh/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/zh/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/zh/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/zh/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/zh/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/zh/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-日本語">
+          <a href="https://kenryu.cc/ja">
+            
+            <i class="icon icon-more"></i>
+            
+            <span class="menu-title">日本語</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/k3nryu" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://weibo.com/512308520" target="_blank" title="Weibo" ><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/Chen__JL" target="_blank" title="Twitter" ><i class="icon icon-twitter"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Feel free to exchange and share your experiences!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Algorithm/">Algorithm</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/File-Sharing-Servers/">File Sharing Servers</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Linux/">Linux</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Network/">Network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Redmine/">Redmine</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Security/">Security</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Storage/">Storage</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Virtualization/">Virtualization</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/Windows/">Windows</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/ZFS/">ZFS</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/zh/categories/macOS/">macOS</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Algorithm/" rel="tag">Algorithm</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/C/" rel="tag">C</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/FE/" rel="tag">FE</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/MySQL/" rel="tag">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Nginx/" rel="tag">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/PHP/" rel="tag">PHP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Server/" rel="tag">Server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/Storage/" rel="tag">Storage</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/ZFS/" rel="tag">ZFS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/aws/" rel="tag">aws</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/blog/" rel="tag">blog</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/console/" rel="tag">console</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/git/" rel="tag">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/hypervisor/" rel="tag">hypervisor</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/kvm/" rel="tag">kvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/linux/" rel="tag">linux</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/macOS/" rel="tag">macOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/network/" rel="tag">network</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/server/" rel="tag">server</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/sftp/" rel="tag">sftp</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/smb/" rel="tag">smb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/storage/" rel="tag">storage</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/vpn/" rel="tag">vpn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/webdav/" rel="tag">webdav</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/windows/" rel="tag">windows</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/zsh/" rel="tag">zsh</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/zh/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/zh/tags/Algorithm/" style="font-size: 14px;">Algorithm</a> <a href="/zh/tags/C/" style="font-size: 14px;">C</a> <a href="/zh/tags/FE/" style="font-size: 14px;">FE</a> <a href="/zh/tags/MySQL/" style="font-size: 13.25px;">MySQL</a> <a href="/zh/tags/Nginx/" style="font-size: 13.25px;">Nginx</a> <a href="/zh/tags/PHP/" style="font-size: 13.25px;">PHP</a> <a href="/zh/tags/Server/" style="font-size: 13.5px;">Server</a> <a href="/zh/tags/Storage/" style="font-size: 13px;">Storage</a> <a href="/zh/tags/ZFS/" style="font-size: 13px;">ZFS</a> <a href="/zh/tags/aws/" style="font-size: 13px;">aws</a> <a href="/zh/tags/blog/" style="font-size: 13px;">blog</a> <a href="/zh/tags/console/" style="font-size: 13px;">console</a> <a href="/zh/tags/git/" style="font-size: 13px;">git</a> <a href="/zh/tags/hypervisor/" style="font-size: 13px;">hypervisor</a> <a href="/zh/tags/kvm/" style="font-size: 13px;">kvm</a> <a href="/zh/tags/linux/" style="font-size: 13.75px;">linux</a> <a href="/zh/tags/macOS/" style="font-size: 13px;">macOS</a> <a href="/zh/tags/network/" style="font-size: 13.25px;">network</a> <a href="/zh/tags/server/" style="font-size: 13.5px;">server</a> <a href="/zh/tags/sftp/" style="font-size: 13px;">sftp</a> <a href="/zh/tags/shell/" style="font-size: 13px;">shell</a> <a href="/zh/tags/smb/" style="font-size: 13px;">smb</a> <a href="/zh/tags/storage/" style="font-size: 13.5px;">storage</a> <a href="/zh/tags/vpn/" style="font-size: 13px;">vpn</a> <a href="/zh/tags/webdav/" style="font-size: 13px;">webdav</a> <a href="/zh/tags/windows/" style="font-size: 13.25px;">windows</a> <a href="/zh/tags/zsh/" style="font-size: 13px;">zsh</a> <a href="/zh/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">技术</a> <a href="/zh/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">网络</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2025/12/">十二月 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/05/">五月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2022/02/">二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/12/">十二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/11/">十一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/10/">十月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/05/">五月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2021/04/">四月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/zh/archives/2020/09/">九月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%83%8C%E6%99%AF%EF%BC%88Background%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">一、背景（Background）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.</span> <span class="toc-text">实际遇到的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%9C%80%E6%B1%82%EF%BC%88Requirements%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、需求（Requirements）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E9%9C%80%E6%B1%82"><span class="toc-number">2.1.</span> <span class="toc-text">目标需求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%90%86%E8%AE%BA%EF%BC%88Theory%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">三、理论（Theory）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Linux-%E6%9D%83%E9%99%90%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. Linux 权限的本质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%BE%E8%AE%A1%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">3.2.</span> <span class="toc-text">2. 设计核心思想</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%99%85%E6%93%8D%E4%BD%9C%EF%BC%88Implementation%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">四、实际操作（Implementation）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E7%BB%9F%E4%B8%80%E5%85%B1%E4%BA%AB%E7%BB%84"><span class="toc-number">4.1.</span> <span class="toc-text">1. 创建统一共享组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AE%E7%9B%AE%E5%BD%95%E5%B1%9E%E7%BB%84%E5%B9%B6%E5%90%AF%E7%94%A8-setgid"><span class="toc-number">4.2.</span> <span class="toc-text">2. 设置目录属组并启用 setgid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%EF%BC%88Optional%EF%BC%89%E5%BC%80%E5%90%AFZFS%E7%9A%84POSIX%E6%A8%A1%E5%BC%8F%E7%9A%84ACL"><span class="toc-number">4.3.</span> <span class="toc-text">3. （Optional）开启ZFS的POSIX模式的ACL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BF%AE%E5%A4%8D%E5%B7%B2%E6%9C%89%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90%EF%BC%88ACL%EF%BC%89%EF%BC%8C%E4%BB%A5%E5%8F%8A%E7%BB%9F%E4%B8%80%E6%9C%AA%E6%9D%A5%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90%EF%BC%88default-ACL%EF%BC%8C%E5%85%B3%E9%94%AE%EF%BC%89"><span class="toc-number">4.4.</span> <span class="toc-text">4. 修复已有文件的权限（ACL），以及统一未来文件的权限（default ACL，关键）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%A1%AE%E4%BF%9D-ACL-mask-%E4%B8%8D%E9%99%90%E5%88%B6%E6%9D%83%E9%99%90"><span class="toc-number">4.5.</span> <span class="toc-text">5. 确保 ACL mask 不限制权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89%E9%98%B2%E6%AD%A2%E8%AF%AF%E5%88%A0%E6%96%87%E4%BB%B6%EF%BC%9ASticky-Bit"><span class="toc-number">4.6.</span> <span class="toc-text">6. （可选）防止误删文件：Sticky Bit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%90%8E%E6%9C%9F%E8%BF%90%E7%BB%B4%EF%BC%88Operations-amp-Tips%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">五、后期运维（Operations &amp; Tips）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BF%AB%E9%80%9F%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="toc-number">5.1.</span> <span class="toc-text">1. 快速健康检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9D%83%E9%99%90%E5%BC%82%E5%B8%B8%E7%9A%84%E5%B8%B8%E8%A7%81%E6%8E%92%E6%9F%A5%E9%A1%BA%E5%BA%8F"><span class="toc-number">5.2.</span> <span class="toc-text">2. 权限异常的常见排查顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%9C%8B%E5%88%B0-ls-l-%E4%B8%AD%E7%9A%84-%E4%B8%8D%E8%A6%81%E6%85%8C"><span class="toc-number">5.3.</span> <span class="toc-text">3. 看到 ls -l 中的 + 不要慌</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%BF%90%E7%BB%B4%E5%8F%A3%E8%AF%80"><span class="toc-number">5.4.</span> <span class="toc-text">4. 一句话运维口诀</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">六、总结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Linux/多协议共享目录（WebDAV-Samba-SFTP）的ZFS-On-Linux权限计实践" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      多协议共享目录（WebDAV / Samba / SFTP）的 ZFS on Linux权限设计实践
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/zh/2025/12/20/Linux/%E5%A4%9A%E5%8D%8F%E8%AE%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95%EF%BC%88WebDAV-Samba-SFTP%EF%BC%89%E7%9A%84ZFS-On-Linux%E6%9D%83%E9%99%90%E8%AE%A1%E5%AE%9E%E8%B7%B5/" class="article-date">
+	  <time datetime="2025-12-20T09:27:00.000Z" itemprop="datePublished">2025-12-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/zh/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/zh/tags/linux/" rel="tag">linux</a>, <a class="article-tag-link-link" href="/zh/tags/sftp/" rel="tag">sftp</a>, <a class="article-tag-link-link" href="/zh/tags/smb/" rel="tag">smb</a>, <a class="article-tag-link-link" href="/zh/tags/storage/" rel="tag">storage</a>, <a class="article-tag-link-link" href="/zh/tags/webdav/" rel="tag">webdav</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/zh/2025/12/20/Linux/%E5%A4%9A%E5%8D%8F%E8%AE%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95%EF%BC%88WebDAV-Samba-SFTP%EF%BC%89%E7%9A%84ZFS-On-Linux%E6%9D%83%E9%99%90%E8%AE%A1%E5%AE%9E%E8%B7%B5/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="一、背景（Background）"><a href="#一、背景（Background）" class="headerlink" title="一、背景（Background）"></a>一、背景（Background）</h2><p>在家庭或小型团队环境中，经常会遇到一个共享目录需要同时被多种协议访问同一个文件夹的情况。例如：</p>
+<ul>
+<li><strong>WebDAV</strong>：用于网页或移动端访问（Apache &#x2F; Nginx）</li>
+<li>**Samba (SMB)**：用于 Windows &#x2F; macOS 文件共享</li>
+<li><strong>SFTP</strong>：用于 SSH 方式的文件管理</li>
+</ul>
+<p>本文以 <code>/share</code> 目录为例，用户非常简单：</p>
+<ul>
+<li>我：<code>k3nryu</code></li>
+<li>老婆：<code>xiaowu</code></li>
+<li>WebDAV 服务用户：<code>www-data</code></li>
+<li>管理用户：<code>root</code></li>
+</ul>
+<p>但问题恰恰出在：<strong>不同协议在 Linux 下会映射成不同的用户和组</strong>。</p>
+<h3 id="实际遇到的问题"><a href="#实际遇到的问题" class="headerlink" title="实际遇到的问题"></a>实际遇到的问题</h3><p>我创建的文件的时候，权限组将会是k3nryu:k3nryu，那么我老婆也编辑不了我的文件。<br>原因是不同访问方式创建的文件，其属主和属组如下：</p>
+<table>
+<thead>
+<tr>
+<th>访问方式</th>
+<th>Linux 看到的用户:组</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebDAV</td>
+<td>www-data:www-data</td>
+</tr>
+<tr>
+<td>Samba（我）</td>
+<td>k3nryu:k3nryu</td>
+</tr>
+<tr>
+<td>Samba（老婆）</td>
+<td>xiaowu:xiaowu</td>
+</tr>
+<tr>
+<td>SFTP</td>
+<td>root:root</td>
+</tr>
+</tbody></table>
+<p>导致的问题：</p>
+<ul>
+<li>A 创建的文件，B 无法读写</li>
+<li>root 创建的文件，普通用户没权限</li>
+<li>子目录权限逐渐失控</li>
+<li>不同服务的 umask 互相冲突</li>
+</ul>
+<hr>
+<h2 id="二、需求（Requirements）"><a href="#二、需求（Requirements）" class="headerlink" title="二、需求（Requirements）"></a>二、需求（Requirements）</h2><h3 id="目标需求"><a href="#目标需求" class="headerlink" title="目标需求"></a>目标需求</h3><blockquote>
+<p><strong>无论通过 WebDAV &#x2F; Samba &#x2F; SFTP &#x2F; 本地 shell：</strong></p>
+<ul>
+<li>在 <code>/share</code>（及其子目录）中创建的文件</li>
+<li>所有相关用户都拥有 <code>rwx</code> 权限</li>
+<li>权限行为长期稳定、无需频繁维护</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>访问方式</th>
+<th>Linux 看到的用户:组</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebDAV</td>
+<td>www-data:share</td>
+</tr>
+<tr>
+<td>Samba（我）</td>
+<td>k3nryu:share</td>
+</tr>
+<tr>
+<td>Samba（老婆）</td>
+<td>xiaowu:share</td>
+</tr>
+<tr>
+<td>SFTP</td>
+<td>root:share</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="三、理论（Theory）"><a href="#三、理论（Theory）" class="headerlink" title="三、理论（Theory）"></a>三、理论（Theory）</h2><h3 id="1-Linux-权限的本质"><a href="#1-Linux-权限的本质" class="headerlink" title="1. Linux 权限的本质"></a>1. Linux 权限的本质</h3><p>Linux 内核只关心三件事：</p>
+<ul>
+<li><strong>UID（用户）</strong></li>
+<li><strong>GID（组）</strong></li>
+<li><strong>权限位 &#x2F; ACL</strong></li>
+</ul>
+<p>它并不知道：</p>
+<ul>
+<li>WebDAV</li>
+<li>Samba</li>
+<li>SFTP</li>
+</ul>
+<p>这些“协议用户”最终都会被映射成 <strong>Linux 用户</strong>，再由内核进行权限判断。</p>
+<h3 id="2-设计核心思想"><a href="#2-设计核心思想" class="headerlink" title="2. 设计核心思想"></a>2. 设计核心思想</h3><blockquote>
+<p><strong>不要围绕“用户”设计权限，而要围绕“共享组（group）”设计权限</strong></p>
+</blockquote>
+<p>关键技术组合：</p>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>共享 group</td>
+<td>表达“谁属于共享成员”</td>
+</tr>
+<tr>
+<td>setgid</td>
+<td>保证新文件继承 group</td>
+</tr>
+<tr>
+<td>ACL</td>
+<td>覆盖不同服务的 umask</td>
+</tr>
+<tr>
+<td>sticky bit（可选）</td>
+<td>防止误删他人文件</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、实际操作（Implementation）"><a href="#四、实际操作（Implementation）" class="headerlink" title="四、实际操作（Implementation）"></a>四、实际操作（Implementation）</h2><p>以下操作假设共享目录为 <code>/share</code>。</p>
+<h3 id="1-创建统一共享组"><a href="#1-创建统一共享组" class="headerlink" title="1. 创建统一共享组"></a>1. 创建统一共享组</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupadd share</span><br></pre></td></tr></table></figure>
+
+<p>将所有相关用户加入该组：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">usermod -aG share k3nryu</span><br><span class="line">usermod -aG share xiaowu</span><br><span class="line">usermod -aG share www-data</span><br><span class="line">usermod -aG share root</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>修改组后需重新登录或重启相关服务。</p>
+</blockquote>
+<hr>
+<h3 id="2-设置目录属组并启用-setgid"><a href="#2-设置目录属组并启用-setgid" class="headerlink" title="2. 设置目录属组并启用 setgid"></a>2. 设置目录属组并启用 setgid</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R www-data:share /share</span><br><span class="line"><span class="built_in">chmod</span> -R 2775 /share</span><br></pre></td></tr></table></figure>
+
+<p>检查效果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -ld /share</span><br></pre></td></tr></table></figure>
+
+<p>期望看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drwxrwsr-x  www-data share /share</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>s</code> 表示 <strong>setgid</strong>，新建文件会自动继承 <code>share</code> 组。</p>
+<hr>
+<h3 id="3-（Optional）开启ZFS的POSIX模式的ACL"><a href="#3-（Optional）开启ZFS的POSIX模式的ACL" class="headerlink" title="3. （Optional）开启ZFS的POSIX模式的ACL"></a>3. （Optional）开启ZFS的POSIX模式的ACL</h3><blockquote>
+<p>如果使用 ZFS文件系统的话，那么它的默认ALC模式是NFSv4 ACL（Solaris 的 chmod A+）.<br>另外一方面setfacl &#x2F; getfacl只支持 Linux POSIX ACL。所以我需要提前将ZFS的ALC模式调整为POSIX。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zfs set acltype=posixacl tank</span><br><span class="line">zfs set aclinherit=passthrough tank</span><br><span class="line">zfs set aclmode=passthrough tank</span><br><span class="line">zfs get acltype,aclinherit,aclmode tank</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-修复已有文件的权限（ACL），以及统一未来文件的权限（default-ACL，关键）"><a href="#4-修复已有文件的权限（ACL），以及统一未来文件的权限（default-ACL，关键）" class="headerlink" title="4. 修复已有文件的权限（ACL），以及统一未来文件的权限（default ACL，关键）"></a>4. 修复已有文件的权限（ACL），以及统一未来文件的权限（default ACL，关键）</h3><p>含义：</p>
+<blockquote>
+<p>以后在 <code>/share</code> 中创建的任何文件或目录，<br><code>share</code> 组始终拥有 <code>rwx</code> 权限，无视创建者和 umask。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修复已有文件的权限（ACL）</span></span><br><span class="line">setfacl -R -m g:share:rwx /share</span><br><span class="line"><span class="comment"># 统一未来文件的权限（default ACL，关键）</span></span><br><span class="line">setfacl -R -d -m g:share:rwx /share</span><br><span class="line"><span class="comment"># 统一子文件（不包含文件夹）去除setgid</span></span><br><span class="line">find /share -<span class="built_in">type</span> f -perm -2000 -<span class="built_in">exec</span> <span class="built_in">chmod</span> g-s &#123;&#125; +\n</span><br></pre></td></tr></table></figure>
+<hr>
+<hr>
+<h3 id="5-确保-ACL-mask-不限制权限"><a href="#5-确保-ACL-mask-不限制权限" class="headerlink" title="5. 确保 ACL mask 不限制权限"></a>5. 确保 ACL mask 不限制权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setfacl -R -m m::rwx /share</span><br><span class="line">setfacl -R -d -m m::rwx /share</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-（可选）防止误删文件：Sticky-Bit"><a href="#6-（可选）防止误删文件：Sticky-Bit" class="headerlink" title="6. （可选）防止误删文件：Sticky Bit"></a>6. （可选）防止误删文件：Sticky Bit</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +t /share</span><br></pre></td></tr></table></figure>
+
+<p>最终目录权限可能为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drwxrwsr-t  root share /share</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<ul>
+<li>可以修改他人文件</li>
+<li>不能删除他人文件（除非 root）</li>
+</ul>
+<hr>
+<h2 id="五、后期运维（Operations-amp-Tips）"><a href="#五、后期运维（Operations-amp-Tips）" class="headerlink" title="五、后期运维（Operations &amp; Tips）"></a>五、后期运维（Operations &amp; Tips）</h2><h3 id="1-快速健康检查"><a href="#1-快速健康检查" class="headerlink" title="1. 快速健康检查"></a>1. 快速健康检查</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -ld /share</span><br><span class="line">getfacl /share</span><br></pre></td></tr></table></figure>
+
+<p>关注：</p>
+<ul>
+<li>是否存在 <code>s</code>（setgid）</li>
+<li>是否存在 <code>default:group:share:rwx</code></li>
+</ul>
+<hr>
+<h3 id="2-权限异常的常见排查顺序"><a href="#2-权限异常的常见排查顺序" class="headerlink" title="2. 权限异常的常见排查顺序"></a>2. 权限异常的常见排查顺序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span> 用户名           <span class="comment"># 是否仍在 share 组</span></span><br><span class="line">getfacl 文件名</span><br><span class="line">mount | grep acl    <span class="comment"># 文件系统是否支持 ACL</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-看到-ls-l-中的-不要慌"><a href="#3-看到-ls-l-中的-不要慌" class="headerlink" title="3. 看到 ls -l 中的 + 不要慌"></a>3. 看到 ls -l 中的 <code>+</code> 不要慌</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-rw-rwx---+ file.txt</span><br></pre></td></tr></table></figure>
+
+<p><code>+</code> 表示该文件存在 ACL，这是正常状态。</p>
+<hr>
+<h3 id="4-一句话运维口诀"><a href="#4-一句话运维口诀" class="headerlink" title="4. 一句话运维口诀"></a>4. 一句话运维口诀</h3><blockquote>
+<p><strong>共享目录看 group，不看人；<br>权限不稳用 ACL；<br>setgid 是灵魂。</strong></p>
+</blockquote>
+<hr>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><p>当一个目录被多个协议访问时，权限问题几乎不可避免。<br>正确的做法不是不断修补 chmod，而是：</p>
+<ul>
+<li><strong>统一 group</strong></li>
+<li><strong>用 setgid 保证继承</strong></li>
+<li><strong>用 ACL 覆盖 umask 差异</strong></li>
+</ul>
+<p>一旦设计正确，后续几乎不需要维护。</p>
+<p><strong>一次设计，长期省心。</strong></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/zh/2025/12/17/Windows/%E4%B8%89%E6%AD%A5%E9%85%8D%E7%BD%AE%EF%BC%88%E6%88%91%E4%BB%AC%E5%96%9C%E6%AC%A2%E7%9A%84%EF%BC%89%E7%BB%88%E7%AB%AF%E8%BD%AF%E4%BB%B6_for_macOS_or_Windows/" title="三步配置（我们喜欢的）终端软件 for macOS/ Windows"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/zh/js/plugin.min.js"></script>
+
+
+<script src="/zh/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/zh/',
+        CONTENT_URL: '/zh/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/zh/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://kenryu.cc/zh/2025/12/20/Linux/%E5%A4%9A%E5%8D%8F%E8%AE%AE%E5%85%B1%E4%BA%AB%E7%9B%AE%E5%BD%95%EF%BC%88WebDAV-Samba-SFTP%EF%BC%89%E7%9A%84ZFS-On-Linux%E6%9D%83%E9%99%90%E8%AE%A1%E5%AE%9E%E8%B7%B5/';
+        
+        this.page.identifier = 'Linux/多协议共享目录（WebDAV-Samba-SFTP）的ZFS-On-Linux权限计实践';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'k3nryu' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
